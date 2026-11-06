@@ -52,12 +52,20 @@ Avant de cloner, assurez-vous d'avoir installé :
   ```bash
   git checkout dev
   git pull origin dev
-  git checkout -b "type(scope): description (#N)"
+  git checkout -b type/issue-N-description
   ```
 
-  Respectez impérativement la convention de nommage suivante : type(scope): description (#N), où #N correspond au numéro de l'issue GitHub associée.
+  Respectez impérativement la convention de nommage suivante : type/issue-N-description, où N correspond au numéro de l'issue GitHub associée.
 
-  Exemple : feat(player): add player movement (#12).
+  Exemple : feat/issue-12-player-movement
+
+- Respectez également la convention Conventional Commits pour vos messages de commit :
+
+  ```bash
+  "feat(player): add player movement (#12)"
+  ```
+
+  Le numéro #12 correspond à l'issue GitHub associée au changement.
 
 - Une fois vos modifications terminées, **assurez-vous qu'elles sont testées et que le projet fonctionne localement** :
   ```bash
