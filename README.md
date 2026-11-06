@@ -46,14 +46,33 @@ Avant de cloner, assurez-vous d'avoir installé :
 
 ### Workflow Git (Branches)
 
-- **Ne jamais coder directement sur `main` ni sur `dev`.**
-- Pour chaque nouvelle fonctionnalité (ex: ajouter le joueur, créer le menu), créez une branche dédiée à partir de `dev` (branche par défaut) :
+- **Ne jamais coder directement sur `main` ou `dev`.**
+- Pour chaque nouvelle fonctionnalité ou correction (ex. : ajouter le joueur, créer le menu), créez une branche dédiée à partir de `dev` :
+
   ```bash
   git checkout dev
   git pull origin dev
-  git checkout -b type(portée): description (#N)
+  git checkout -b "type(scope): description (#N)"
   ```
-- Une fois votre modification terminée et testée localement, poussez votre branche et ouvrez une **Pull Request (PR)** sur GitHub vers la branche `dev`.
+
+  Respectez impérativement la convention de nommage suivante : type(scope): description (#N), où #N correspond au numéro de l'issue GitHub associée.
+
+  Exemple : feat(player): add player movement (#12).
+
+- Une fois vos modifications terminées, **assurez-vous qu'elles sont testées et que le projet fonctionne localement** :
+  ```bash
+  ./gradlew test
+  ./gradlew lwjgl3:run
+  ```
+- Vérifiez la couverture des tests avec JaCoCo :
+
+  L'exécution de ./gradlew test génère automatiquement les rapports JaCoCo.
+
+  Consultez le rapport HTML situé dans core/build/reports/jacoco/test/html/index.html pour visualiser la couverture du code et identifier les parties qui ne sont pas couvertes par les tests.
+
+  Assurez-vous que les tests couvrent correctement les fonctionnalités ajoutées ou modifiées.
+
+- Poussez ensuite votre branche sur le dépôt distant et ouvrez une **Pull Request (PR)** sur GitHub en ciblant la branche `dev`.
 
 ### Où ajouter votre code ?
 
@@ -62,5 +81,5 @@ Avant de cloner, assurez-vous d'avoir installé :
 
 ## Problèmes fréquents (Dépannage)
 
-- **Erreur de version Java :** Si le projet refuse de compiler, vérifiez dans l'IDE que le `Project SDK` et la version de Gradle utilisent bien Java 17 (File > Project Structure).
+- **Erreur de version Java :** Si le projet refuse de compiler, vérifiez dans l'IDE que le `Project SDK` et la version de Gradle utilisent bien Java 21 (File > Project Structure).
 - **Fichiers Assets non trouvés :** Dans IntelliJ, si le jeu plante au démarrage car il ne trouve pas les images, vérifiez que le _Working Directory_ de votre configuration de lancement pointe bien sur le dossier `assets` (ou la racine du projet selon votre configuration GDX-Liftoff).
