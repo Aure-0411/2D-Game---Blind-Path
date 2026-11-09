@@ -39,3 +39,11 @@ jacocoTestReport {
 jar {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+javadoc {
+  options.encoding = 'UTF-8'
+  options.charSet = 'UTF-8'
+  options.docEncoding = 'UTF-8'
+  options.windowTitle = 'Blind Path API'
+  options.docTitle = 'Blind Path API'
+}
