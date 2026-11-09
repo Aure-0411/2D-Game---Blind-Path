@@ -11,7 +11,8 @@ class GnomeTest {
 
     @BeforeEach
     void setUp() {
-        gnome = new Gnome(1f,1f);
+        gnome = new Gnome();
+        gnome.setPosition(1f, 1f);
     }
 
     @Test
