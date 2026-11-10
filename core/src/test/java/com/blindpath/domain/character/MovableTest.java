@@ -27,7 +27,7 @@ class MovableTest {
 
     @Test
     void moveEast_advancesBySpeedTimesDelta() {
-        move(Direction.EAST, DELTA);
+        move(Direction.RIGHT, DELTA);
 
         assertEquals(5f + gnome.getSpeed() * DELTA, gnome.getX(), 1e-5f);
         assertEquals(5f, gnome.getY(), 1e-5f);
@@ -35,7 +35,7 @@ class MovableTest {
 
     @Test
     void moveNorth_increasesY() {
-        move(Direction.NORTH, DELTA);
+        move(Direction.UP, DELTA);
 
         assertEquals(5f, gnome.getX(), 1e-5f);
         assertEquals(5f + gnome.getSpeed() * DELTA, gnome.getY(), 1e-5f);
@@ -54,11 +54,11 @@ class MovableTest {
 
     @Test
     void diagonalSigns_areRespected() {
-        move(Direction.NORTH_EAST, DELTA);
+        move(Direction.UP_RIGHT, DELTA);
         assertTrue(gnome.getX() > 5f && gnome.getY() > 5f);
 
         gnome.setPosition(5f, 5f);
-        move(Direction.SOUTH_WEST, DELTA);
+        move(Direction.DOWN_LEFT, DELTA);
         assertTrue(gnome.getX() < 5f && gnome.getY() < 5f);
     }
 
@@ -72,7 +72,7 @@ class MovableTest {
 
     @Test
     void zeroDelta_doesNotMove() {
-        move(Direction.EAST, 0f);
+        move(Direction.RIGHT, 0f);
 
         assertEquals(5f, gnome.getX());
     }

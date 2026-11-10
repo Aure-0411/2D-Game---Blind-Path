@@ -8,14 +8,14 @@ class DirectionTest {
 
     @Test
     void fromKeys_singleKey() {
-        assertEquals(Direction.NORTH, Direction.fromKeys(true, false, false, false));
-        assertEquals(Direction.EAST,  Direction.fromKeys(false, false, false, true));
+        assertEquals(Direction.UP, Direction.fromKeys(true, false, false, false));
+        assertEquals(Direction.RIGHT,  Direction.fromKeys(false, false, false, true));
     }
 
     @Test
     void fromKeys_diagonal() {
-        assertEquals(Direction.NORTH_EAST, Direction.fromKeys(true, false, false, true));
-        assertEquals(Direction.SOUTH_WEST, Direction.fromKeys(false, true, true, false));
+        assertEquals(Direction.UP_RIGHT, Direction.fromKeys(true, false, false, true));
+        assertEquals(Direction.DOWN_LEFT, Direction.fromKeys(false, true, true, false));
     }
 
     @Test
@@ -23,7 +23,7 @@ class DirectionTest {
         assertEquals(Direction.NONE, Direction.fromKeys(false, false, true, true));
         assertEquals(Direction.NONE, Direction.fromKeys(true, true, false, false));
         assertEquals(Direction.NONE, Direction.fromKeys(true, true, true, true));
-        assertEquals(Direction.EAST, Direction.fromKeys(true, true, false, true));
+        assertEquals(Direction.RIGHT, Direction.fromKeys(true, true, false, true));
     }
 
     @Test
