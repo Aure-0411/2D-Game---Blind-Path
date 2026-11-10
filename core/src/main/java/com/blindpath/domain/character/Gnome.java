@@ -4,7 +4,7 @@ public class Gnome extends Character{
     private Direction facing = Direction.SOUTH;
 
     public Gnome() {
-        super(0.1f, 0, 0, 1f, 1f);
+        super(2f, 0, 0, 1f, 1f);
     }
 
     public Direction getFacing() { return facing; }
