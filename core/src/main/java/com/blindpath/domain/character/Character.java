@@ -10,6 +10,7 @@ public abstract class Character implements Movable/*, Collidable*/{
     private float speed;
     private float x, y;
     private float width, height;
+    private Direction facing = Direction.DOWN;
 
     public Character (float speed, float x, float y, float width, float height){
         this.maxLife = 6;
@@ -34,6 +35,14 @@ public abstract class Character implements Movable/*, Collidable*/{
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public Direction getFacing() { return facing; }
+
+    public void setFacing(Direction facing) {
+        if (facing != Direction.NONE) {
+            this.facing = facing;
+        }
     }
 
     @Override
