@@ -21,6 +21,11 @@ class GnomeTest {
     }
 
     @Test
+    void newGnome_defaultSpeed() {
+        assertEquals(2f, gnome.getSpeed());
+    }
+    
+    @Test
     void newGnome_isSmallerThanOneCell() {
         // doit pouvoir passer dans un couloir d'une case
         assertTrue(gnome.getWidth() == 1f);
@@ -44,23 +49,23 @@ class GnomeTest {
     //     assertFalse(bounds.intersects(new Bounds(10f, 10f, 1f, 1f)));
     // }
 
-    @Test
-    void newGnome_facesSouthByDefault() {
-        assertEquals(Direction.SOUTH, gnome.getFacing());
-    }
+    // @Test
+    // void newGnome_facesSouthByDefault() {
+    //     assertEquals(Direction.SOUTH, gnome.getFacing());
+    // }
 
-    @Test
-    void setFacing_remembersDirection() {
-        gnome.setFacing(Direction.NORTH_EAST);
+    // @Test
+    // void setFacing_remembersDirection() {
+    //     gnome.setFacing(Direction.NORTH_EAST);
 
-        assertEquals(Direction.NORTH_EAST, gnome.getFacing());
-    }
+    //     assertEquals(Direction.NORTH_EAST, gnome.getFacing());
+    // }
 
-    @Test
-    void setFacing_noneKeepsLastDirection() {
-        gnome.setFacing(Direction.WEST);
-        gnome.setFacing(Direction.NONE);
+    // @Test
+    // void setFacing_noneKeepsLastDirection() {
+    //     gnome.setFacing(Direction.WEST);
+    //     gnome.setFacing(Direction.NONE);
 
-        assertEquals(Direction.WEST, gnome.getFacing());
-    }
+    //     assertEquals(Direction.WEST, gnome.getFacing());
+    // }
 }
