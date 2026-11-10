@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
  */
 class MonsterRhythmTest {
  
+    private static final int TPS = GameClock.TICKS_PER_SECOND;
     private static final float FRAME = 1f / 60;
  
     /** Minimal stand-in for Monster: only the time logic, no grid. */
@@ -55,15 +56,15 @@ class MonsterRhythmTest {
  
     @Test
     void defaultMonsterMovesOneCellPerSecond() {
-        FakeMonster monster = new FakeMonster(20, 1);
+        FakeMonster monster = new FakeMonster(TPS, 1);
         clock.addListener(monster);
         runSeconds(monster, 3);
-        assertEquals(3, monster.cellsMoved, "GDD default: 1 cell every 20 ticks -> 3 cells in 3 s");
+        assertEquals(3, monster.cellsMoved, "1 cell every " + TPS + " ticks (1 s) -> 3 cells in 3 s");
     }
  
     @Test
     void stunnedMonsterDoesNotMove() {
-        FakeMonster monster = new FakeMonster(20, 1);
+        FakeMonster monster = new FakeMonster(TPS, 1);
         clock.addListener(monster);
         monster.stun.start(2.5f);
         runSeconds(monster, 3);
@@ -72,10 +73,9 @@ class MonsterRhythmTest {
  
     @Test
     void strongerMonsterAfterRetryMovesFaster() {
-        FakeMonster monster = new FakeMonster(10, 1);
+        FakeMonster monster = new FakeMonster(TPS / 2, 1);
         clock.addListener(monster);
         runSeconds(monster, 3);
-        assertEquals(6, monster.cellsMoved, "10 ticks between moves -> 6 cells in 3 s");
+        assertEquals(6, monster.cellsMoved, TPS / 2 + " ticks between moves (0.5 s) -> 6 cells in 3 s");
     }
 }
- 
