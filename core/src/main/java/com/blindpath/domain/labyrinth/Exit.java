@@ -28,7 +28,7 @@ public class Exit {
         this.border = border;
 
         this.bounds = new Bounds(this.x, this.y, this.width, this.height);
-   
+
     }
 
     public int getX (){
@@ -48,11 +48,11 @@ public class Exit {
         return this.border;
     }
 
-    // public boolean isReached(Gnome gnome){
-    //     if (this.bounds.intersects(gnome.getBounds())){
-    //         return true;
-    //     }
-    // return false;
-    // }
-    
+    public boolean isReached(Collidable entity){
+        if (this.bounds.intersects(entity.getBounds())){
+            return true;
+        }
+    return false;
+    }
+
 }
