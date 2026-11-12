@@ -49,10 +49,12 @@ Pour plus de détails sur l'avancement du projet, consultez la [liste des jalons
 
 ## Prérequis
 
-Avant de cloner, assurez-vous d'avoir installé :
+Avant de cloner le dépôt, assurez-vous d'avoir installé :
 
-- **Java JDK 21** (ou la version exacte configurée dans votre `build.gradle`)
-- **IntelliJ IDEA** ou **VsCode**
+- **Git** (vérification : `git --version`)
+- **Java JDK 21** (vérification : `java --version`)
+
+Si vous souhaitez naviguer dans le code et le modifier avec plus de confort, vous pouvez utiliser **IntelliJ IDEA** ou **VS Code**.
 
 ---
 
