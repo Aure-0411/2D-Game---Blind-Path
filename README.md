@@ -1,6 +1,41 @@
-# Blind Path libGDX
+# Blind Path
 
-Description rapide du jeu (ex: Jeu de plateforme 2D développé avec libGDX).
+## Présentation du jeu
+
+### Pitch
+
+Lors de sa toute première expédition avec son père, un jeune gnome chute dans un ancien puits de mine et se réveille au plus profond d'un donjon maléfique. À ses côtés, une lanterne magique, qui n'éclaire que lui. D'un claquement de doigts, il peut en réveiller le pouvoir et révéler un bref instant ce qui l'entoure, mais le bruit produit attire ce qui rôde dans le noir...
+
+Parcourez vingt niveaux pour remonter à la surface, déjouez les pièges et découvrez les secrets du donjon pour retrouver les vôtres. Chaque claquement est un choix crucial : voir ou rester discret.
+
+### Gameplay
+
+Le joueur évolue dans une série de labyrinthes plongés dans l'obscurité. À chaque claquement, le halo de lumière de la lanterne s'élargit un court instant, ce qui permet au joueur de se repérer. Mais les monstres, qui se déplacent déjà de manière autonome, sont attirés vers le bruit qu'il fait alors.
+
+Les vingt niveaux se divisent en quatre paliers de cinq niveaux. Chaque palier correspond à une difficulté croissante : facile, moyen, difficile, extrême. Chaque niveau ne compte qu'un ennemi ou aucun. Le joueur ne peut pas tuer les monstres, seulement les fuir ou les repousser. En cas de mort, il reprend au premier niveau du dernier palier atteint et conserve son inventaire. Néanmoins, en contrepartie des informations qu'il a pu obtenir lors sa précédente exploration, les monstres deviennent plus redoutables.
+
+Le joueur peut aussi interragir avec les murs en activant des leviers ou grâce au claquement. Pour s'aider, il peut compter sur les objets aux effets variés qu'il trouve au cours de son exploration ainsi que sur les compétences qu'il débloque à mesure qu'il progresse.
+
+### Inspiration
+
+Le jeu s'inspire principalement de la série *Little Nightmares*, qui met en scène des personnages enfantins confrontés à des monstres aussi difformes que meurtriers. Le contraste entre l'apparence du gnome et celle des monstres y puise son inspiration, de même que l'incapacité du joueur à vaincre les ennemis et la fuite comme seule échappatoire.
+
+Une autre inspiration est *The Binding of Isaac*, là aussi en raison du contraste entre l'aspect du protagoniste et celui des ennemis, mais aussi par le système d'objets : dans ce jeu comme dans *Blind Path*, le joueur ramasse des objets qui modifient les capacités du personnage, et gagne des pièces qu'il dépense dans une boutique.
+
+Enfin, *Blind Path* s'inspire du genre du roguelite, dans lequel on conserve tout ou partie de son inventaire ou de ses améliorations après une défaite.
+
+---
+
+## Contexte du projet et équipe
+
+*Blind Path* est un jeu conçu par quatre personnes, en trois semaines, dans le cadre du projet 2D Game d'Epitech. Il est développé en Java avec le framework libGDX. L'objectif principal du projet est la maîtrise de la programmation orientée objet.
+
+| Membre | Compte GitHub | Module | Spécialité |
+| --- | --- | --- | --- |
+| Xavier | xavier-ammar | Héros et objets | Rédaction (GDD, README, Javadoc) |
+| Pierre | pioupious | Affichage et interface | Assets graphiques et sonores, UML |
+| Aurélien | Aure-0411 | Lanterne et monstres | Planification, GitHub, intégration continue |
+| Grégoire | gregoireY | Niveaux et moteur | Outillage, relecture technique |
 
 ---
 
