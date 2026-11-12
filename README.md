@@ -58,19 +58,22 @@ Si vous souhaitez naviguer dans le code et le modifier avec plus de confort, vou
 
 ---
 
-## Installation et Lancement Rapide
+## Installation
 
 1. **Cloner le dépôt :**
 
    ```bash
-   git clone -b dev git@github.com:Aure-0411/2D-Game---Blind-Path.git
+   git clone https://github.com/Aure-0411/2D-Game---Blind-Path.git
    cd 2D-Game---Blind-Path
    ```
 
-2. **Importer le projet dans l'IDE :**
-   - Ouvrez votre IDE (IntelliJ / VsCode).
-   - Choisissez **Open** (Ouvrir) et sélectionnez le fichier **`build.gradle`** à la racine du projet.
-   - Laissez l'IDE télécharger automatiquement toutes les dépendances (cela peut prendre quelques minutes au premier lancement).
+2. **(Facultatif) Importer le projet dans l'éditeur de code :**
+   - **IntelliJ IDEA :** choisissez **Open** (Ouvrir), puis sélectionnez le fichier `build.gradle` à la racine du projet.
+   - **VS Code :** placez-vous à la racine du projet, puis tapez `code .` dans votre terminal.
+
+   Laissez l'éditeur télécharger automatiquement toutes les dépendances (cela peut prendre quelques minutes au premier lancement).
+
+---
 
 3. **Lancer le jeu (Desktop/LWJGL3) :**
    - **Via l'IDE :** Trouvez la classe `Lwjgl3Launcher` dans le module `lwjgl3`, faites un clic droit et sélectionnez **Run**.
