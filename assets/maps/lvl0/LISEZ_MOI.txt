@@ -1,0 +1,28 @@
+BLIND PATH — MAP 30 x 30 — PREMIERE PREVIEW DETAILLEE
+
+Extraire tout le ZIP puis ouvrir Blind_Path_30x30.tmx dans Tiled.
+Conserver les TSX et le dossier assets a cote des TMX.
+
+Carte orthogonale 30 x 30 cases, tuiles 250 x 250 pixels.
+Les murs proviennent directement de la premiere preview detaillee validee (21a6c934), avant la reduction des details.
+La bande verticale, les faces de pierre et leur mousse sont decoupees dans la source 1378 x 1142. Les bandes horizontales et les raccords sont assembles a partir de ces memes dessins. Toutes les mises a l'echelle du dessin source sont uniformes et vers le bas.
+Le trace du labyrinthe, le sol et les decors a 75 % sont conserves. Deux lanternes seulement : entree et sortie.
+
+CALQUES
+Sols et Murs : tuiles modifiables.
+Decors et Lanternes : objets tuiles deplacables individuellement.
+Ombres_contact : ombres statiques des objets places dans cette version.
+Eclairage_apercu : ambiance statique, peut etre masquee.
+Lumieres : les deux points pour l'eclairage de votre moteur Java.
+Entree_sortie et Collisions : calques caches de reperage.
+
+POUR LE JEU
+Utiliser Blind_Path_30x30_sans_eclairage.tmx si votre moteur applique deja son eclairage.
+L'eclairage et les ombres de l'apercu sont statiques ; ils ne suivent pas les modifications manuelles des objets et murs dans Tiled.
+Les tuiles de mur et le calque Collisions contiennent les rectangles solides : utiliser une seule de ces deux sources.
+Les decors sont traversables par defaut. Les PNG d'eclairage et d'ombres mesurent 7500 x 7500.
+
+CONTROLE VISUEL
+apercu_map.png : carte complete.
+apercu_detail_murs.png : gros plan.
+detail_murs_100_pourcent.png : exemples de tuiles a leur taille reelle.
