@@ -39,6 +39,14 @@ Enfin, *Blind Path* s'inspire du genre du roguelite, dans lequel on conserve tou
 
 ---
 
+## État d'avancement
+
+L'équipe travaille actuellement sur les tâches relatives au jalon « Prototype level », dont l'objectif est de programmer un niveau de test jouable afin de valider le cœur du gameplay avant de créer les vingt niveaux.
+
+Pour plus de détails sur l'avancement du projet, consultez la [liste des jalons](https://github.com/Aure-0411/2D-Game---Blind-Path/milestones).
+
+---
+
 ## Prérequis
 
 Avant de cloner, assurez-vous d'avoir installé :
