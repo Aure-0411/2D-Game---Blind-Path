@@ -78,4 +78,46 @@ class GnomeTest {
 
         assertEquals(Direction.LEFT, gnome.getFacing());
     }
+
+    @Test
+    void takeMonsterHitRemovesTwoHalfHearts() {
+        gnome.takeMonsterHit();
+
+        assertEquals(4, gnome.getLife());
+    }
+
+    @Test
+    void takeMonsterHitStartsImmunity() {
+        gnome.takeMonsterHit();
+
+        assertTrue(gnome.isImmune());
+    }
+
+    @Test
+    void secondHitDuringImmunityRemovesNothing() {
+        gnome.takeMonsterHit();
+        gnome.takeMonsterHit();
+
+        assertEquals(4, gnome.getLife());
+    }
+
+    @Test
+    void immunityEndsAfterTwoSeconds() {
+        gnome.takeMonsterHit();
+
+        gnome.updateImmunity(2f);
+
+        assertFalse(gnome.isImmune());
+    }
+
+    @Test
+    void gnomeIsDeadAfterThreeHits() {
+        gnome.takeMonsterHit();
+        gnome.updateImmunity(2f);
+        gnome.takeMonsterHit();
+        gnome.updateImmunity(2f);
+        gnome.takeMonsterHit();
+
+        assertTrue(gnome.isDead());
+    }
 }
