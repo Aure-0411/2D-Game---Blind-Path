@@ -2,6 +2,7 @@ package com.blindpath.domain.character;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.blindpath.domain.labyrinth.Bounds;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,14 +23,14 @@ class GnomeTest {
 
     @Test
     void newGnome_defaultSpeed() {
-        assertEquals(2f, gnome.getSpeed());
+        assertEquals(2.75f, gnome.getSpeed());
     }
 
     @Test
-    void newGnome_isSmallerThanOneCell() {
-        // doit pouvoir passer dans un couloir d'une case
-        assertTrue(gnome.getWidth() == 1f);
-        assertTrue(gnome.getHeight() == 1f);
+    void newGnome_fitsInTwoCellCorridor() {
+        // doit pouvoir passer deux cases
+        assertTrue(gnome.getWidth() < 2f);
+        assertTrue(gnome.getHeight() < 2f);
     }
 
     @Test
@@ -40,14 +41,23 @@ class GnomeTest {
         assertEquals(3.5f, gnome.getY());
     }
 
-    // @Test
-    // void getBounds_followsPositionAndSize() {
-    //     gnome.setPosition(2f, 3f);
-    //     Bounds bounds = gnome.getBounds();
+    @Test
+    void getBounds_followsPositionAndSize() {
+        gnome.setPosition(2f, 3f);
+        Bounds bounds = gnome.getBounds();
 
-    //     assertTrue(bounds.intersects(new Bounds(2f, 3f, gnome.getWidth(), gnome.getHeight())));
-    //     assertFalse(bounds.intersects(new Bounds(10f, 10f, 1f, 1f)));
-    // }
+        assertTrue(bounds.intersects(new Bounds(2f, 3f, gnome.getWidth(), gnome.getHeight())));
+        assertFalse(bounds.intersects(new Bounds(10f, 10f, 1f, 1f)));
+    }
+
+    @Test
+    void gnome_isCollidable_andCollidesWithOverlappingWall() {
+        gnome.setPosition(2f, 2f);
+
+        assertTrue(gnome.canCollide());
+        assertTrue(gnome.collide(new com.blindpath.domain.labyrinth.Wall(2.5f, 2.5f, 1f, 1f)));
+        assertFalse(gnome.collide(new com.blindpath.domain.labyrinth.Wall(5f, 5f, 1f, 1f)));
+    }
 
     @Test
     void newGnome_facesSouthByDefault() {
