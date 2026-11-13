@@ -11,6 +11,7 @@ public class InputController {
 
     private final Level level;
     private final IntPredicate keyDown;
+    private boolean moving;
 
     public InputController(Level level) {
         this(level, key -> Gdx.input.isKeyPressed(key));
@@ -33,9 +34,17 @@ public class InputController {
         Direction direction = readDirection(keyDown);
         Gnome gnome = level.getGnome();
 
-        gnome.setFacing(direction); // ignore NONE, garde la dernière orientation
         if (direction != Direction.NONE) {
-            level.tryMove(gnome, direction.getNormalizedX(), direction.getNormalizedY(), deltaTime);
+            gnome.setFacing(direction);
+            moving = level.tryMove(gnome, direction.getNormalizedX(), direction.getNormalizedY(), deltaTime);
+        } else {
+            moving = false;
+            gnome.setFacing(Direction.DOWN); // Retour à l'orientation par défaut quand tout est relâché
         }
+    }
+
+    /** Vrai si le gnome a réellement avancé à la dernière image (faux s'il pousse contre un mur). */
+    public boolean isMoving() {
+        return moving;
     }
 }
