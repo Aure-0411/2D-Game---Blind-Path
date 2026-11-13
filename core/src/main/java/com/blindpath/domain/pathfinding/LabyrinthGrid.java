@@ -43,11 +43,33 @@ public class LabyrinthGrid {
             return false;
         }
 
-        Bounds cell = newBoundsCell(position);
+        Bounds cell = new Bounds(position.getColumn(), position.getRow(), 1f, 1f); 
+
+        for (Obstacle obstacle : labyrinth.getObstacles()) {
+            if (obstacle instanceof Wall wall && wall.blocksMonster() && wall.canCollide() && wall.getBounds().intersects(cell)) {
+                return false;
+            }
+        }
 
         return true;
 
     }
 
+    public List<GridPosition> getNeighbors(GridPosition position) {
+        
+        List<GridPosition> neighbors = new ArrayList<>();
+
+        for (int[] direction : DIRECTIONS) {
+            GridPosition next = new GridPosition(position.getColumn() + direction[0], position.getRow() + direction[1]);
+            if (isWalkable(next)) {
+                neighbors.add(next);
+            }
+        }
+
+        return neighbors;
+
+    }
+
+    
 }
 
