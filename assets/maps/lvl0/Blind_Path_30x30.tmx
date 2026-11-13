@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="11" nextobjectid="338">
+ <properties>
+  <property name="lumiere_apercu" value="Le calque Eclairage_apercu est statique. Utiliser Lumieres pour le rendu dynamique du jeu."/>
+  <property name="version_visuelle" value="Murs naturels et decors stylises valides - lumiere 02"/>
+ </properties>
+ <tileset firstgid="1" source="murs_valides.tsx"/>
+ <tileset firstgid="305" source="sols_valides.tsx"/>
+ <tileset firstgid="317" source="decors_stylises.tsx"/>
+ <layer id="1" name="Sols" width="30" height="30">
+  <data encoding="csv">
+309,313,309,306,305,309,306,308,306,305,310,313,305,312,309,306,307,309,307,309,310,310,312,313,311,307,312,312,306,307,
+306,316,315,310,310,313,307,307,310,311,309,305,309,309,305,313,306,305,308,308,309,306,308,305,306,308,308,305,308,307,
+308,308,309,312,305,313,310,305,308,305,306,310,313,310,308,305,312,311,305,313,305,305,308,313,313,307,310,309,305,311,
+313,310,313,306,308,309,310,307,315,312,308,308,310,316,309,308,306,311,307,314,306,310,310,305,312,305,307,309,306,305,
+306,314,311,310,311,316,309,308,305,308,306,310,310,309,306,306,307,311,309,313,309,307,306,308,305,307,305,310,307,307,
+311,306,309,305,309,306,307,309,315,311,310,313,310,305,311,308,305,310,305,313,305,308,314,305,310,306,313,310,306,307,
+305,305,307,309,307,314,306,307,310,308,305,311,313,311,306,307,306,308,307,306,309,309,307,309,309,306,308,313,310,305,
+306,308,316,306,311,316,307,309,316,306,307,305,307,311,309,312,305,307,313,305,308,309,306,313,310,307,308,312,312,307,
+306,314,310,308,309,310,309,310,306,316,306,306,312,310,308,310,310,308,306,306,315,305,309,315,310,307,307,308,310,313,
+311,311,307,306,307,308,308,308,305,312,316,308,310,309,310,313,309,305,311,308,309,310,305,310,307,305,310,307,307,307,
+313,305,314,305,311,306,306,306,307,309,305,305,306,309,309,309,305,310,308,306,309,313,306,306,309,311,316,307,305,308,
+309,305,308,311,312,308,308,309,306,306,311,310,307,308,313,305,308,306,308,312,309,307,306,312,305,310,310,308,310,312,
+307,316,306,306,308,307,305,314,305,311,306,307,311,307,308,308,307,308,307,306,309,312,315,314,310,307,306,305,311,305,
+308,316,312,307,308,312,311,305,308,305,306,305,313,307,306,305,311,306,305,311,316,312,305,305,309,316,306,308,310,306,
+306,310,309,308,305,306,309,306,312,311,308,310,309,308,306,306,305,305,307,307,315,309,306,310,305,312,310,308,310,309,
+306,308,312,305,305,309,307,308,307,306,312,307,307,309,308,311,307,306,308,310,307,310,308,309,307,307,315,306,308,316,
+307,308,307,305,310,308,306,306,307,310,307,310,315,310,316,305,309,307,311,308,305,310,306,308,306,312,307,311,306,309,
+310,309,305,314,306,305,311,309,309,309,313,311,309,307,309,313,306,305,307,310,309,313,308,306,306,306,307,305,306,305,
+316,307,306,309,310,307,309,308,306,311,309,306,315,315,305,316,313,309,306,306,308,306,316,308,310,310,313,308,305,305,
+307,312,305,309,315,307,310,310,310,308,305,311,308,310,312,308,310,307,310,306,308,316,309,310,310,309,305,308,307,311,
+305,314,309,305,310,308,307,307,305,305,306,312,308,307,310,311,310,310,310,305,315,307,305,305,305,309,305,312,308,306,
+313,316,310,315,309,308,310,316,306,309,309,310,308,307,309,307,311,305,308,307,307,306,305,309,306,310,309,316,310,309,
+309,306,309,315,309,309,311,312,305,307,312,314,310,305,306,309,316,306,305,312,307,308,310,311,316,312,309,315,306,310,
+308,307,310,305,313,305,309,306,309,312,308,310,307,308,308,307,307,310,312,308,305,316,311,309,305,313,307,311,315,316,
+312,311,309,308,305,305,308,316,306,311,308,310,308,306,310,306,309,313,308,310,305,307,310,308,307,310,307,313,316,305,
+307,306,305,309,309,308,309,305,309,310,313,314,309,307,312,312,310,308,306,306,308,312,306,309,308,310,309,310,308,311,
+309,306,309,313,311,311,305,309,306,308,307,307,309,310,309,316,305,313,309,313,306,310,310,306,308,307,305,307,308,307,
+311,313,308,310,307,308,313,311,308,309,310,310,305,306,307,307,312,305,309,307,306,309,305,313,305,311,310,307,306,306,
+310,309,309,305,305,305,306,310,305,307,310,308,309,307,307,308,308,308,311,312,308,306,314,305,308,306,305,307,309,305,
+311,306,308,313,309,312,308,309,308,307,314,309,313,305,308,308,306,309,308,312,310,306,310,310,312,307,312,313,315,306
+</data>
+ </layer>
+ <layer id="2" name="Murs" width="30" height="30">
+  <data encoding="csv">
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,
+0,0,0,0,0,0,0,0,0,0,0,0,0,31,0,0,32,0,0,0,0,0,0,33,0,0,0,0,0,34,
+0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,36,0,0,0,0,0,0,37,0,0,0,0,0,38,
+39,0,0,40,41,42,43,0,0,44,0,0,0,45,0,0,46,47,48,49,0,0,0,50,0,0,51,0,0,52,
+53,0,0,54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,55,0,0,56,
+57,0,0,58,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,59,0,0,60,
+61,0,0,62,0,0,63,0,0,64,0,0,0,65,66,67,68,69,70,71,0,0,0,72,73,74,75,0,0,76,
+77,0,0,78,0,0,0,0,0,0,0,0,0,79,0,0,0,0,0,0,0,0,0,0,0,0,80,0,0,81,
+82,0,0,83,0,0,0,0,0,0,0,0,0,84,0,0,0,0,0,0,0,0,0,0,0,0,85,0,0,86,
+87,0,0,88,0,0,89,90,91,92,93,94,95,96,0,0,97,98,99,100,0,0,0,101,0,0,102,0,0,103,
+104,0,0,105,0,0,0,0,0,106,0,0,0,0,0,0,0,0,0,0,0,0,0,107,0,0,0,0,0,108,
+109,0,0,110,0,0,0,0,0,111,0,0,0,0,0,0,0,0,0,0,0,0,0,112,0,0,0,0,0,113,
+114,0,0,115,0,0,0,0,0,116,0,0,0,0,0,0,0,0,0,0,0,0,0,117,0,0,0,0,0,118,
+119,120,121,122,123,124,125,126,127,128,0,0,0,129,0,0,130,0,0,131,0,0,0,132,0,0,133,0,0,134,
+135,0,0,0,0,0,136,0,0,0,0,0,0,137,0,0,138,0,0,139,0,0,0,0,0,0,140,0,0,141,
+142,0,0,0,0,0,143,0,0,0,0,0,0,144,0,0,145,0,0,146,0,0,0,0,0,0,147,0,0,148,
+149,150,151,152,0,0,153,154,155,156,0,0,0,157,0,0,158,159,160,161,0,0,0,162,163,164,165,166,167,168,
+169,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,170,0,0,171,0,0,0,0,0,0,0,0,0,172,
+173,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,174,0,0,175,0,0,0,0,0,0,0,0,0,176,
+177,0,0,178,179,180,181,0,0,182,183,184,185,186,0,0,187,0,0,188,189,190,191,192,0,0,193,0,0,194,
+195,0,0,196,0,0,0,0,0,197,0,0,0,0,0,0,0,0,0,198,0,0,0,199,0,0,200,0,0,201,
+202,0,0,203,0,0,0,0,0,204,0,0,0,0,0,0,0,0,0,205,0,0,0,206,0,0,207,0,0,208,
+209,0,0,210,0,0,0,0,0,211,0,0,0,0,0,0,0,0,0,212,0,0,0,213,0,0,214,0,0,215,
+216,0,0,217,218,219,220,0,0,221,0,0,0,222,0,0,223,0,0,224,0,0,0,225,226,227,228,0,0,229,
+230,0,0,0,0,0,0,0,0,231,0,0,0,0,0,0,0,0,0,232,0,0,0,0,0,0,0,0,0,233,
+234,0,0,0,0,0,0,0,0,235,0,0,0,0,0,0,0,0,0,236,0,0,0,0,0,0,0,0,0,237,
+238,0,0,239,0,0,240,0,0,241,0,0,0,242,0,0,243,244,245,246,0,0,0,247,0,0,248,0,0,249,
+250,0,0,251,0,0,252,0,0,0,0,0,0,0,0,0,253,0,0,0,0,0,0,254,0,0,255,0,0,0,
+256,0,0,257,0,0,258,0,0,0,0,0,0,0,0,0,259,0,0,0,0,0,0,260,0,0,261,0,0,0,
+262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291
+</data>
+ </layer>
+ <imagelayer id="9" name="Ombres_contact" visible="0">
+  <image source="assets/ombres_contact.png" width="7500" height="7500"/>
+ </imagelayer>
+ <objectgroup draworder="index" id="3" name="Decors" visible="0">
+  <object id="1" name="caisse_a" gid="317" x="1809.38" y="442.394" width="131.25" height="134.798">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="2" name="caisse_b" gid="318" x="2057.5" y="448.567" width="135" height="147.135">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="3" name="tonneau" gid="319" x="2313.13" y="443.604" width="123.75" height="137.197">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="4" name="cordage" gid="320" x="2320.63" y="666.497" width="108.75" height="82.995">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="5" name="planches_a" gid="321" x="2046.25" y="676.046" width="157.5" height="102.082">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="6" name="tonneau" gid="319" x="6809.38" y="447.757" width="131.25" height="145.515">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="7" name="caisse_b" gid="318" x="6809.38" y="696.529" width="131.25" height="143.048">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="8" name="planches_a" gid="321" x="6542.5" y="678.476" width="165" height="106.942">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="9" name="colonne_brisee" gid="325" x="1255" y="2198.23" width="240" height="146.46">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="10" name="gravats" gid="326" x="1288.75" y="1915.61" width="172.5" height="81.225">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="11" name="champignons" gid="324" x="2816.88" y="1164.92" width="116.25" height="79.845">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="12" name="champignons" gid="324" x="6322.5" y="1911.06" width="105" height="72.12">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="13" name="caisse_a" gid="317" x="6807.5" y="3194.32" width="135" height="138.645">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="14" name="planches_b" gid="322" x="7053.75" y="3411.56" width="142.5" height="73.125">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="15" name="cordage" gid="320" x="6576.25" y="2912.21" width="97.5" height="74.4075">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="16" name="gravats" gid="326" x="3529.38" y="4420.02" width="191.25" height="90.0525">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="17" name="petits_gravats" gid="327" x="3563.13" y="3677.05" width="123.75" height="104.108">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="18" name="tonneau" gid="319" x="1063.13" y="5443.6" width="123.75" height="137.197">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="19" name="caisse_b" gid="318" x="1057.5" y="5698.57" width="135" height="147.135">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="20" name="planches_b" gid="322" x="1315" y="5655.79" width="120" height="61.5825">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="21" name="colonne_brisee" gid="325" x="5255" y="6948.23" width="240" height="146.46">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="22" name="gravats" gid="326" x="5042.5" y="6663.84" width="165" height="77.6925">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="23" name="petits_gravats" gid="327" x="3065" y="1925.47" width="120" height="100.95">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="24" name="planches_b" gid="322" x="1051.88" y="1912.52" width="146.25" height="75.0525">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="25" name="disque_bois" gid="323" x="566.875" y="1181.54" width="116.25" height="113.063">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="26" name="disque_bois" gid="323" x="3316.88" y="5681.54" width="116.25" height="113.063">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="27" name="cordage" gid="320" x="4074.38" y="5163.63" width="101.25" height="77.2725">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="28" name="champignons" gid="324" x="2815" y="6916.21" width="120" height="82.425">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="29" name="champignons" gid="324" x="7070.63" y="4662.35" width="108.75" height="74.7">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="30" name="champignons" gid="324" x="6818.75" y="6413.64" width="112.5" height="77.2725">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="31" name="champignons" gid="324" x="5568.75" y="4163.64" width="112.5" height="77.2725">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="32" name="petits_gravats" gid="327" x="4565" y="6175.48" width="120" height="100.95">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="33" name="caisse_a" gid="317" x="809.375" y="6442.39" width="131.25" height="134.798">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="34" name="toile" gid="328" x="5300" y="444.996" width="150" height="140.002">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="35" name="toile" gid="328" x="1805.63" y="2689.75" width="138.75" height="129.502">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="36" name="toile" gid="328" x="1811.25" y="3684.5" width="127.5" height="119.002">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="37" name="toile" gid="328" x="1055.63" y="5189.75" width="138.75" height="129.502">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="38" name="toile" gid="328" x="5557.5" y="5188" width="135" height="126">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="39" name="toile" gid="328" x="6307.5" y="6438" width="135" height="126">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup draworder="index" id="4" name="Lanternes" visible="0">
+  <object id="40" name="lanterne" gid="329" x="212.5" y="341" width="225" height="192">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="41" name="lanterne" gid="329" x="7112.5" y="6783.5" width="225" height="192">
+   <properties>
+    <property name="decoratif" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <imagelayer id="5" name="Eclairage_apercu">
+  <image source="assets/eclairage_apercu.png" width="7500" height="7500"/>
+  <properties>
+   <property name="usage" value="Apercu statique des deux lanternes. Masquer ce calque pour le moteur de lumiere dynamique."/>
+  </properties>
+ </imagelayer>
+ <objectgroup id="6" name="Lumieres" visible="0">
+  <object id="42" name="Lumiere_1" x="250" y="387.5">
+   <properties>
+    <property name="bloquee_par_murs" type="bool" value="true"/>
+    <property name="couleur" type="color" value="#ffffb45c"/>
+    <property name="intensite" type="float" value="1"/>
+    <property name="rayon" type="float" value="1000"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="43" name="Lumiere_2" x="7200" y="6837.5">
+   <properties>
+    <property name="bloquee_par_murs" type="bool" value="true"/>
+    <property name="couleur" type="color" value="#ffffb45c"/>
+    <property name="intensite" type="float" value="1"/>
+    <property name="rayon" type="float" value="1000"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="Entrance">
+  <object id="45" name="Entrance" x="7250" y="6750" width="250" height="500">
+   <properties>
+    <property name="border" value="RIGHT"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="Exit">
+  <object id="337" name="Exit" x="0" y="250" width="250" height="500">
+   <properties>
+    <property name="border" value="LEFT"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="8" name="Collisions">
+  <object id="46" name="Mur" x="0" y="0" width="250" height="250"/>
+  <object id="47" name="Mur" x="250" y="0" width="250" height="250"/>
+  <object id="48" name="Mur" x="500" y="0" width="250" height="250"/>
+  <object id="49" name="Mur" x="750" y="0" width="250" height="250"/>
+  <object id="50" name="Mur" x="1000" y="0" width="250" height="250"/>
+  <object id="51" name="Mur" x="1250" y="0" width="250" height="250"/>
+  <object id="52" name="Mur" x="1500" y="0" width="250" height="250"/>
+  <object id="53" name="Mur" x="1750" y="0" width="250" height="250"/>
+  <object id="54" name="Mur" x="2000" y="0" width="250" height="250"/>
+  <object id="55" name="Mur" x="2250" y="0" width="250" height="250"/>
+  <object id="56" name="Mur" x="2500" y="0" width="250" height="250"/>
+  <object id="57" name="Mur" x="2750" y="0" width="250" height="250"/>
+  <object id="58" name="Mur" x="3000" y="0" width="250" height="250"/>
+  <object id="59" name="Mur" x="3250" y="0" width="250" height="250"/>
+  <object id="60" name="Mur" x="3500" y="0" width="250" height="250"/>
+  <object id="61" name="Mur" x="3750" y="0" width="250" height="250"/>
+  <object id="62" name="Mur" x="4000" y="0" width="250" height="250"/>
+  <object id="63" name="Mur" x="4250" y="0" width="250" height="250"/>
+  <object id="64" name="Mur" x="4500" y="0" width="250" height="250"/>
+  <object id="65" name="Mur" x="4750" y="0" width="250" height="250"/>
+  <object id="66" name="Mur" x="5000" y="0" width="250" height="250"/>
+  <object id="67" name="Mur" x="5250" y="0" width="250" height="250"/>
+  <object id="68" name="Mur" x="5500" y="0" width="250" height="250"/>
+  <object id="69" name="Mur" x="5750" y="0" width="250" height="250"/>
+  <object id="70" name="Mur" x="6000" y="0" width="250" height="250"/>
+  <object id="71" name="Mur" x="6250" y="0" width="250" height="250"/>
+  <object id="72" name="Mur" x="6500" y="0" width="250" height="250"/>
+  <object id="73" name="Mur" x="6750" y="0" width="250" height="250"/>
+  <object id="74" name="Mur" x="7000" y="0" width="250" height="250"/>
+  <object id="75" name="Mur" x="7250" y="0" width="250" height="250"/>
+  <object id="76" name="Mur" x="3250" y="250" width="250" height="250"/>
+  <object id="77" name="Mur" x="4000" y="250" width="250" height="250"/>
+  <object id="78" name="Mur" x="5750" y="250" width="250" height="250"/>
+  <object id="79" name="Mur" x="7250" y="250" width="250" height="250"/>
+  <object id="80" name="Mur" x="3250" y="500" width="250" height="250"/>
+  <object id="81" name="Mur" x="4000" y="500" width="250" height="250"/>
+  <object id="82" name="Mur" x="5750" y="500" width="250" height="250"/>
+  <object id="83" name="Mur" x="7250" y="500" width="250" height="250"/>
+  <object id="84" name="Mur" x="0" y="750" width="250" height="250"/>
+  <object id="85" name="Mur" x="750" y="750" width="250" height="250"/>
+  <object id="86" name="Mur" x="1000" y="750" width="250" height="250"/>
+  <object id="87" name="Mur" x="1250" y="750" width="250" height="250"/>
+  <object id="88" name="Mur" x="1500" y="750" width="250" height="250"/>
+  <object id="89" name="Mur" x="2250" y="750" width="250" height="250"/>
+  <object id="90" name="Mur" x="3250" y="750" width="250" height="250"/>
+  <object id="91" name="Mur" x="4000" y="750" width="250" height="250"/>
+  <object id="92" name="Mur" x="4250" y="750" width="250" height="250"/>
+  <object id="93" name="Mur" x="4500" y="750" width="250" height="250"/>
+  <object id="94" name="Mur" x="4750" y="750" width="250" height="250"/>
+  <object id="95" name="Mur" x="5750" y="750" width="250" height="250"/>
+  <object id="96" name="Mur" x="6500" y="750" width="250" height="250"/>
+  <object id="97" name="Mur" x="7250" y="750" width="250" height="250"/>
+  <object id="98" name="Mur" x="0" y="1000" width="250" height="250"/>
+  <object id="99" name="Mur" x="750" y="1000" width="250" height="250"/>
+  <object id="100" name="Mur" x="6500" y="1000" width="250" height="250"/>
+  <object id="101" name="Mur" x="7250" y="1000" width="250" height="250"/>
+  <object id="102" name="Mur" x="0" y="1250" width="250" height="250"/>
+  <object id="103" name="Mur" x="750" y="1250" width="250" height="250"/>
+  <object id="104" name="Mur" x="6500" y="1250" width="250" height="250"/>
+  <object id="105" name="Mur" x="7250" y="1250" width="250" height="250"/>
+  <object id="106" name="Mur" x="0" y="1500" width="250" height="250"/>
+  <object id="107" name="Mur" x="750" y="1500" width="250" height="250"/>
+  <object id="108" name="Mur" x="1500" y="1500" width="250" height="250"/>
+  <object id="109" name="Mur" x="2250" y="1500" width="250" height="250"/>
+  <object id="110" name="Mur" x="3250" y="1500" width="250" height="250"/>
+  <object id="111" name="Mur" x="3500" y="1500" width="250" height="250"/>
+  <object id="112" name="Mur" x="3750" y="1500" width="250" height="250"/>
+  <object id="113" name="Mur" x="4000" y="1500" width="250" height="250"/>
+  <object id="114" name="Mur" x="4250" y="1500" width="250" height="250"/>
+  <object id="115" name="Mur" x="4500" y="1500" width="250" height="250"/>
+  <object id="116" name="Mur" x="4750" y="1500" width="250" height="250"/>
+  <object id="117" name="Mur" x="5750" y="1500" width="250" height="250"/>
+  <object id="118" name="Mur" x="6000" y="1500" width="250" height="250"/>
+  <object id="119" name="Mur" x="6250" y="1500" width="250" height="250"/>
+  <object id="120" name="Mur" x="6500" y="1500" width="250" height="250"/>
+  <object id="121" name="Mur" x="7250" y="1500" width="250" height="250"/>
+  <object id="122" name="Mur" x="0" y="1750" width="250" height="250"/>
+  <object id="123" name="Mur" x="750" y="1750" width="250" height="250"/>
+  <object id="124" name="Mur" x="3250" y="1750" width="250" height="250"/>
+  <object id="125" name="Mur" x="6500" y="1750" width="250" height="250"/>
+  <object id="126" name="Mur" x="7250" y="1750" width="250" height="250"/>
+  <object id="127" name="Mur" x="0" y="2000" width="250" height="250"/>
+  <object id="128" name="Mur" x="750" y="2000" width="250" height="250"/>
+  <object id="129" name="Mur" x="3250" y="2000" width="250" height="250"/>
+  <object id="130" name="Mur" x="6500" y="2000" width="250" height="250"/>
+  <object id="131" name="Mur" x="7250" y="2000" width="250" height="250"/>
+  <object id="132" name="Mur" x="0" y="2250" width="250" height="250"/>
+  <object id="133" name="Mur" x="750" y="2250" width="250" height="250"/>
+  <object id="134" name="Mur" x="1500" y="2250" width="250" height="250"/>
+  <object id="135" name="Mur" x="1750" y="2250" width="250" height="250"/>
+  <object id="136" name="Mur" x="2000" y="2250" width="250" height="250"/>
+  <object id="137" name="Mur" x="2250" y="2250" width="250" height="250"/>
+  <object id="138" name="Mur" x="2500" y="2250" width="250" height="250"/>
+  <object id="139" name="Mur" x="2750" y="2250" width="250" height="250"/>
+  <object id="140" name="Mur" x="3000" y="2250" width="250" height="250"/>
+  <object id="141" name="Mur" x="3250" y="2250" width="250" height="250"/>
+  <object id="142" name="Mur" x="4000" y="2250" width="250" height="250"/>
+  <object id="143" name="Mur" x="4250" y="2250" width="250" height="250"/>
+  <object id="144" name="Mur" x="4500" y="2250" width="250" height="250"/>
+  <object id="145" name="Mur" x="4750" y="2250" width="250" height="250"/>
+  <object id="146" name="Mur" x="5750" y="2250" width="250" height="250"/>
+  <object id="147" name="Mur" x="6500" y="2250" width="250" height="250"/>
+  <object id="148" name="Mur" x="7250" y="2250" width="250" height="250"/>
+  <object id="149" name="Mur" x="0" y="2500" width="250" height="250"/>
+  <object id="150" name="Mur" x="750" y="2500" width="250" height="250"/>
+  <object id="151" name="Mur" x="2250" y="2500" width="250" height="250"/>
+  <object id="152" name="Mur" x="5750" y="2500" width="250" height="250"/>
+  <object id="153" name="Mur" x="7250" y="2500" width="250" height="250"/>
+  <object id="154" name="Mur" x="0" y="2750" width="250" height="250"/>
+  <object id="155" name="Mur" x="750" y="2750" width="250" height="250"/>
+  <object id="156" name="Mur" x="2250" y="2750" width="250" height="250"/>
+  <object id="157" name="Mur" x="5750" y="2750" width="250" height="250"/>
+  <object id="158" name="Mur" x="7250" y="2750" width="250" height="250"/>
+  <object id="159" name="Mur" x="0" y="3000" width="250" height="250"/>
+  <object id="160" name="Mur" x="750" y="3000" width="250" height="250"/>
+  <object id="161" name="Mur" x="2250" y="3000" width="250" height="250"/>
+  <object id="162" name="Mur" x="5750" y="3000" width="250" height="250"/>
+  <object id="163" name="Mur" x="7250" y="3000" width="250" height="250"/>
+  <object id="164" name="Mur" x="0" y="3250" width="250" height="250"/>
+  <object id="165" name="Mur" x="250" y="3250" width="250" height="250"/>
+  <object id="166" name="Mur" x="500" y="3250" width="250" height="250"/>
+  <object id="167" name="Mur" x="750" y="3250" width="250" height="250"/>
+  <object id="168" name="Mur" x="1000" y="3250" width="250" height="250"/>
+  <object id="169" name="Mur" x="1250" y="3250" width="250" height="250"/>
+  <object id="170" name="Mur" x="1500" y="3250" width="250" height="250"/>
+  <object id="171" name="Mur" x="1750" y="3250" width="250" height="250"/>
+  <object id="172" name="Mur" x="2000" y="3250" width="250" height="250"/>
+  <object id="173" name="Mur" x="2250" y="3250" width="250" height="250"/>
+  <object id="174" name="Mur" x="3250" y="3250" width="250" height="250"/>
+  <object id="175" name="Mur" x="4000" y="3250" width="250" height="250"/>
+  <object id="176" name="Mur" x="4750" y="3250" width="250" height="250"/>
+  <object id="177" name="Mur" x="5750" y="3250" width="250" height="250"/>
+  <object id="178" name="Mur" x="6500" y="3250" width="250" height="250"/>
+  <object id="179" name="Mur" x="7250" y="3250" width="250" height="250"/>
+  <object id="180" name="Mur" x="0" y="3500" width="250" height="250"/>
+  <object id="181" name="Mur" x="1500" y="3500" width="250" height="250"/>
+  <object id="182" name="Mur" x="3250" y="3500" width="250" height="250"/>
+  <object id="183" name="Mur" x="4000" y="3500" width="250" height="250"/>
+  <object id="184" name="Mur" x="4750" y="3500" width="250" height="250"/>
+  <object id="185" name="Mur" x="6500" y="3500" width="250" height="250"/>
+  <object id="186" name="Mur" x="7250" y="3500" width="250" height="250"/>
+  <object id="187" name="Mur" x="0" y="3750" width="250" height="250"/>
+  <object id="188" name="Mur" x="1500" y="3750" width="250" height="250"/>
+  <object id="189" name="Mur" x="3250" y="3750" width="250" height="250"/>
+  <object id="190" name="Mur" x="4000" y="3750" width="250" height="250"/>
+  <object id="191" name="Mur" x="4750" y="3750" width="250" height="250"/>
+  <object id="192" name="Mur" x="6500" y="3750" width="250" height="250"/>
+  <object id="193" name="Mur" x="7250" y="3750" width="250" height="250"/>
+  <object id="194" name="Mur" x="0" y="4000" width="250" height="250"/>
+  <object id="195" name="Mur" x="250" y="4000" width="250" height="250"/>
+  <object id="196" name="Mur" x="500" y="4000" width="250" height="250"/>
+  <object id="197" name="Mur" x="750" y="4000" width="250" height="250"/>
+  <object id="198" name="Mur" x="1500" y="4000" width="250" height="250"/>
+  <object id="199" name="Mur" x="1750" y="4000" width="250" height="250"/>
+  <object id="200" name="Mur" x="2000" y="4000" width="250" height="250"/>
+  <object id="201" name="Mur" x="2250" y="4000" width="250" height="250"/>
+  <object id="202" name="Mur" x="3250" y="4000" width="250" height="250"/>
+  <object id="203" name="Mur" x="4000" y="4000" width="250" height="250"/>
+  <object id="204" name="Mur" x="4250" y="4000" width="250" height="250"/>
+  <object id="205" name="Mur" x="4500" y="4000" width="250" height="250"/>
+  <object id="206" name="Mur" x="4750" y="4000" width="250" height="250"/>
+  <object id="207" name="Mur" x="5750" y="4000" width="250" height="250"/>
+  <object id="208" name="Mur" x="6000" y="4000" width="250" height="250"/>
+  <object id="209" name="Mur" x="6250" y="4000" width="250" height="250"/>
+  <object id="210" name="Mur" x="6500" y="4000" width="250" height="250"/>
+  <object id="211" name="Mur" x="6750" y="4000" width="250" height="250"/>
+  <object id="212" name="Mur" x="7000" y="4000" width="250" height="250"/>
+  <object id="213" name="Mur" x="7250" y="4000" width="250" height="250"/>
+  <object id="214" name="Mur" x="0" y="4250" width="250" height="250"/>
+  <object id="215" name="Mur" x="4000" y="4250" width="250" height="250"/>
+  <object id="216" name="Mur" x="4750" y="4250" width="250" height="250"/>
+  <object id="217" name="Mur" x="7250" y="4250" width="250" height="250"/>
+  <object id="218" name="Mur" x="0" y="4500" width="250" height="250"/>
+  <object id="219" name="Mur" x="4000" y="4500" width="250" height="250"/>
+  <object id="220" name="Mur" x="4750" y="4500" width="250" height="250"/>
+  <object id="221" name="Mur" x="7250" y="4500" width="250" height="250"/>
+  <object id="222" name="Mur" x="0" y="4750" width="250" height="250"/>
+  <object id="223" name="Mur" x="750" y="4750" width="250" height="250"/>
+  <object id="224" name="Mur" x="1000" y="4750" width="250" height="250"/>
+  <object id="225" name="Mur" x="1250" y="4750" width="250" height="250"/>
+  <object id="226" name="Mur" x="1500" y="4750" width="250" height="250"/>
+  <object id="227" name="Mur" x="2250" y="4750" width="250" height="250"/>
+  <object id="228" name="Mur" x="2500" y="4750" width="250" height="250"/>
+  <object id="229" name="Mur" x="2750" y="4750" width="250" height="250"/>
+  <object id="230" name="Mur" x="3000" y="4750" width="250" height="250"/>
+  <object id="231" name="Mur" x="3250" y="4750" width="250" height="250"/>
+  <object id="232" name="Mur" x="4000" y="4750" width="250" height="250"/>
+  <object id="233" name="Mur" x="4750" y="4750" width="250" height="250"/>
+  <object id="234" name="Mur" x="5000" y="4750" width="250" height="250"/>
+  <object id="235" name="Mur" x="5250" y="4750" width="250" height="250"/>
+  <object id="236" name="Mur" x="5500" y="4750" width="250" height="250"/>
+  <object id="237" name="Mur" x="5750" y="4750" width="250" height="250"/>
+  <object id="238" name="Mur" x="6500" y="4750" width="250" height="250"/>
+  <object id="239" name="Mur" x="7250" y="4750" width="250" height="250"/>
+  <object id="240" name="Mur" x="0" y="5000" width="250" height="250"/>
+  <object id="241" name="Mur" x="750" y="5000" width="250" height="250"/>
+  <object id="242" name="Mur" x="2250" y="5000" width="250" height="250"/>
+  <object id="243" name="Mur" x="4750" y="5000" width="250" height="250"/>
+  <object id="244" name="Mur" x="5750" y="5000" width="250" height="250"/>
+  <object id="245" name="Mur" x="6500" y="5000" width="250" height="250"/>
+  <object id="246" name="Mur" x="7250" y="5000" width="250" height="250"/>
+  <object id="247" name="Mur" x="0" y="5250" width="250" height="250"/>
+  <object id="248" name="Mur" x="750" y="5250" width="250" height="250"/>
+  <object id="249" name="Mur" x="2250" y="5250" width="250" height="250"/>
+  <object id="250" name="Mur" x="4750" y="5250" width="250" height="250"/>
+  <object id="251" name="Mur" x="5750" y="5250" width="250" height="250"/>
+  <object id="252" name="Mur" x="6500" y="5250" width="250" height="250"/>
+  <object id="253" name="Mur" x="7250" y="5250" width="250" height="250"/>
+  <object id="254" name="Mur" x="0" y="5500" width="250" height="250"/>
+  <object id="255" name="Mur" x="750" y="5500" width="250" height="250"/>
+  <object id="256" name="Mur" x="2250" y="5500" width="250" height="250"/>
+  <object id="257" name="Mur" x="4750" y="5500" width="250" height="250"/>
+  <object id="258" name="Mur" x="5750" y="5500" width="250" height="250"/>
+  <object id="259" name="Mur" x="6500" y="5500" width="250" height="250"/>
+  <object id="260" name="Mur" x="7250" y="5500" width="250" height="250"/>
+  <object id="261" name="Mur" x="0" y="5750" width="250" height="250"/>
+  <object id="262" name="Mur" x="750" y="5750" width="250" height="250"/>
+  <object id="263" name="Mur" x="1000" y="5750" width="250" height="250"/>
+  <object id="264" name="Mur" x="1250" y="5750" width="250" height="250"/>
+  <object id="265" name="Mur" x="1500" y="5750" width="250" height="250"/>
+  <object id="266" name="Mur" x="2250" y="5750" width="250" height="250"/>
+  <object id="267" name="Mur" x="3250" y="5750" width="250" height="250"/>
+  <object id="268" name="Mur" x="4000" y="5750" width="250" height="250"/>
+  <object id="269" name="Mur" x="4750" y="5750" width="250" height="250"/>
+  <object id="270" name="Mur" x="5750" y="5750" width="250" height="250"/>
+  <object id="271" name="Mur" x="6000" y="5750" width="250" height="250"/>
+  <object id="272" name="Mur" x="6250" y="5750" width="250" height="250"/>
+  <object id="273" name="Mur" x="6500" y="5750" width="250" height="250"/>
+  <object id="274" name="Mur" x="7250" y="5750" width="250" height="250"/>
+  <object id="275" name="Mur" x="0" y="6000" width="250" height="250"/>
+  <object id="276" name="Mur" x="2250" y="6000" width="250" height="250"/>
+  <object id="277" name="Mur" x="4750" y="6000" width="250" height="250"/>
+  <object id="278" name="Mur" x="7250" y="6000" width="250" height="250"/>
+  <object id="279" name="Mur" x="0" y="6250" width="250" height="250"/>
+  <object id="280" name="Mur" x="2250" y="6250" width="250" height="250"/>
+  <object id="281" name="Mur" x="4750" y="6250" width="250" height="250"/>
+  <object id="282" name="Mur" x="7250" y="6250" width="250" height="250"/>
+  <object id="283" name="Mur" x="0" y="6500" width="250" height="250"/>
+  <object id="284" name="Mur" x="750" y="6500" width="250" height="250"/>
+  <object id="285" name="Mur" x="1500" y="6500" width="250" height="250"/>
+  <object id="286" name="Mur" x="2250" y="6500" width="250" height="250"/>
+  <object id="287" name="Mur" x="3250" y="6500" width="250" height="250"/>
+  <object id="288" name="Mur" x="4000" y="6500" width="250" height="250"/>
+  <object id="289" name="Mur" x="4250" y="6500" width="250" height="250"/>
+  <object id="290" name="Mur" x="4500" y="6500" width="250" height="250"/>
+  <object id="291" name="Mur" x="4750" y="6500" width="250" height="250"/>
+  <object id="292" name="Mur" x="5750" y="6500" width="250" height="250"/>
+  <object id="293" name="Mur" x="6500" y="6500" width="250" height="250"/>
+  <object id="294" name="Mur" x="7250" y="6500" width="250" height="250"/>
+  <object id="295" name="Mur" x="0" y="6750" width="250" height="250"/>
+  <object id="296" name="Mur" x="750" y="6750" width="250" height="250"/>
+  <object id="297" name="Mur" x="1500" y="6750" width="250" height="250"/>
+  <object id="298" name="Mur" x="4000" y="6750" width="250" height="250"/>
+  <object id="299" name="Mur" x="5750" y="6750" width="250" height="250"/>
+  <object id="300" name="Mur" x="6500" y="6750" width="250" height="250"/>
+  <object id="301" name="Mur" x="0" y="7000" width="250" height="250"/>
+  <object id="302" name="Mur" x="750" y="7000" width="250" height="250"/>
+  <object id="303" name="Mur" x="1500" y="7000" width="250" height="250"/>
+  <object id="304" name="Mur" x="4000" y="7000" width="250" height="250"/>
+  <object id="305" name="Mur" x="5750" y="7000" width="250" height="250"/>
+  <object id="306" name="Mur" x="6500" y="7000" width="250" height="250"/>
+  <object id="307" name="Mur" x="0" y="7250" width="250" height="250"/>
+  <object id="308" name="Mur" x="250" y="7250" width="250" height="250"/>
+  <object id="309" name="Mur" x="500" y="7250" width="250" height="250"/>
+  <object id="310" name="Mur" x="750" y="7250" width="250" height="250"/>
+  <object id="311" name="Mur" x="1000" y="7250" width="250" height="250"/>
+  <object id="312" name="Mur" x="1250" y="7250" width="250" height="250"/>
+  <object id="313" name="Mur" x="1500" y="7250" width="250" height="250"/>
+  <object id="314" name="Mur" x="1750" y="7250" width="250" height="250"/>
+  <object id="315" name="Mur" x="2000" y="7250" width="250" height="250"/>
+  <object id="316" name="Mur" x="2250" y="7250" width="250" height="250"/>
+  <object id="317" name="Mur" x="2500" y="7250" width="250" height="250"/>
+  <object id="318" name="Mur" x="2750" y="7250" width="250" height="250"/>
+  <object id="319" name="Mur" x="3000" y="7250" width="250" height="250"/>
+  <object id="320" name="Mur" x="3250" y="7250" width="250" height="250"/>
+  <object id="321" name="Mur" x="3500" y="7250" width="250" height="250"/>
+  <object id="322" name="Mur" x="3750" y="7250" width="250" height="250"/>
+  <object id="323" name="Mur" x="4000" y="7250" width="250" height="250"/>
+  <object id="324" name="Mur" x="4250" y="7250" width="250" height="250"/>
+  <object id="325" name="Mur" x="4500" y="7250" width="250" height="250"/>
+  <object id="326" name="Mur" x="4750" y="7250" width="250" height="250"/>
+  <object id="327" name="Mur" x="5000" y="7250" width="250" height="250"/>
+  <object id="328" name="Mur" x="5250" y="7250" width="250" height="250"/>
+  <object id="329" name="Mur" x="5500" y="7250" width="250" height="250"/>
+  <object id="330" name="Mur" x="5750" y="7250" width="250" height="250"/>
+  <object id="331" name="Mur" x="6000" y="7250" width="250" height="250"/>
+  <object id="332" name="Mur" x="6250" y="7250" width="250" height="250"/>
+  <object id="333" name="Mur" x="6500" y="7250" width="250" height="250"/>
+  <object id="334" name="Mur" x="6750" y="7250" width="250" height="250"/>
+  <object id="335" name="Mur" x="7000" y="7250" width="250" height="250"/>
+  <object id="336" name="Mur" x="7250" y="7250" width="250" height="250"/>
+ </objectgroup>
+</map>
