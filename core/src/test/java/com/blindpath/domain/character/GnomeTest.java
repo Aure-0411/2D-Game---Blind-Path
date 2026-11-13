@@ -78,4 +78,11 @@ class GnomeTest {
 
         assertEquals(Direction.LEFT, gnome.getFacing());
     }
+
+    @Test
+    void takeMonsterHitRemovesTwoHalfHearts() {
+        gnome.takeMonsterHit();
+
+        assertEquals(4, gnome.getLife());
+    }
 }
