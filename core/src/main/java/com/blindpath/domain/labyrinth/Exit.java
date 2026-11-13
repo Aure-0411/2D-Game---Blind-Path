@@ -48,6 +48,13 @@ public class Exit {
         return this.border;
     }
 
+    /**
+    * Checks whether a collision is detected between the exit's and the entity's hitboxes.
+    * In case of border to border, there is no contact.
+    *
+    * @param entity has the Collidable type and can create a collision.
+    * @return answers "Is there a collision?" with true or false.
+    */
     public boolean isReached(Collidable entity){
         if (this.bounds.intersects(entity.getBounds())){
             return true;
