@@ -3,17 +3,28 @@ package com.blindpath.presentation.screen;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.blindpath.domain.character.Direction;
+import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.game.Level;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
+import com.blindpath.domain.physics.CollisionWorld;
 import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
+import com.blindpath.infrastructure.physics.Box2DCollisionWorld;
+import com.blindpath.presentation.input.InputController;
+import com.blindpath.presentation.renderer.CharacterRenderer;
+import com.blindpath.presentation.renderer.CollisionDebugRenderer;
+import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
 
 
@@ -30,6 +41,15 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private FitViewport viewport;
     private Labyrinth labyrinth;
+
+    private Level level;
+    private CollisionWorld collisions;
+    private InputController input;
+    private SpriteBatch batch;
+    private CharacterRenderer<Gnome> characterRenderer;
+    private CollisionDebugRenderer debugRenderer;
+    private boolean debugCollisions = false;
+    private float stateTime;
 
     @Override
     public void show() {
@@ -48,6 +68,19 @@ public class GameScreen implements Screen {
             this.labyrinth = new Labyrinth(mapWidth, mapHeight, entrance, exit, obstacles);
             renderer = new LabyrinthRenderer(map);
 
+            // Le gnome démarre au centre de l'entrée ; Box2D reste caché derrière CollisionWorld.
+            Gnome gnome = new Gnome();
+            gnome.setPosition(
+                    entrance.getX() + (entrance.getWidth() - gnome.getWidth()) / 2f,
+                    entrance.getY() + (entrance.getHeight() - gnome.getHeight()) / 2f);
+            collisions = new Box2DCollisionWorld();
+            level = new Level(gnome, labyrinth, collisions);
+            input = new InputController(level);
+            batch = new SpriteBatch();
+            characterRenderer = new CharacterRenderer<>(
+                    GnomeSprites.ATLAS_PATH, GnomeSprites::regionName, Direction.DOWN, 0.15f);
+            debugRenderer = new CollisionDebugRenderer();
+
             camera = new OrthographicCamera();
             // FitViewport conserve les proportions et peut ajouter des bandes noires.
             viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
@@ -59,13 +92,30 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        // 1. Entrées + logique (déplacement avec collisions)
+        input.handleInput(delta);
+        level.update(delta);
+        stateTime += delta;
+        if (Gdx.input.isKeyJustPressed(Keys.F3)) {
+            debugCollisions = !debugCollisions;
+        }
+
+        // 2. Dessin
         // Efface l'image précédente, y compris les bandes autour du viewport.
         ScreenUtils.clear(0f, 0f, 0f, 1f);
         // Sélectionne la zone de la fenêtre dans laquelle dessiner la carte.
         viewport.apply();
         camera.update();
         renderer.render(camera);
-        // delta sera utile plus tard pour faire évoluer la logique du jeu.
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        characterRenderer.render(batch, level.getGnome(), stateTime, input.isMoving());
+        batch.end();
+
+        if (debugCollisions) {
+            debugRenderer.render(camera, level);
+        }
     }
 
     @Override
@@ -99,6 +149,10 @@ public class GameScreen implements Screen {
             renderer.dispose();
             renderer = null;
         }
+        if (characterRenderer != null) { characterRenderer.dispose(); characterRenderer = null; }
+        if (debugRenderer != null) { debugRenderer.dispose(); debugRenderer = null; }
+        if (batch != null) { batch.dispose(); batch = null; }
+        if (collisions != null) { collisions.dispose(); collisions = null; }
         if (map != null) {
             map.dispose();
             map = null;
