@@ -28,7 +28,7 @@ public class Exit {
         this.border = border;
 
         this.bounds = new Bounds(this.x, this.y, this.width, this.height);
-   
+
     }
 
     public int getX (){
@@ -48,11 +48,18 @@ public class Exit {
         return this.border;
     }
 
-    // public boolean isReached(Gnome gnome){
-    //     if (this.bounds.intersects(gnome.getBounds())){
-    //         return true;
-    //     }
-    // return false;
-    // }
-    
+    /**
+    * Checks whether a collision is detected between the exit's and the entity's hitboxes.
+    * In case of border to border, there is no contact.
+    *
+    * @param entity has the Collidable type and can create a collision.
+    * @return answers "Is there a collision?" with true or false.
+    */
+    public boolean isReached(Collidable entity){
+        if (this.bounds.intersects(entity.getBounds())){
+            return true;
+        }
+    return false;
+    }
+
 }
