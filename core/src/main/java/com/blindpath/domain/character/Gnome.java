@@ -26,4 +26,8 @@ public class Gnome extends Character{
     public void updateImmunity(float deltaTime) {
         immunityTimer = Math.max(0f, immunityTimer - deltaTime);
     }
+
+    public boolean isDead() {
+        return getLife() == 0;
+    }
 }
