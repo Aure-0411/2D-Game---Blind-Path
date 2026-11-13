@@ -109,4 +109,15 @@ class GnomeTest {
 
         assertFalse(gnome.isImmune());
     }
+
+    @Test
+    void gnomeIsDeadAfterThreeHits() {
+        gnome.takeMonsterHit();
+        gnome.updateImmunity(2f);
+        gnome.takeMonsterHit();
+        gnome.updateImmunity(2f);
+        gnome.takeMonsterHit();
+
+        assertTrue(gnome.isDead());
+    }
 }
