@@ -13,9 +13,10 @@ import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
+import com.blindpath.domain.light.Light;
 import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
+import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
-
 
 public class GameScreen implements Screen {
 
@@ -30,6 +31,8 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private FitViewport viewport;
     private Labyrinth labyrinth;
+    private FogRenderer fogRenderer;
+    private final Light light = new Light();
 
     @Override
     public void show() {
@@ -47,6 +50,7 @@ public class GameScreen implements Screen {
             int mapHeight = map.getProperties().get("height", Integer.class);
             this.labyrinth = new Labyrinth(mapWidth, mapHeight, entrance, exit, obstacles);
             renderer = new LabyrinthRenderer(map);
+            fogRenderer = new FogRenderer();
 
             camera = new OrthographicCamera();
             // FitViewport conserve les proportions et peut ajouter des bandes noires.
@@ -65,6 +69,9 @@ public class GameScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.render(camera);
+        fogRenderer.render(camera,
+                light.getHeroCellX(),
+                light.getHeroCellY());
         // delta sera utile plus tard pour faire évoluer la logique du jeu.
     }
 
@@ -102,6 +109,10 @@ public class GameScreen implements Screen {
         if (map != null) {
             map.dispose();
             map = null;
+        }
+        if (fogRenderer != null) {
+            fogRenderer.dispose();
+            fogRenderer = null;
         }
     }
 }

@@ -123,5 +123,81 @@ class LightTest {
         assertThrows(IllegalArgumentException.class, () -> new Light(3f, 1f, -1f), "cooldown must be > 0");
         assertThrows(IllegalArgumentException.class, () -> light.addBonusPercent(-10), "bonus must be >= 0");
     }
+
+    @Test
+    void onlyHeroCellIsPermanentlyVisible() {
+        light.updateHeroPosition(3.5f, 5.5f);
+
+        assertTrue(light.isVisible(3, 5));
+        for (int x = 0; x < 10; x++) {
+            for (int y = 0; y < 10; y++) {
+                if (x != 3 || y != 5) {
+                    assertFalse(light.isVisible(x, y), "Cell must be hidden: " + x + ", " + y);
+                }
+            }
+        }
+    }
+
+    @Test
+    void movingToAnotherCellHidesPreviousCell() {
+        light.updateHeroPosition(3.5f, 5.5f);
+        assertTrue(light.isVisible(3, 5));
+
+        light.updateHeroPosition(4.2f, 5.5f);
+
+        assertTrue(light.isVisible(4, 5));
+        assertFalse(light.isVisible(3, 5));
+    }
+
+    @Test
+    void movingInsideSameCellKeepsItVisible() {
+        light.updateHeroPosition(3.1f, 5.1f);
+        light.updateHeroPosition(3.9f, 5.9f);
+
+        assertTrue(light.isVisible(3, 5));
+        assertFalse(light.isVisible(4, 5));
+        assertFalse(light.isVisible(3, 6));
+    }
+
+    @Test
+    void crossingVerticalBoundaryUpdatesVisibleCell() {
+        light.updateHeroPosition(3.5f, 5.99f);
+        assertTrue(light.isVisible(3, 5));
+
+        light.updateHeroPosition(3.5f, 6f);
+
+        assertTrue(light.isVisible(3, 6));
+        assertFalse(light.isVisible(3, 5));
+    }
+
+    @Test
+    void exactGridBoundaryBelongsToCellStartingThere() {
+        light.updateHeroPosition(4f, 6f);
+
+        assertTrue(light.isVisible(4, 6));
+        assertFalse(light.isVisible(3, 6));
+        assertFalse(light.isVisible(4, 5));
+    }
+
+    @Test
+    void negativeCoordinatesAreRoundedDown() {
+        light.updateHeroPosition(-0.2f, -1.2f);
+
+        assertTrue(light.isVisible(-1, -2));
+        assertFalse(light.isVisible(0, -1));
+    }
+
+    @Test
+    void movingHeroDoesNotMoveActiveSnapOrigin() {
+        light.setOrigin(3.5f, 5.5f);
+        light.snap();
+
+        light.updateHeroPosition(4.2f, 6.2f);
+
+        assertTrue(light.isVisible(4, 6));
+        assertFalse(light.isVisible(3, 5));
+        assertEquals(3.5f, light.getSnapX(), DELTA);
+        assertEquals(5.5f, light.getSnapY(), DELTA);
+    }
 }
  
