@@ -8,6 +8,7 @@ public class Labyrinth {
     private final int width;
     private final int height;
     private final List<Obstacle> obstacles;
+    private final List<Obstacle> boundaryWalls;
     private final Entrance entrance;
     private final Exit exit;
 
@@ -34,6 +35,20 @@ public class Labyrinth {
         // Copie non modifiable : ajouter ou retirer un élément de la liste d'origine
         // ne change pas les obstacles du labyrinthe.
         this.obstacles = List.copyOf(obstacles);
+        // Murs invisibles juste à l'extérieur de la carte (épaisseur 1 case).
+        this.boundaryWalls = List.of(
+            new Wall(-1, -1, width + 2, 1),      // bas
+            new Wall(-1, height, width + 2, 1),  // haut
+            new Wall(-1, 0, 1, height),          // gauche
+            new Wall(width, 0, 1, height));      // droite
+    }
+
+    /**
+     * Limites de la carte : le gnome ne peut pas en sortir, même par l'entrée ou la sortie
+     * (leurs ouvertures sont dans la grille, ces murs sont juste derrière).
+     */
+    public List<Obstacle> getBoundaryWalls() {
+        return boundaryWalls;
     }
 
     private void validateOpening(int x, int y, int openingWidth, int openingHeight, Border border) {
