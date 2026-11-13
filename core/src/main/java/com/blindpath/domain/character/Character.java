@@ -1,10 +1,9 @@
 package com.blindpath.domain.character;
 
-// import com.blindpath.physics.Movable;
-// import com.blindpath.physics.Collidable;
-// import com.blindpath.physics.Bounds;
+import com.blindpath.domain.labyrinth.Bounds;
+import com.blindpath.domain.labyrinth.Collidable;
 
-public abstract class Character implements Movable/*, Collidable*/{
+public abstract class Character implements Movable, Collidable{
     private int life;
     private int maxLife;
     private float speed;
@@ -20,6 +19,7 @@ public abstract class Character implements Movable/*, Collidable*/{
         this.y = y;
         this.width = width;
         this.height = height;
+        
     }
 
     public int getMaxLife() { return maxLife; }
@@ -45,13 +45,24 @@ public abstract class Character implements Movable/*, Collidable*/{
         }
     }
 
+    /** Déplacement "brut", sans collision. Pour avancer en respectant les murs : Level.tryMove. */
     @Override
     public void move(float directionX, float directionY, float deltaTime) {
         x += directionX * speed * deltaTime;
         y += directionY * speed * deltaTime;
     }
-    // @Override 
-    // public Bounds getBounds() { 
-    //     return new Bounds(x, y, width, height); 
-    // }
+
+    // ---- Collidable ----
+    @Override
+    public boolean canCollide() { return true; }
+
+    @Override
+    public boolean collide(Collidable other) {
+        return canCollide() && other.canCollide() && getBounds().intersects(other.getBounds());
+    }
+
+    @Override
+    public Bounds getBounds() {
+        return new Bounds(x, y, width, height);
+    }
 }

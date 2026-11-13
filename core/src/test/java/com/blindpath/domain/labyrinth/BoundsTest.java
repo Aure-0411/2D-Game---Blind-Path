@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 public class BoundsTest {
-
     @ParameterizedTest
     @CsvSource({
         "9, 9, 2, 2, true",       // Chevauchement partiel.
@@ -27,6 +26,7 @@ public class BoundsTest {
         "10, 10, 2, 2, false",    // Contact par un coin.
         "9.5, 9.5, 0.75, 0.75, true"
     })
+
     void intersectionMatchesGeometryInBothDirections(
             float x, float y, float width, float height, boolean expected) {
         Bounds first = new Bounds(0, 0, 10, 10);
@@ -64,5 +64,17 @@ public class BoundsTest {
     void nonPositiveDimensionsAreRejected(float width, float height) {
         assertThrows(IllegalArgumentException.class,
             () -> new Bounds(0, 0, width, height));
+    }
+
+    @Test
+    void gettersExposeRectangle() {
+        Bounds bounds = new Bounds(1, 2, 4, 6);
+
+        assertEquals(1f, bounds.getX());
+        assertEquals(2f, bounds.getY());
+        assertEquals(4f, bounds.getWidth());
+        assertEquals(6f, bounds.getHeight());
+        assertEquals(3f, bounds.getCenterX());
+        assertEquals(5f, bounds.getCenterY());
     }
 }
