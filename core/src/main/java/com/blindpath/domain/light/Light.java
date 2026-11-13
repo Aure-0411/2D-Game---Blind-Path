@@ -18,6 +18,8 @@ public class Light implements Revealable {
     private float originY;
     private float snapX;
     private float snapY;
+    private int heroCellX;
+    private int heroCellY;
 
     public Light(float baseRadius, float revealDuration, float cooldown) {
 
@@ -105,5 +107,26 @@ public class Light implements Revealable {
         float progress = revealTimer.getProgress();
         return getRevealRadius() * (1f - Math.abs(2f * progress - 1f));
     }
+
+    public void updateHeroPosition (float centerX, float centerY) {
+        this.heroCellX = (int) Math.floor(centerX);
+        this.heroCellY = (int) Math.floor(centerY);
+    }
+
+    public boolean isVisible(int cellX, int cellY) {
+        if ( this.heroCellX == cellX && this.heroCellY == cellY ) {
+            return true;
+        } 
+        return false;
+    }
+
+    public int getHeroCellX(){
+        return this.heroCellX;
+    } 
+    
+    public int getHeroCellY(){
+        return this.heroCellY;
+    } 
+
 
 }
