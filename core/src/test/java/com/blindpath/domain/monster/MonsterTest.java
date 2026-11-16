@@ -3,6 +3,7 @@ package com.blindpath.domain.monster;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
@@ -72,6 +73,13 @@ class MonsterTest {
         assertEquals(CASES, monster.getCasePerMove());
         assertEquals(SNAP_CASES, monster.getSnapDistance());
         assertEquals(cell(0, START_ROW), monster.getPosition());
+    }
+
+    @Test
+    void isInvisibleByDefaultandCanBeRevealed() {
+        assertFalse(monster.isVisible(), "a new monster must be invisible");
+        monster.setVisible(true);
+        assertTrue(monster.isVisible(), "the monster must be visible after setVisible(true)");
     }
 
     @Test
