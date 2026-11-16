@@ -4,8 +4,8 @@ import com.blindpath.domain.time.GameTimer;
 
 public class Light implements Revealable {
 
-    public static final float DEFAULT_RADIUS = 3f;
-    public static final float DEFAULT_REVEAL_DURATION = 1f;
+    public static float DEFAULT_RADIUS = 4.5f;
+    public static float DEFAULT_REVEAL_DURATION = 1f;
     public static final float DEFAULT_COOLDOWN = 2f;
 
     private final float baseRadius;
@@ -18,6 +18,8 @@ public class Light implements Revealable {
     private float originY;
     private float snapX;
     private float snapY;
+    private float heroCenterX;
+    private float heroCenterY;
 
     public Light(float baseRadius, float revealDuration, float cooldown) {
 
@@ -106,4 +108,29 @@ public class Light implements Revealable {
         return getRevealRadius() * (1f - Math.abs(2f * progress - 1f));
     }
 
+    /** La visibilité permanente a un diamètre d'une unité du monde. */
+    public float getPermanentVisibilityRadius() {
+        return 0.6f;
+    }
+
+    public void updateHeroPosition(float centerX, float centerY) {
+        this.heroCenterX = centerX;
+        this.heroCenterY = centerY;
+    }
+
+    /** Vérifie un point du monde, et non un indice de case. Bord inclus. */
+    public boolean isVisible(float worldX, float worldY) {
+        float dx = worldX - heroCenterX;
+        float dy = worldY - heroCenterY;
+        float radius = getPermanentVisibilityRadius();
+        return dx * dx + dy * dy <= radius * radius;
+    }
+
+    public float getHeroCenterX() {
+        return heroCenterX;
+    }
+
+    public float getHeroCenterY() {
+        return heroCenterY;
+    }
 }
