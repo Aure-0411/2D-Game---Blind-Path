@@ -24,6 +24,7 @@ public abstract class Monster implements SnapListener, TickListener {
     private int ticksPerMove = DEFAULT_TICKS_PER_MOVE;
     private int casePerMove = DEFAULT_CASE_PER_MOVE;
     private int snapDistance = DEFAULT_SNAP_DISTANCE;
+    private boolean visible = false;
     
     protected Monster(LabyrinthGrid grid, MovementStrategy strategy, GridPosition start) {
         if (grid == null || strategy == null || start == null)
@@ -55,6 +56,14 @@ public abstract class Monster implements SnapListener, TickListener {
     public void setSnapDistance(int v) {
         if (v < 0) throw new IllegalArgumentException("snapDistance < 0");
         snapDistance = v;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     protected void moveTowards(GridPosition goal, int steps) {
