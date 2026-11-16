@@ -1,5 +1,7 @@
 package com.blindpath.domain.labyrinth;
 
+import com.blindpath.domain.character.Gnome;
+
 public class Exit {
 
     private int height;
@@ -49,14 +51,14 @@ public class Exit {
     }
 
     /**
-    * Checks whether a collision is detected between the exit's and the entity's hitboxes.
+    * Checks whether a collision is detected between the exit's and the gnome's hitboxes.
     * In case of border to border, there is no contact.
     *
-    * @param entity has the Collidable type and can create a collision.
+    * @param gnome can collide with other hitboxes, including the exit's.
     * @return answers "Is there a collision?" with true or false.
     */
-    public boolean isReached(Collidable entity){
-        if (this.bounds.intersects(entity.getBounds())){
+    public boolean isReached(Gnome gnome){
+        if (this.bounds.intersects(gnome.getBounds())){
             return true;
         }
     return false;
