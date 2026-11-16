@@ -118,4 +118,13 @@ class LevelTest {
         gnome.setPosition(9f, 5f);
         assertTrue(level.isCompleted());
     }
+
+    @Test
+    void update_afterImmunityDuration_gnomeIsNoLongerImmune() {
+        gnome.takeMonsterHit();
+
+        level.update(2f);
+
+        assertFalse(gnome.isImmune());
+    }
 }

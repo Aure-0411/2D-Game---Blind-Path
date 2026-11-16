@@ -47,6 +47,7 @@ public class Level {
     public Labyrinth getLabyrinth() { return labyrinth; }
 
     public void update(float deltaTime) {
+        gnome.updateImmunity(deltaTime);
         // Plus tard : lumière, monstre, objets posés...
     }
 
