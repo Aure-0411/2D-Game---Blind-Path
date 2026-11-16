@@ -18,7 +18,7 @@ void main() {
     v_texCoords = a_texCoord0;
 
     // Avec notre SpriteBatch, les positions de draw sont en unités du monde.
-    // On les conserve AVANT la projection pour identifier les cases du jeu.
+    // On les conserve AVANT la projection pour placer le cercle et le snap.
     v_worldPosition = a_position.xy;
     gl_Position = u_projTrans * a_position;
 }
