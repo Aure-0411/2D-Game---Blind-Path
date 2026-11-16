@@ -107,4 +107,15 @@ class LevelTest {
     void labyrinth_exposesFourBoundaryWalls() {
         assertEquals(4, level.getLabyrinth().getBoundaryWalls().size());
     }
+
+    @Test
+    void isCompleted_atStart_returnsFalse() {
+        assertFalse(level.isCompleted());
+    }
+
+    @Test
+    void isCompleted_onExit_returnsTrue() {
+        gnome.setPosition(9f, 5f);
+        assertTrue(level.isCompleted());
+    }
 }
