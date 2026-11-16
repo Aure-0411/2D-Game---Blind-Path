@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="11" nextobjectid="338">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="12" nextobjectid="341">
  <properties>
   <property name="lumiere_apercu" value="Le calque Eclairage_apercu est statique. Utiliser Lumieres pour le rendu dynamique du jeu."/>
   <property name="version_visuelle" value="Murs naturels et decors stylises valides - lumiere 02"/>
@@ -70,8 +70,8 @@
 230,0,0,0,0,0,0,0,0,231,0,0,0,0,0,0,0,0,0,232,0,0,0,0,0,0,0,0,0,233,
 234,0,0,0,0,0,0,0,0,235,0,0,0,0,0,0,0,0,0,236,0,0,0,0,0,0,0,0,0,237,
 238,0,0,239,0,0,240,0,0,241,0,0,0,242,0,0,243,244,245,246,0,0,0,247,0,0,248,0,0,249,
-250,0,0,251,0,0,252,0,0,0,0,0,0,0,0,0,253,0,0,0,0,0,0,254,0,0,255,0,0,0,
-256,0,0,257,0,0,258,0,0,0,0,0,0,0,0,0,259,0,0,0,0,0,0,260,0,0,261,0,0,0,
+250,0,0,251,0,0,252,0,0,0,0,0,0,0,0,0,313,0,0,0,0,0,0,254,0,0,255,0,0,0,
+256,0,0,257,0,0,258,0,0,0,0,0,0,0,0,0,310,0,0,0,0,0,0,260,0,0,261,0,0,0,
 262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289,290,291
 </data>
  </layer>
@@ -580,13 +580,11 @@
   <object id="295" name="Mur" x="0" y="6750" width="250" height="250"/>
   <object id="296" name="Mur" x="750" y="6750" width="250" height="250"/>
   <object id="297" name="Mur" x="1500" y="6750" width="250" height="250"/>
-  <object id="298" name="Mur" x="4000" y="6750" width="250" height="250"/>
   <object id="299" name="Mur" x="5750" y="6750" width="250" height="250"/>
   <object id="300" name="Mur" x="6500" y="6750" width="250" height="250"/>
   <object id="301" name="Mur" x="0" y="7000" width="250" height="250"/>
   <object id="302" name="Mur" x="750" y="7000" width="250" height="250"/>
   <object id="303" name="Mur" x="1500" y="7000" width="250" height="250"/>
-  <object id="304" name="Mur" x="4000" y="7000" width="250" height="250"/>
   <object id="305" name="Mur" x="5750" y="7000" width="250" height="250"/>
   <object id="306" name="Mur" x="6500" y="7000" width="250" height="250"/>
   <object id="307" name="Mur" x="0" y="7250" width="250" height="250"/>
@@ -619,5 +617,10 @@
   <object id="334" name="Mur" x="6750" y="7250" width="250" height="250"/>
   <object id="335" name="Mur" x="7000" y="7250" width="250" height="250"/>
   <object id="336" name="Mur" x="7250" y="7250" width="250" height="250"/>
+ </objectgroup>
+ <objectgroup id="11" name="monstre_start">
+  <object id="340" name="Monster" x="7000" y="500">
+   <point/>
+  </object>
  </objectgroup>
 </map>
