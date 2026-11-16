@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import com.blindpath.domain.character.Gnome;
+
 public class ExitTest {
 
     @ParameterizedTest
@@ -45,10 +47,11 @@ public class ExitTest {
     void shouldReachExitWhenOverlapsIt() {
         // Arrange
         Exit exit = new Exit(0, 0, Border.TOP);
-        TestGnome testGnome = new TestGnome(1, 0, 1, 1);
+        Gnome gnome = new Gnome();
+        gnome.setPosition(1f, 0f);
 
         // Act
-        boolean reached = exit.isReached(testGnome);
+        boolean reached = exit.isReached(gnome);
 
         // Assert
         assertTrue(reached);
@@ -58,10 +61,11 @@ public class ExitTest {
     void shouldNotReachExitWhenDoesNotOverlapIt() {
         // Arrange
         Exit exit = new Exit(0, 0, Border.TOP);
-        TestGnome testGnome = new TestGnome(10, 10, 1, 1);
+        Gnome gnome = new Gnome();
+        gnome.setPosition(10f, 10f);
 
         // Act
-        boolean reached = exit.isReached(testGnome);
+        boolean reached = exit.isReached(gnome);
 
         // Assert
         assertFalse(reached);
@@ -71,34 +75,13 @@ public class ExitTest {
     void shouldNotReachExitWhenBordersOnlyTouch() {
         // Arrange
         Exit exit = new Exit(0, 0, Border.TOP);
-        TestGnome testGnome = new TestGnome(1, 1, 1, 1);
+        Gnome gnome = new Gnome();
+        gnome.setPosition(1f, 1f);
 
         // Act
-        boolean reached = exit.isReached(testGnome);
+        boolean reached = exit.isReached(gnome);
 
         // Assert
         assertFalse(reached);
-    }
-
-    private static class TestGnome implements Collidable {
-        private final Bounds bounds;
-        TestGnome(float x, float y, float width, float height) {
-            this.bounds = new Bounds(x, y, width, height);
-        }
-
-        @Override
-        public Bounds getBounds() {
-            return bounds;
-        }
-
-        @Override
-        public boolean canCollide() {
-            return true;
-        }
-
-        @Override
-        public boolean collide(Collidable other) {
-            return false;
-        }
     }
 }
