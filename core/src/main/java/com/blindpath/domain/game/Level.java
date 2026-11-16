@@ -41,9 +41,9 @@ public class Level {
         }
         collisions.addDynamic(gnome);
     }
-    
+
     public Gnome getGnome() { return gnome; }
-        
+
     public Labyrinth getLabyrinth() { return labyrinth; }
 
     public void update(float deltaTime) {
@@ -58,8 +58,8 @@ public class Level {
         return collisions.move(character, dx, dy, deltaTime);
     }
 
-    
-    
+
+
     // public  Boolean tryMoveMonster( Monster monster , GridPosition target){
 
     // }
@@ -71,9 +71,13 @@ public class Level {
     // public void addPlacedObject(PlacedObject object){
 
     // }
-    
-    // public Boolean isCompleted (){
 
-    // }
-
+    /**
+    * Checks if the labyrinth's exit is reached by the gnome.
+    *
+    * @return answers "Did the gnome reach the labyrinth's exit?" with true or false.
+    */
+    public boolean isCompleted(){
+        return labyrinth.getExit().isReached(gnome);
+    }
 }
