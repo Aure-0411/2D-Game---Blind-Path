@@ -110,7 +110,7 @@ public class Light implements Revealable {
 
     /** La visibilité permanente a un diamètre d'une unité du monde. */
     public float getPermanentVisibilityRadius() {
-        return 0.6f;
+        return 0.8f;
     }
 
     public void updateHeroPosition(float centerX, float centerY) {

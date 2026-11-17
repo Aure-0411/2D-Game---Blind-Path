@@ -1,12 +1,12 @@
 package com.blindpath.domain.light;
  
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
- 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
  
@@ -18,6 +18,8 @@ class LightTest {
  
     private static final float FRAME = 1f / 60;
     private static final float DELTA = 0.001f;
+    // Valeur attendue du réglage permanent actuel, indépendante du code testé.
+    private static final float EXPECTED_PERMANENT_RADIUS = 0.8f;
  
     private Light light;
  
@@ -126,23 +128,24 @@ class LightTest {
     }
 
     @Test
-    void permanentVisibilityHasDiameterOnePointTwo() {
+    void permanentVisibilityHasDiameterOnePointSix() {
         light.updateHeroPosition(0f, 0f);
-        assertEquals(0.6f, light.getPermanentVisibilityRadius(), DELTA);
+        assertEquals(EXPECTED_PERMANENT_RADIUS, light.getPermanentVisibilityRadius(), DELTA);
         assertTrue(light.isVisible(0f, 0f));
         assertTrue(light.isVisible(0.3f, 0.3f));
-        assertFalse(light.isVisible(0.5f, 0.5f));
-        assertFalse(light.isVisible(0.61f, 0f));
-        assertFalse(light.isVisible(0f, -0.61f));
+        assertTrue(light.isVisible(0.5f, 0.5f));
+        assertFalse(light.isVisible(0.6f, 0.6f));
+        assertFalse(light.isVisible(0.81f, 0f));
+        assertFalse(light.isVisible(0f, -0.81f));
     }
 
     @Test
     void circleBoundaryIsVisibleInAllDirections() {
         light.updateHeroPosition(0f, 0f);
-        assertTrue(light.isVisible(0.6f, 0f));
-        assertTrue(light.isVisible(-0.6f, 0f));
-        assertTrue(light.isVisible(0f, 0.6f));
-        assertTrue(light.isVisible(0f, -0.6f));
+        assertTrue(light.isVisible(EXPECTED_PERMANENT_RADIUS, 0f));
+        assertTrue(light.isVisible(-EXPECTED_PERMANENT_RADIUS, 0f));
+        assertTrue(light.isVisible(0f, EXPECTED_PERMANENT_RADIUS));
+        assertTrue(light.isVisible(0f, -EXPECTED_PERMANENT_RADIUS));
     }
 
     @Test
