@@ -29,6 +29,19 @@ import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
 
+//monster
+import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.Jumper;
+import com.blindpath.domain.time.GameClock;
+import com.blindpath.domain.pathfinding.LabyrinthGrid;
+import com.blindpath.domain.pathfinding.GridPosition;
+import com.blindpath.infrastructure.pathfinding.GdxAiPathfinder;
+import com.blindpath.domain.light.SnapEvent;
+import com.blindpath.domain.light.SnapSource;
+import com.blindpath.presentation.renderer.MonsterRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Color;
+
 public class GameScreen implements Screen {
 
     // Une unité du monde correspond à une case : la carte fait 30 x 30 cases.
@@ -52,7 +65,14 @@ public class GameScreen implements Screen {
     private CharacterRenderer<Gnome> characterRenderer;
     private CollisionDebugRenderer debugRenderer;
     private boolean debugCollisions = false;
+    private boolean monsterVisible = false;
     private float stateTime;
+
+    //monster (juste Jumper pour le moment)
+    private Monster monster;
+    private MonsterRenderer monsterRenderer;
+    private final GameClock clock = new GameClock();
+    private ShapeRenderer shapes;
 
     @Override
     public void show() {
@@ -69,6 +89,7 @@ public class GameScreen implements Screen {
             int mapWidth = map.getProperties().get("width", Integer.class);
             int mapHeight = map.getProperties().get("height", Integer.class);
             this.labyrinth = new Labyrinth(mapWidth, mapHeight, entrance, exit, obstacles);
+            LabyrinthGrid grid = new LabyrinthGrid(labyrinth);
             renderer = new LabyrinthRenderer(map);
             fogRenderer = new FogRenderer();
 
@@ -84,6 +105,10 @@ public class GameScreen implements Screen {
             characterRenderer = new CharacterRenderer<>(
                     GnomeSprites.ATLAS_PATH, GnomeSprites::regionName, Direction.DOWN, 0.15f);
             debugRenderer = new CollisionDebugRenderer();
+            shapes = new ShapeRenderer();
+            monster = new Jumper(grid, new GridPosition((int) exit.getX(), (int) exit.getY()), new GdxAiPathfinder());
+            clock.addListener(monster);
+            monsterRenderer = new MonsterRenderer("jumper");
 
             camera = new OrthographicCamera();
             // FitViewport conserve les proportions et peut ajouter des bandes noires.
@@ -111,13 +136,20 @@ public class GameScreen implements Screen {
                 light.getHeroCenterY()
         );
 
+        GridPosition gnomeCell = new GridPosition((int) Math.floor(light.getHeroCenterX()), (int) Math.floor(light.getHeroCenterY()));
+        monster.setTarget(gnomeCell);
+        clock.update(delta);
+
         if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-            light.snap();
+            if (light.snap()) {
+                monster.onSnap(new SnapEvent(light.getHeroCenterX(), light.getHeroCenterY(), SnapSource.HERO, 0));
+            }
         }
 
         stateTime += delta;
         if (Gdx.input.isKeyJustPressed(Keys.F3)) {
             debugCollisions = !debugCollisions;
+           monsterVisible = !monsterVisible;
         }
 
         // 2. Dessin
@@ -127,6 +159,14 @@ public class GameScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.render(camera);
+
+        if (!monsterVisible) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            monsterRenderer.render(batch, monster, stateTime);
+            batch.end();
+        }
+
         // Dessine le voile avant le héros pour que celui-ci reste entièrement visible.
         fogRenderer.render(
                 camera,
@@ -148,6 +188,18 @@ public class GameScreen implements Screen {
 
         if (debugCollisions) {
             debugRenderer.render(camera, level);
+        }
+
+        if (monsterVisible) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            monsterRenderer.render(batch, monster, stateTime);
+            batch.end();
+            shapes.setProjectionMatrix(camera.combined);
+            shapes.begin(ShapeRenderer.ShapeType.Line);
+            shapes.setColor(Color.GREEN);
+            shapes.rect(monster.getPosition().getColumn(), monster.getPosition().getRow(), 1, 1);
+            shapes.end();
         }
     }
 
@@ -205,6 +257,16 @@ public class GameScreen implements Screen {
         if (fogRenderer != null) {
             fogRenderer.dispose();
             fogRenderer = null;
+        }
+
+        if (monsterRenderer != null) {
+            monsterRenderer.dispose();
+            monsterRenderer = null;
+        }
+
+        if (shapes != null) {
+            shapes.dispose();
+            shapes = null;
         }
     }
 }

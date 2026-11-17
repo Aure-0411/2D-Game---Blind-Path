@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class MonsterRenderer implements Disposable {
 
-    private static final float SIZE = 2f;
+    private static final float SIZE = 1.9f;
     private static final String[] STATES = {"move", "idle","stunned"};
     private static final float[] DURATIONS = {0.14f, 0.35f, 0.18f};
     private static final String[] ORIENTATION = {"left", "right", "up_left", "up_right", "down_left", "down_right"};
