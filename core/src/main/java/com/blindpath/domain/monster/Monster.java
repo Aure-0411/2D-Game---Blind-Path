@@ -6,16 +6,19 @@ import com.blindpath.domain.light.SnapListener;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.time.TickListener;
+import com.blindpath.domain.labyrinth.Bounds;
+import com.blindpath.domain.labyrinth.Collidable;
 
 /**
  * Classe de base des monstres. Possèdent tous : grid position, target,
  * tick rhythm et snap reaction. Children (Jumper, Screamer, ...)
  * override les méthodes par ceux dans leur comportement.
  */
-public abstract class Monster implements SnapListener, TickListener {
+public abstract class Monster implements SnapListener, TickListener, Collidable {
     public static final int DEFAULT_TICKS_PER_MOVE = 30;
     public static final int DEFAULT_CASE_PER_MOVE = 1;
     public static final int DEFAULT_SNAP_DISTANCE = 1;
+    public static final int SIZE = 2;
 
     private final LabyrinthGrid grid;
     private final MovementStrategy strategy;
@@ -25,12 +28,12 @@ public abstract class Monster implements SnapListener, TickListener {
     private int casePerMove = DEFAULT_CASE_PER_MOVE;
     private int snapDistance = DEFAULT_SNAP_DISTANCE;
     private boolean visible = false;
-    
+
     protected Monster(LabyrinthGrid grid, MovementStrategy strategy, GridPosition start) {
         if (grid == null || strategy == null || start == null)
             throw new IllegalArgumentException("null argument");
-        this.grid = grid; 
-        this.strategy = strategy; 
+        this.grid = grid;
+        this.strategy = strategy;
         this.position = start;
     }
 
@@ -81,5 +84,19 @@ public abstract class Monster implements SnapListener, TickListener {
         GridPosition origin = new GridPosition(
             (int) Math.floor(event.getSourceX()), (int) Math.floor(event.getSourceY()));
         moveTowards(origin, snapDistance);
+    }
+
+    // ---- Collidable ----
+    @Override
+    public boolean canCollide() { return true; }
+
+    @Override
+    public boolean collide(Collidable other) {
+        return canCollide() && other.canCollide() && getBounds().intersects(other.getBounds());
+    }
+
+    @Override
+    public Bounds getBounds() {
+        return new Bounds(position.getColumn(), position.getRow(), SIZE, SIZE);
     }
 }
