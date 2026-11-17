@@ -23,7 +23,8 @@ class LightTest {
  
     @BeforeEach
     void setUp() {
-        light = new Light();
+        // Paramètres explicites pour tester les règles indépendamment du réglage visuel.
+        light = new Light(3f, 1f, 2f);
         light.setOrigin(10f, 10f);
     }
  
@@ -123,5 +124,155 @@ class LightTest {
         assertThrows(IllegalArgumentException.class, () -> new Light(3f, 1f, -1f), "cooldown must be > 0");
         assertThrows(IllegalArgumentException.class, () -> light.addBonusPercent(-10), "bonus must be >= 0");
     }
+
+    @Test
+    void permanentVisibilityHasDiameterOnePointTwo() {
+        light.updateHeroPosition(0f, 0f);
+        assertEquals(0.6f, light.getPermanentVisibilityRadius(), DELTA);
+        assertTrue(light.isVisible(0f, 0f));
+        assertTrue(light.isVisible(0.3f, 0.3f));
+        assertFalse(light.isVisible(0.5f, 0.5f));
+        assertFalse(light.isVisible(0.61f, 0f));
+        assertFalse(light.isVisible(0f, -0.61f));
+    }
+
+    @Test
+    void circleBoundaryIsVisibleInAllDirections() {
+        light.updateHeroPosition(0f, 0f);
+        assertTrue(light.isVisible(0.6f, 0f));
+        assertTrue(light.isVisible(-0.6f, 0f));
+        assertTrue(light.isVisible(0f, 0.6f));
+        assertTrue(light.isVisible(0f, -0.6f));
+    }
+
+    @Test
+    void circleFollowsFractionalMovementInsideSameCell() {
+        light.updateHeroPosition(3.1f, 5.5f);
+        assertTrue(light.isVisible(2.7f, 5.5f));
+        assertFalse(light.isVisible(4.3f, 5.5f));
+
+        light.updateHeroPosition(3.9f, 5.5f);
+
+        assertFalse(light.isVisible(2.7f, 5.5f));
+        assertTrue(light.isVisible(4.3f, 5.5f));
+        assertEquals(3.9f, light.getHeroCenterX(), DELTA);
+        assertEquals(5.5f, light.getHeroCenterY(), DELTA);
+    }
+
+    @Test
+    void circleFollowsVerticalMovementAndNegativePositions() {
+        light.updateHeroPosition(-0.25f, -1.25f);
+        assertTrue(light.isVisible(-0.25f, -1.25f));
+
+        light.updateHeroPosition(-0.25f, -2.25f);
+
+        assertFalse(light.isVisible(-0.25f, -1.25f));
+        assertTrue(light.isVisible(-0.25f, -2.25f));
+        assertEquals(-2.25f, light.getHeroCenterY(), DELTA);
+    }
+
+    @Test
+    void movingHeroDoesNotMoveActiveSnapOrigin() {
+        light.setOrigin(3.5f, 5.5f);
+        light.snap();
+        light.updateHeroPosition(4.2f, 6.2f);
+
+        assertTrue(light.isVisible(4.2f, 6.2f));
+        assertFalse(light.isVisible(3.5f, 5.5f));
+        assertEquals(3.5f, light.getSnapX(), DELTA);
+        assertEquals(5.5f, light.getSnapY(), DELTA);
+    }
+
+    @Test
+    void defaultLightUsesConfiguredSnapSettings() {
+        Light defaults = new Light();
+        assertEquals(4.5f, defaults.getRevealRadius(), DELTA);
+        assertTrue(defaults.snap());
+        defaults.update(0.5f);
+        assertEquals(0.5f, defaults.getRevealProgress(), DELTA);
+        defaults.update(0.5f);
+        assertFalse(defaults.isRevealing());
+        assertTrue(defaults.isOnCooldown());
+        defaults.update(1f);
+        assertFalse(defaults.isOnCooldown());
+    }
+
+    @Test
+    void revealProgressAdvancesWithoutChangingMaskScale() {
+        light.snap();
+        assertEquals(0f, light.getRevealProgress(), DELTA);
+
+        light.update(0.25f);
+        assertEquals(0.25f, light.getRevealProgress(), DELTA);
+        assertEquals(3f, light.getRevealRadius(), DELTA);
+
+        light.update(0.5f);
+        assertEquals(0.75f, light.getRevealProgress(), DELTA);
+        assertEquals(3f, light.getRevealRadius(), DELTA);
+
+        light.update(0.25f);
+        assertFalse(light.isRevealing());
+        assertEquals(0f, light.getRevealProgress(), DELTA);
+    }
+
+    @Test
+    void refusedSnapDoesNotRestartTimersOrMoveOrigin() {
+        light.setOrigin(2f, 3f);
+        light.snap();
+        light.update(0.25f);
+        light.setOrigin(8f, 9f);
+
+        assertFalse(light.snap());
+        assertEquals(0.25f, light.getRevealProgress(), DELTA);
+        assertEquals(2f, light.getSnapX(), DELTA);
+        assertEquals(3f, light.getSnapY(), DELTA);
+
+        light.update(0.75f);
+        assertFalse(light.isRevealing());
+        assertTrue(light.isOnCooldown());
+        light.update(1f);
+        assertFalse(light.isOnCooldown());
+    }
+
+    @Test
+    void nextAcceptedSnapUsesNewOriginAndRestartsProgress() {
+        light.snap();
+        light.update(2f);
+        light.setOrigin(-2.5f, 7.25f);
+
+        assertTrue(light.snap());
+        assertEquals(-2.5f, light.getSnapX(), DELTA);
+        assertEquals(7.25f, light.getSnapY(), DELTA);
+        assertEquals(0f, light.getRevealProgress(), DELTA);
+        assertTrue(light.isRevealing());
+        assertTrue(light.isOnCooldown());
+    }
+
+    @Test
+    void permanentVisibilityRemainsAfterSnapEnds() {
+        light.updateHeroPosition(2f, 3f);
+        light.snap();
+        light.update(2f);
+
+        assertFalse(light.isRevealing());
+        assertTrue(light.isVisible(2f, 3f));
+        assertFalse(light.isVisible(3f, 3f));
+    }
+
+    @Test
+    void revealTimingDoesNotDependOnNumberOfFrames() {
+        Light singleStep = new Light(3f, 1f, 2f);
+        Light multipleSteps = new Light(3f, 1f, 2f);
+        singleStep.snap();
+        multipleSteps.snap();
+
+        singleStep.update(0.75f);
+        for (int i = 0; i < 3; i++) {
+            multipleSteps.update(0.25f);
+        }
+
+        assertEquals(singleStep.getRevealProgress(), multipleSteps.getRevealProgress(), DELTA);
+        assertEquals(singleStep.isRevealing(), multipleSteps.isRevealing());
+        assertEquals(singleStep.isOnCooldown(), multipleSteps.isOnCooldown());
+    }
 }
- 
