@@ -287,7 +287,7 @@
    </properties>
   </object>
  </objectgroup>
- <imagelayer id="5" name="Eclairage_apercu">
+ <imagelayer id="5" name="Eclairage_apercu" opacity="0.53">
   <image source="assets/eclairage_apercu.png" width="7500" height="7500"/>
   <properties>
    <property name="usage" value="Apercu statique des deux lanternes. Masquer ce calque pour le moteur de lumiere dynamique."/>
