@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -221,5 +222,14 @@ class MonsterTest {
         tick(monster, 1, 10);
         assertEquals(cell(0, START_ROW - CASES), monster.getPosition());
         assertEquals(10, monster.getTicksPerMove());
+    }
+
+    @Test
+    void hasATwoByTwoHitboxOnItsCell() {
+        Bounds bounds = monster.getBounds();
+        assertEquals(0f, bounds.getX());
+        assertEquals(6f, bounds.getY());
+        assertEquals(Monster.SIZE, bounds.getWidth());
+        assertEquals(Monster.SIZE, bounds.getHeight());
     }
 }
