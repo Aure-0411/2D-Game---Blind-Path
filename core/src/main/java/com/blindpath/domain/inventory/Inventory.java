@@ -47,22 +47,44 @@ public class Inventory {
             throw new IllegalArgumentException("le niveau ou le Gnome ne peuvent pas etres null");
         }
 
-        if (slot >= 0 && slot < this.stacks.size() && this.stacks.get(slot) == null) {
+        if (slot < 0 || slot >= this.stacks.size()) {
             throw new IllegalArgumentException("Ce slot n'exite pas");
         }
         if (!this.stacks.get(slot).getItem().canUse(user, level)) {
             return false;
         } else {
+            this.stacks.get(slot).getItem().use(user, level);
             this.stacks.get(slot).rmv();
+            if (this.stacks.get(slot).getQuantity() == 0) {
+                this.stacks.remove(slot);
+            }
             return true;
         }
 
     }
-    public List<ItemStack> getStacks (){
-        return this.stacks;
+
+    public List<ItemStack> getStacks() {
+        return List.copyOf(this.stacks);
     }
 
-    // public void useHealthNeeded(Gnome user, Level level) {
-    //     if (user.getLife()) 
-    // }
+    public void useHealthNeeded(Gnome user, Level level) {
+        if (user == null || level == null) {
+            throw new IllegalArgumentException("le niveau ou le Gnome ne peuvent pas etres null");
+        }
+        if (user.getLife() < 0 || user.getLife() > user.getMaxLife()) {
+            throw new IllegalArgumentException("Le nombre de point de vie est pas normal");
+        }
+        if (user.getLife() == 0) {
+            return;
+        }
+        if (user.getLife() < user.getMaxLife()) {
+            for (int i = 0; i < this.stacks.size(); i++) {
+                if (this.stacks.get(i).getItem().getClass() == Heart.class) {
+                    use(i, user, level);
+                    return;
+                }
+            }
+
+        }
+    }
 }
