@@ -6,6 +6,7 @@ import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
+import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.physics.CollisionWorld;
 
 public class Level {
@@ -13,7 +14,7 @@ public class Level {
     private Gnome gnome;
     private Labyrinth labyrinth;
     private final CollisionWorld collisions;
-    // private Monster monster;
+    private Monster monster;
     // private Pathfinder pathfinder;
     // private List<Chest> chests;
     // private List<PlacedObject> placedObjects;
@@ -48,7 +49,10 @@ public class Level {
 
     public void update(float deltaTime) {
         gnome.updateImmunity(deltaTime);
-        // Plus tard : lumière, monstre, objets posés...
+        if (monster != null && gnome.collide(monster)) {
+            gnome.takeMonsterHit();
+        }
+        // Plus tard : lumière, objets posés...
     }
 
     /** Déplace le personnage en respectant les murs. Renvoie true s'il a bougé. */
@@ -59,7 +63,7 @@ public class Level {
         return collisions.move(character, dx, dy, deltaTime);
     }
 
-
+    public void setMonster(Monster monster) { this.monster = monster; }
 
     // public  Boolean tryMoveMonster( Monster monster , GridPosition target){
 
