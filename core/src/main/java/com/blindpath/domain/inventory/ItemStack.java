@@ -25,7 +25,7 @@ public class ItemStack {
         return this.quantity;
     }
 
-    public void add(int quantityToAdd) {
+    void add(int quantityToAdd) {
         if (quantityToAdd < 0) {
             throw new IllegalArgumentException("La quantité ajoutée ne peut pas être négative.");
         }
@@ -39,7 +39,7 @@ public class ItemStack {
         }
 
     }
-       public void rmv() {
+    void rmv() {
         if (this.quantity == 0) {
             throw new IllegalArgumentException("Il n'y a pas d'objet à supprimer");
         }
