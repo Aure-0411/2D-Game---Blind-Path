@@ -18,15 +18,16 @@ import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
+import com.blindpath.domain.light.Light;
 import com.blindpath.domain.physics.CollisionWorld;
 import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
 import com.blindpath.infrastructure.physics.Box2DCollisionWorld;
 import com.blindpath.presentation.input.InputController;
 import com.blindpath.presentation.renderer.CharacterRenderer;
 import com.blindpath.presentation.renderer.CollisionDebugRenderer;
+import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
-
 
 public class GameScreen implements Screen {
 
@@ -41,6 +42,8 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private FitViewport viewport;
     private Labyrinth labyrinth;
+    private FogRenderer fogRenderer;
+    private final Light light = new Light();
 
     private Level level;
     private CollisionWorld collisions;
@@ -67,6 +70,7 @@ public class GameScreen implements Screen {
             int mapHeight = map.getProperties().get("height", Integer.class);
             this.labyrinth = new Labyrinth(mapWidth, mapHeight, entrance, exit, obstacles);
             renderer = new LabyrinthRenderer(map);
+            fogRenderer = new FogRenderer();
 
             // Le gnome démarre au centre de l'entrée ; Box2D reste caché derrière CollisionWorld.
             Gnome gnome = new Gnome();
@@ -95,6 +99,22 @@ public class GameScreen implements Screen {
         // 1. Entrées + logique (déplacement avec collisions)
         input.handleInput(delta);
         level.update(delta);
+        light.update(delta);
+        // La position du modèle est le coin inférieur gauche : Light reçoit le centre.
+        Gnome gnome = level.getGnome();
+        light.updateHeroPosition(
+                gnome.getX() + gnome.getWidth() / 2f,
+                gnome.getY() + gnome.getHeight() / 2f);
+
+        light.setOrigin(
+                light.getHeroCenterX(),
+                light.getHeroCenterY()
+        );
+
+        if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+            light.snap();
+        }
+
         stateTime += delta;
         if (Gdx.input.isKeyJustPressed(Keys.F3)) {
             debugCollisions = !debugCollisions;
@@ -107,6 +127,19 @@ public class GameScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.render(camera);
+        // Dessine le voile avant le héros pour que celui-ci reste entièrement visible.
+        fogRenderer.render(
+                camera,
+                light.getHeroCenterX(),
+                light.getHeroCenterY(),
+                light.getPermanentVisibilityRadius(),
+                light.isRevealing(),
+                light.getSnapX(),
+                light.getSnapY(),
+                light.getRevealProgress(),
+                light.getRevealRadius(),
+                delta
+        );
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -149,13 +182,29 @@ public class GameScreen implements Screen {
             renderer.dispose();
             renderer = null;
         }
-        if (characterRenderer != null) { characterRenderer.dispose(); characterRenderer = null; }
-        if (debugRenderer != null) { debugRenderer.dispose(); debugRenderer = null; }
-        if (batch != null) { batch.dispose(); batch = null; }
-        if (collisions != null) { collisions.dispose(); collisions = null; }
+        if (characterRenderer != null) {
+            characterRenderer.dispose();
+            characterRenderer = null;
+        }
+        if (debugRenderer != null) {
+            debugRenderer.dispose();
+            debugRenderer = null;
+        }
+        if (batch != null) {
+            batch.dispose();
+            batch = null;
+        }
+        if (collisions != null) {
+            collisions.dispose();
+            collisions = null;
+        }
         if (map != null) {
             map.dispose();
             map = null;
+        }
+        if (fogRenderer != null) {
+            fogRenderer.dispose();
+            fogRenderer = null;
         }
     }
 }
