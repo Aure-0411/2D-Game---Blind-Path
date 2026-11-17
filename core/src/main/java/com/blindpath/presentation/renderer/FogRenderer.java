@@ -39,11 +39,11 @@ public class FogRenderer {
         batch.setShader(shader);
 
         // Charge une seule fois les 15 images du masque Circle.
-        this.snapFrames = new Texture[37];
+        this.snapFrames = new Texture[15];
         for (int i = 0; i < snapFrames.length; i++) {
             String path = String.format(
                     java.util.Locale.ROOT,
-                    "animations/snap/halo/Snap_Halo_%04d.png",
+                    "animations/snap/circle/Snap_Circle_%04d.png",
                     i);
             snapFrames[i] = new Texture(path);
         }
