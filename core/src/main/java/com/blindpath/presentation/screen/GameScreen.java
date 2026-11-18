@@ -5,18 +5,29 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.blindpath.Main;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
+import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.light.Light;
 import com.blindpath.domain.physics.CollisionWorld;
@@ -40,7 +51,6 @@ import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 import com.blindpath.presentation.renderer.MonsterRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.Color;
 
 public class GameScreen implements Screen {
 
@@ -71,8 +81,19 @@ public class GameScreen implements Screen {
     //monster (juste Jumper pour le moment)
     private Monster monster;
     private MonsterRenderer monsterRenderer;
+    private LabyrinthGrid monsterGrid;
     private final GameClock clock = new GameClock();
     private ShapeRenderer shapes;
+
+    private boolean paused = false;
+    private final Main main;
+    private Stage pauseStage;
+    private Skin pauseSkin;
+
+    public GameScreen(Main main) {
+        this.main = main;
+
+    }
 
     @Override
     public void show() {
@@ -89,7 +110,9 @@ public class GameScreen implements Screen {
             int mapWidth = map.getProperties().get("width", Integer.class);
             int mapHeight = map.getProperties().get("height", Integer.class);
             this.labyrinth = new Labyrinth(mapWidth, mapHeight, entrance, exit, obstacles);
-            LabyrinthGrid grid = new LabyrinthGrid(labyrinth);
+            // Grille du monstre : il occupe un bloc Monster.SIZE x Monster.SIZE,
+            // donc une case n'est praticable que si tout le bloc évite les murs.
+            monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
             renderer = new LabyrinthRenderer(map);
             fogRenderer = new FogRenderer();
 
@@ -106,13 +129,55 @@ public class GameScreen implements Screen {
                     GnomeSprites.ATLAS_PATH, GnomeSprites::regionName, Direction.DOWN, 0.15f);
             debugRenderer = new CollisionDebugRenderer();
             shapes = new ShapeRenderer();
-            monster = new Jumper(grid, new GridPosition((int) exit.getX(), (int) exit.getY()), new GdxAiPathfinder());
+            monster = new Jumper(monsterGrid, new GridPosition((int) exit.getX(), (int) exit.getY()), new GdxAiPathfinder());
+            level.setMonster(monster);
             clock.addListener(monster);
             monsterRenderer = new MonsterRenderer("jumper");
 
             camera = new OrthographicCamera();
             // FitViewport conserve les proportions et peut ajouter des bandes noires.
             viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+
+            // pause //
+            pauseStage = new Stage(new ScreenViewport());
+            pauseSkin = new Skin();
+            pauseSkin.add("default-font", new BitmapFont());
+            pauseSkin.getFont("default-font").getData().setScale(3f);
+
+            TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+            buttonStyle.font = pauseSkin.getFont("default-font");
+            buttonStyle.fontColor = Color.WHITE;
+            buttonStyle.overFontColor = Color.YELLOW;
+            buttonStyle.downFontColor = Color.GRAY;
+
+            pauseSkin.add("default", buttonStyle);
+
+            Table pauseTable = new Table();
+            pauseTable.setFillParent(true);
+
+            TextButton menuButton = new TextButton("Retour au menu", pauseSkin);
+            menuButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    main.setScreen(new MainMenuScreen(main));
+                    GameScreen.this.dispose();
+                }
+            });
+
+            TextButton quitButton = new TextButton("Quit", pauseSkin);
+            quitButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    Gdx.app.exit();
+                }
+            });
+
+            pauseTable.add(menuButton).width(500).height(100).padBottom(30);
+            pauseTable.row();
+            pauseTable.add(quitButton).width(500).height(100);
+
+            pauseStage.addActor(pauseTable);
+
         }
 
         // true centre la caméra dans le monde, ici en (15, 15).
@@ -121,35 +186,57 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // 1. Entrées + logique (déplacement avec collisions)
-        input.handleInput(delta);
-        level.update(delta);
-        light.update(delta);
-        // La position du modèle est le coin inférieur gauche : Light reçoit le centre.
-        Gnome gnome = level.getGnome();
-        light.updateHeroPosition(
-                gnome.getX() + gnome.getWidth() / 2f,
-                gnome.getY() + gnome.getHeight() / 2f);
 
-        light.setOrigin(
-                light.getHeroCenterX(),
-                light.getHeroCenterY()
-        );
-
-        GridPosition gnomeCell = new GridPosition((int) Math.floor(light.getHeroCenterX()), (int) Math.floor(light.getHeroCenterY()));
-        monster.setTarget(gnomeCell);
-        clock.update(delta);
-
-        if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-            if (light.snap()) {
-                monster.onSnap(new SnapEvent(light.getHeroCenterX(), light.getHeroCenterY(), SnapSource.HERO, 0));
+        // set the pause key and effect//
+        if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
+            paused = !paused;
+            if (paused) {
+                Gdx.input.setInputProcessor(pauseStage);
+            } else if (Gdx.input.getInputProcessor() == pauseStage) {
+                Gdx.input.setInputProcessor(null);
             }
         }
 
-        stateTime += delta;
+        if (!paused) {
+            // Les mises à jour du jeu.
+
+            // 1. Entrées + logique (déplacement avec collisions)
+            input.handleInput(delta);
+            level.update(delta);
+            // La règle de victoire appartient au modèle ; l'écran choisit l'affichage.
+            if (level.isCompleted()) {
+                main.setScreen(new EndScreen(main));
+                dispose();
+                return;
+            }
+            light.update(delta);
+            // La position du modèle est le coin inférieur gauche : Light reçoit le centre.
+            Gnome gnome = level.getGnome();
+            light.updateHeroPosition(
+                    gnome.getX() + gnome.getWidth() / 2f,
+                    gnome.getY() + gnome.getHeight() / 2f);
+
+            light.setOrigin(
+                    light.getHeroCenterX(),
+                    light.getHeroCenterY()
+            );
+
+            GridPosition gnomeCell = new GridPosition((int) Math.floor(light.getHeroCenterX()), (int) Math.floor(light.getHeroCenterY()));
+            // Le monstre vise un bloc praticable qui recouvre la case du gnome.
+            monster.setTarget(monsterGrid.anchorCovering(gnomeCell));
+            clock.update(delta);
+
+            if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+                if (light.snap()) {
+                    monster.onSnap(new SnapEvent(light.getHeroCenterX(), light.getHeroCenterY(), SnapSource.HERO, 0));
+                }
+            }
+
+            stateTime += delta;
+        }
         if (Gdx.input.isKeyJustPressed(Keys.F3)) {
             debugCollisions = !debugCollisions;
-           monsterVisible = !monsterVisible;
+            monsterVisible = !monsterVisible;
         }
 
         // 2. Dessin
@@ -166,7 +253,6 @@ public class GameScreen implements Screen {
             monsterRenderer.render(batch, monster, stateTime);
             batch.end();
         }
-
         // Dessine le voile avant le héros pour que celui-ci reste entièrement visible.
         fogRenderer.render(
                 camera,
@@ -178,7 +264,7 @@ public class GameScreen implements Screen {
                 light.getSnapY(),
                 light.getRevealProgress(),
                 light.getRevealRadius(),
-                delta
+                paused ? 0f : delta
         );
 
         batch.setProjectionMatrix(camera.combined);
@@ -196,17 +282,22 @@ public class GameScreen implements Screen {
             monsterRenderer.render(batch, monster, stateTime);
             batch.end();
 
-            float boxSize = 2f;
+            // On dessine la VRAIE hitbox (celle que Level utilise pour les dégâts),
+            // pas une copie du calcul : le debug montre ce que le jeu utilise vraiment.
+            Bounds hitbox = monster.getBounds();
             shapes.setProjectionMatrix(camera.combined);
             shapes.begin(ShapeRenderer.ShapeType.Line);
             shapes.setColor(Color.GREEN);
-            shapes.rect(
-                monster.getPosition().getColumn() + 0.5f - boxSize / 2,
-                monster.getPosition().getRow() + 0.5f - boxSize / 2,
-                boxSize, boxSize
-            );
+            shapes.rect(hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
             shapes.end();
         }
+
+        if (paused) {
+            pauseStage.getViewport().apply();
+            pauseStage.act(delta);
+            pauseStage.draw();
+        }
+
     }
 
     @Override
@@ -214,6 +305,9 @@ public class GameScreen implements Screen {
         // Adapte l'affichage à la fenêtre sans étirer la carte.
         if (viewport != null) {
             viewport.update(width, height, true);
+        }
+        if (pauseStage != null) {
+            pauseStage.getViewport().update(width, height, true);
         }
     }
 
@@ -230,6 +324,9 @@ public class GameScreen implements Screen {
     @Override
     public void hide() {
         // Masquer l'écran ne le détruit pas : il pourra être réaffiché.
+        if (Gdx.input.getInputProcessor() == pauseStage) {
+            Gdx.input.setInputProcessor(null);
+        }
     }
 
     @Override
@@ -273,6 +370,16 @@ public class GameScreen implements Screen {
         if (shapes != null) {
             shapes.dispose();
             shapes = null;
+        }
+
+        if (pauseStage != null) {
+            pauseStage.dispose();
+            pauseStage = null;
+        }
+
+        if (pauseSkin != null) {
+            pauseSkin.dispose();
+            pauseSkin = null;
         }
     }
 }
