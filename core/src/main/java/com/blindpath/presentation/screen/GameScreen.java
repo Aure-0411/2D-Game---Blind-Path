@@ -195,10 +195,16 @@ public class GameScreen implements Screen {
             batch.begin();
             monsterRenderer.render(batch, monster, stateTime);
             batch.end();
+
+            float boxSize = 2f;
             shapes.setProjectionMatrix(camera.combined);
             shapes.begin(ShapeRenderer.ShapeType.Line);
             shapes.setColor(Color.GREEN);
-            shapes.rect(monster.getPosition().getColumn(), monster.getPosition().getRow(), 1, 1);
+            shapes.rect(
+                monster.getPosition().getColumn() + 0.5f - boxSize / 2,
+                monster.getPosition().getRow() + 0.5f - boxSize / 2,
+                boxSize, boxSize
+            );
             shapes.end();
         }
     }
