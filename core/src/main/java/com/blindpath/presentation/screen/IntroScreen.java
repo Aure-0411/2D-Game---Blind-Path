@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.blindpath.Main;
 
-/** Joue l'animatique une seule fois, puis démarre la partie. */
+/** Joue l'animatique au lancement de l'application, puis ouvre le menu principal. */
 public class IntroScreen implements Screen {
     private static final String DIRECTORY = "animations/intro/";
 
@@ -66,7 +66,7 @@ public class IntroScreen implements Screen {
             frameIndex++;
         }
         if (frameIndex == frames.length) {
-            main.setScreen(new GameScreen(main));
+            main.setScreen(new MainMenuScreen(main));
             dispose();
             return;
         }
