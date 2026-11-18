@@ -42,7 +42,7 @@ public class MainMenuScreen implements Screen {
         startButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                main.setScreen(new IntroScreen(main));
+                main.setScreen(new GameScreen(main));
                 MainMenuScreen.this.dispose();
             }
         });
