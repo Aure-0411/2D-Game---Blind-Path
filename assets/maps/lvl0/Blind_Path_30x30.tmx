@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="12" nextobjectid="341">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="13" nextobjectid="344">
  <properties>
   <property name="lumiere_apercu" value="Le calque Eclairage_apercu est statique. Utiliser Lumieres pour le rendu dynamique du jeu."/>
   <property name="version_visuelle" value="Murs naturels et decors stylises valides - lumiere 02"/>
@@ -293,6 +293,13 @@
    <property name="usage" value="Apercu statique des deux lanternes. Masquer ce calque pour le moteur de lumiere dynamique."/>
   </properties>
  </imagelayer>
+ <objectgroup id="12" name="Coffre">
+  <object id="341" name="Coffre_01" x="250" y="3500" width="250" height="500">
+   <properties>
+    <property name="Orientation" value="RIGHT"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="6" name="Lumieres" visible="0">
   <object id="42" name="Lumiere_1" x="250" y="387.5">
    <properties>
@@ -327,7 +334,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="8" name="Collisions">
+ <objectgroup id="8" name="Collisions" visible="0">
   <object id="46" name="Mur" x="0" y="0" width="250" height="250"/>
   <object id="47" name="Mur" x="250" y="0" width="250" height="250"/>
   <object id="48" name="Mur" x="500" y="0" width="250" height="250"/>

@@ -6,7 +6,7 @@ public class Light implements Revealable {
 
     public static float DEFAULT_RADIUS = 4.5f;
     public static float DEFAULT_REVEAL_DURATION = 1f;
-    public static final float DEFAULT_COOLDOWN = 2f;
+    public static final float DEFAULT_COOLDOWN = 1.5f;
 
     private final float baseRadius;
     private final float revealDuration;
