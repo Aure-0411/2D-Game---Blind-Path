@@ -10,11 +10,23 @@ import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Wall;
+import com.blindpath.domain.monster.ChaseStrategy;
+import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.MovementStrategy;
+import com.blindpath.domain.pathfinding.GridPosition;
+import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.physics.AabbCollisionWorld;
+import com.blindpath.infrastructure.pathfinding.GdxAiPathfinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LevelTest {
+
+    private static class TestMonster extends Monster {
+        TestMonster(LabyrinthGrid grid, MovementStrategy strategy, GridPosition start) {
+            super(grid, strategy, start);
+        }
+    }
 
     private Gnome gnome;
     private Level level;
@@ -117,5 +129,26 @@ class LevelTest {
     void isCompleted_onExit_returnsTrue() {
         gnome.setPosition(9f, 5f);
         assertTrue(level.isCompleted());
+    }
+
+    @Test
+    void update_afterImmunityDuration_gnomeIsNoLongerImmune() {
+        gnome.takeMonsterHit();
+
+        level.update(2f);
+
+        assertFalse(gnome.isImmune());
+    }
+
+    @Test
+    void update_afterCollisionWithMonster_gnomeLosesTwoHalfHearts() {
+        LabyrinthGrid grid = new LabyrinthGrid(level.getLabyrinth());
+        MovementStrategy strategy = new ChaseStrategy(new GdxAiPathfinder());
+        Monster monster = new TestMonster(grid, strategy, new GridPosition(1, 4));
+        level.setMonster(monster);
+
+        level.update(0.1f);
+
+        assertEquals(gnome.getMaxLife() - 2, gnome.getLife());
     }
 }
