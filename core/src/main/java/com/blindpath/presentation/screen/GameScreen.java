@@ -27,6 +27,7 @@ import com.blindpath.domain.game.Level;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
+import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.light.Light;
 import com.blindpath.domain.physics.CollisionWorld;
@@ -38,6 +39,18 @@ import com.blindpath.presentation.renderer.CollisionDebugRenderer;
 import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
+
+//monster
+import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.Jumper;
+import com.blindpath.domain.time.GameClock;
+import com.blindpath.domain.pathfinding.LabyrinthGrid;
+import com.blindpath.domain.pathfinding.GridPosition;
+import com.blindpath.infrastructure.pathfinding.GdxAiPathfinder;
+import com.blindpath.domain.light.SnapEvent;
+import com.blindpath.domain.light.SnapSource;
+import com.blindpath.presentation.renderer.MonsterRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameScreen implements Screen {
 
@@ -62,7 +75,15 @@ public class GameScreen implements Screen {
     private CharacterRenderer<Gnome> characterRenderer;
     private CollisionDebugRenderer debugRenderer;
     private boolean debugCollisions = false;
+    private boolean monsterVisible = false;
     private float stateTime;
+
+    //monster (juste Jumper pour le moment)
+    private Monster monster;
+    private MonsterRenderer monsterRenderer;
+    private LabyrinthGrid monsterGrid;
+    private final GameClock clock = new GameClock();
+    private ShapeRenderer shapes;
 
     private boolean paused = false;
     private final Main main;
@@ -89,6 +110,9 @@ public class GameScreen implements Screen {
             int mapWidth = map.getProperties().get("width", Integer.class);
             int mapHeight = map.getProperties().get("height", Integer.class);
             this.labyrinth = new Labyrinth(mapWidth, mapHeight, entrance, exit, obstacles);
+            // Grille du monstre : il occupe un bloc Monster.SIZE x Monster.SIZE,
+            // donc une case n'est praticable que si tout le bloc évite les murs.
+            monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
             renderer = new LabyrinthRenderer(map);
             fogRenderer = new FogRenderer();
 
@@ -104,6 +128,11 @@ public class GameScreen implements Screen {
             characterRenderer = new CharacterRenderer<>(
                     GnomeSprites.ATLAS_PATH, GnomeSprites::regionName, Direction.DOWN, 0.15f);
             debugRenderer = new CollisionDebugRenderer();
+            shapes = new ShapeRenderer();
+            monster = new Jumper(monsterGrid, new GridPosition((int) exit.getX(), (int) exit.getY()), new GdxAiPathfinder());
+            level.setMonster(monster);
+            clock.addListener(monster);
+            monsterRenderer = new MonsterRenderer("jumper");
 
             camera = new OrthographicCamera();
             // FitViewport conserve les proportions et peut ajouter des bandes noires.
@@ -192,14 +221,22 @@ public class GameScreen implements Screen {
                     light.getHeroCenterY()
             );
 
+            GridPosition gnomeCell = new GridPosition((int) Math.floor(light.getHeroCenterX()), (int) Math.floor(light.getHeroCenterY()));
+            // Le monstre vise un bloc praticable qui recouvre la case du gnome.
+            monster.setTarget(monsterGrid.anchorCovering(gnomeCell));
+            clock.update(delta);
+
             if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-                light.snap();
+                if (light.snap()) {
+                    monster.onSnap(new SnapEvent(light.getHeroCenterX(), light.getHeroCenterY(), SnapSource.HERO, 0));
+                }
             }
 
             stateTime += delta;
         }
         if (Gdx.input.isKeyJustPressed(Keys.F3)) {
             debugCollisions = !debugCollisions;
+            monsterVisible = !monsterVisible;
         }
 
         // 2. Dessin
@@ -209,6 +246,13 @@ public class GameScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.render(camera);
+
+        if (!monsterVisible) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            monsterRenderer.render(batch, monster, stateTime);
+            batch.end();
+        }
         // Dessine le voile avant le héros pour que celui-ci reste entièrement visible.
         fogRenderer.render(
                 camera,
@@ -230,6 +274,22 @@ public class GameScreen implements Screen {
 
         if (debugCollisions) {
             debugRenderer.render(camera, level);
+        }
+
+        if (monsterVisible) {
+            batch.setProjectionMatrix(camera.combined);
+            batch.begin();
+            monsterRenderer.render(batch, monster, stateTime);
+            batch.end();
+
+            // On dessine la VRAIE hitbox (celle que Level utilise pour les dégâts),
+            // pas une copie du calcul : le debug montre ce que le jeu utilise vraiment.
+            Bounds hitbox = monster.getBounds();
+            shapes.setProjectionMatrix(camera.combined);
+            shapes.begin(ShapeRenderer.ShapeType.Line);
+            shapes.setColor(Color.GREEN);
+            shapes.rect(hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
+            shapes.end();
         }
 
         if (paused) {
@@ -300,6 +360,16 @@ public class GameScreen implements Screen {
         if (fogRenderer != null) {
             fogRenderer.dispose();
             fogRenderer = null;
+        }
+
+        if (monsterRenderer != null) {
+            monsterRenderer.dispose();
+            monsterRenderer = null;
+        }
+
+        if (shapes != null) {
+            shapes.dispose();
+            shapes = null;
         }
 
         if (pauseStage != null) {
