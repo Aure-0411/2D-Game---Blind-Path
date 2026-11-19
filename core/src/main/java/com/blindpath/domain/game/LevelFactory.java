@@ -12,6 +12,7 @@ import com.blindpath.domain.chest.LootTable;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.LabyrinthLoader;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
@@ -77,8 +78,12 @@ public class LevelFactory {
         LabyrinthGrid monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
         Pathfinder pathfinder = new GdxAiPathfinder();
 
+        MonsterType mapMonsterType = loader.loadMonsterType(cfg.mapPath());
+        MonsterType effectiveType = (mapMonsterType != null) ? mapMonsterType : cfg.monsterType();
+
         GridPosition monsterSpawn = loader.loadMonsterSpawn(cfg.mapPath());
-        Monster monster = cfg.monsterType().create(monsterGrid, monsterSpawn, pathfinder);
+        Monster monster = effectiveType.create(monsterGrid, monsterSpawn, pathfinder);
+
 
         gnome.setPosition(
                 labyrinth.getEntrance().getX(),

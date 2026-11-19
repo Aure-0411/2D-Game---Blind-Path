@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PointMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -14,6 +15,7 @@ import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.labyrinth.Wall;
+import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.LabyrinthLoader;
@@ -152,6 +154,36 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
     }
 
     @Override
+    public MonsterType loadMonsterType(String mapPath) {
+        if (mapPath == null || mapPath.isBlank()) {
+            throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
+        }
+        TiledMap map = new TmxMapLoader().load(mapPath);
+        try {
+            return loadMonsterType(map);
+        } finally {
+            map.dispose();
+        }
+    }
+
+    public MonsterType loadMonsterType(TiledMap map) {
+        if (map == null) {
+            throw new IllegalArgumentException("La carte doit être renseignée.");
+        }
+        MapLayer layer = map.getLayers().get("monstre_start");
+        if (layer == null || layer.getObjects().getCount() != 1) {
+            return null;
+        }
+        MapObject object = layer.getObjects().get(0);
+        String rawType = object.getProperties().get("monsterType", String.class);
+        if (rawType == null || rawType.isBlank()) {
+            return null;
+        }
+        return MonsterType.valueOf(rawType.trim().toUpperCase());
+    }
+
+    
+    @Override
     public GridPosition loadMonsterSpawn(String mapPath) {
         if (mapPath == null || mapPath.isBlank()) {
             throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
@@ -177,7 +209,7 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         float px;
         float py;
 
-        if (object instanceof com.badlogic.gdx.maps.objects.PointMapObject pointObj) {
+        if (object instanceof PointMapObject pointObj) {
             px = pointObj.getPoint().x;
             py = pointObj.getPoint().y;
         } else if (object instanceof RectangleMapObject rectObj) {
@@ -185,15 +217,16 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
             py = rectObj.getRectangle().y;
         } else {
             throw new IllegalArgumentException(
-                "L'objet dans monstre_start doit être un point ou un rectangle : " + object.getName());
+                    "L'objet dans monstre_start doit être un point ou un rectangle : " + object.getName());
         }
 
-        return new GridPosition(
-                toGridCoordinate(px),
-                toGridCoordinate(py));
+        int col = toGridCoordinate(px);
+        int row = toGridCoordinate(py);
+
+        // Le point Tiled est au centre de la zone 2x2 du monstre -> coin bas-gauche = (col - 1, row - 1)
+        return new GridPosition(col - 1, row - 1);
+
     }
-
-
 
     // Entrée et sortie suivent les mêmes règles : on partage leur validation.
     private RectangleMapObject loadOpening(TiledMap map, String name) {
