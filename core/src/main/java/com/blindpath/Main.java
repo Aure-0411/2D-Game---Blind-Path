@@ -1,7 +1,7 @@
 package com.blindpath;
 
 import com.badlogic.gdx.Game;
-import com.blindpath.presentation.screen.IntroScreen;
+import com.blindpath.presentation.screen.MainMenuScreen;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all
@@ -11,7 +11,8 @@ public class Main extends Game {
 
     @Override
     public void create() {
-        setScreen(new IntroScreen(this));
+        // setScreen(new IntroScreen(this));
+        setScreen(new MainMenuScreen(this));
     }
 
     // @Override

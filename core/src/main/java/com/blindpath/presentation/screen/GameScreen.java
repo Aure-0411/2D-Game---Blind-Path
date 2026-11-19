@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -24,33 +25,31 @@ import com.blindpath.Main;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
+import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
-import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.light.Light;
+import com.blindpath.domain.light.SnapEvent;
+import com.blindpath.domain.light.SnapSource;
+import com.blindpath.domain.monster.Jumper;
+import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.pathfinding.GridPosition;
+import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.physics.CollisionWorld;
+import com.blindpath.domain.time.GameClock;
 import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
+import com.blindpath.infrastructure.pathfinding.GdxAiPathfinder;
 import com.blindpath.infrastructure.physics.Box2DCollisionWorld;
+import com.blindpath.presentation.hud.Hud;
 import com.blindpath.presentation.input.InputController;
 import com.blindpath.presentation.renderer.CharacterRenderer;
 import com.blindpath.presentation.renderer.CollisionDebugRenderer;
 import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
-
-//monster
-import com.blindpath.domain.monster.Monster;
-import com.blindpath.domain.monster.Jumper;
-import com.blindpath.domain.time.GameClock;
-import com.blindpath.domain.pathfinding.LabyrinthGrid;
-import com.blindpath.domain.pathfinding.GridPosition;
-import com.blindpath.infrastructure.pathfinding.GdxAiPathfinder;
-import com.blindpath.domain.light.SnapEvent;
-import com.blindpath.domain.light.SnapSource;
 import com.blindpath.presentation.renderer.MonsterRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameScreen implements Screen {
 
@@ -90,6 +89,8 @@ public class GameScreen implements Screen {
     private Stage pauseStage;
     private Skin pauseSkin;
 
+    private Hud hud;
+
     public GameScreen(Main main) {
         this.main = main;
 
@@ -99,6 +100,7 @@ public class GameScreen implements Screen {
     public void show() {
         // show() est appelée quand l'écran devient actif. Ce contrôle évite de recharger les ressources si la même instance est réaffichée.
         if (map == null) {
+            hud = new Hud();
             // Chargement provisoire ici ; il rejoindra ensuite le chargeur dédié.
             map = new TmxMapLoader().load(MAP_PATH);
             TiledLabyrinthLoader loader = new TiledLabyrinthLoader();
@@ -291,7 +293,8 @@ public class GameScreen implements Screen {
             shapes.rect(hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
             shapes.end();
         }
-
+        hud.update(light.getCooldownProgress(), level.getGnome().getLife());;
+        hud.render(paused ? 0f : delta);
         if (paused) {
             pauseStage.getViewport().apply();
             pauseStage.act(delta);
@@ -305,6 +308,9 @@ public class GameScreen implements Screen {
         // Adapte l'affichage à la fenêtre sans étirer la carte.
         if (viewport != null) {
             viewport.update(width, height, true);
+        }
+        if (hud != null) {
+            hud.resize(width, height);
         }
         if (pauseStage != null) {
             pauseStage.getViewport().update(width, height, true);
@@ -380,6 +386,10 @@ public class GameScreen implements Screen {
         if (pauseSkin != null) {
             pauseSkin.dispose();
             pauseSkin = null;
+        }
+        if (hud != null) {
+            hud.dispose();
+            hud = null;
         }
     }
 }
