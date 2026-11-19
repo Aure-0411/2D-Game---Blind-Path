@@ -11,12 +11,17 @@ public class Gnome extends Character{
         super(2.75f, 0, 0, HITBOX_SIZE, HITBOX_SIZE);
     }
 
-    public void takeMonsterHit() {
+    @Override
+    public void takeDamage(int amount) {
         if (isImmune()) {
             return;
         }
-        setLife(Math.max(0, getLife() - MONSTER_DAMAGE));
+        setLife(Math.max(0, getLife() - amount));
         immunityTimer = IMMUNITY_DURATION;
+    }
+
+    public void takeMonsterHit() {
+        takeDamage(MONSTER_DAMAGE);
     }
 
     public boolean isImmune() {
