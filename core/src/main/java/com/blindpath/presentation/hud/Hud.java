@@ -1,15 +1,27 @@
 package com.blindpath.presentation.hud;
 
+
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.blindpath.domain.inventory.BearTrap;
+import com.blindpath.domain.inventory.Booster;
+import com.blindpath.domain.inventory.Compass;
+import com.blindpath.domain.inventory.Dynamite;
+import com.blindpath.domain.inventory.Heart;
+import com.blindpath.domain.inventory.Item;
+import com.blindpath.domain.inventory.ItemStack;
 
 public class Hud {
 
@@ -22,6 +34,17 @@ public class Hud {
     private final TextureRegionDrawable heartFullDrawable;
     private final TextureRegionDrawable heartHalfDrawable;
     private final TextureRegionDrawable heartEmptyDrawable;
+    private final Image[] itemImages;
+    private final Label[] itemQuantities;
+    private final BitmapFont itemFont;
+    private final Texture dynamiteTexture;
+    private final Texture bearTrapTexture;
+    private final Texture boosterTexture;
+    private final Texture compassTexture;
+    private final TextureRegionDrawable dynamiteDrawable;
+    private final TextureRegionDrawable bearTrapDrawable;
+    private final TextureRegionDrawable boosterDrawable;
+    private final TextureRegionDrawable compassDrawable;
 
     private final Image[] hearts;
 
@@ -81,9 +104,42 @@ public class Hud {
             root.row();
         }
 
+        // Items//
+        // Les images sont chargées une seule fois, puis réutilisées à chaque mise à jour.
+        dynamiteTexture = new Texture("items/inventaire/dynamite__icone.png");
+        bearTrapTexture = new Texture("items/inventaire/piege_a_ours_icone.png");
+        boosterTexture = new Texture("items/inventaire/recharge_magique_icone.png");
+        compassTexture = new Texture("items/inventaire/boussole_icone.png");
+        dynamiteDrawable = new TextureRegionDrawable(new TextureRegion(dynamiteTexture));
+        bearTrapDrawable = new TextureRegionDrawable(new TextureRegion(bearTrapTexture));
+        boosterDrawable = new TextureRegionDrawable(new TextureRegion(boosterTexture));
+        compassDrawable = new TextureRegionDrawable(new TextureRegion(compassTexture));
+
+        Table inventoryTable = new Table();
+        inventoryTable.setFillParent(true);
+        inventoryTable.right().padRight(30);
+        itemImages = new Image[5];
+        itemQuantities = new Label[5];
+        itemFont = new BitmapFont();
+        itemFont.getData().setScale(1.5f);
+
+        Label.LabelStyle quantityStyle = new Label.LabelStyle(itemFont, Color.WHITE);
+        for (int i = 0; i < 5; i++) {
+            Table slotTable = new Table();
+            itemImages[i] = new Image();
+            itemQuantities[i] = new Label("", quantityStyle);
+            slotTable.setBackground(white.tint(Color.valueOf("#000000")));
+            inventoryTable.add(slotTable).size(64).padBottom(10);
+            inventoryTable.row();
+            slotTable.add(itemImages[i]).size(44);
+            slotTable.row();
+            slotTable.add(itemQuantities[i]).right();
+        }
+        stage.addActor(inventoryTable);
+
     }
 
-    public void update(float cooldownProgress, int life) {
+    public void update(float cooldownProgress, int life, List<ItemStack> stacks) {
         cooldownBar.setValue(cooldownProgress);
         for (int i = 0; i < hearts.length; i++) {
 
@@ -98,6 +154,38 @@ public class Hud {
                 hearts[i].setDrawable(heartEmptyDrawable);
             }
         }
+
+        for (int i = 0; i < itemImages.length; i++) {
+            if (i < stacks.size()) {
+                ItemStack stack = stacks.get(i);
+                itemImages[i].setDrawable(getItemDrawable(stack.getItem()));
+                itemQuantities[i].setText(Integer.toString(stack.getQuantity()));
+            } else {
+                // Efface l'ancien contenu quand cet emplacement devient vide.
+                itemQuantities[i].setText("");
+                itemImages[i].setDrawable(null);
+            }
+        }
+    }
+
+    // L'association entre un objet métier et son image appartient au HUD.
+    private TextureRegionDrawable getItemDrawable(Item item) {
+        if (item instanceof Heart) {
+            return heartFullDrawable;
+        }
+        if (item instanceof Dynamite) {
+            return dynamiteDrawable;
+        }
+        if (item instanceof BearTrap) {
+            return bearTrapDrawable;
+        }
+        if (item instanceof Booster) {
+            return boosterDrawable;
+        }
+        if (item instanceof Compass) {
+            return compassDrawable;
+        }
+        return null;
     }
 
     public void render(float delta) {
@@ -116,6 +204,11 @@ public class Hud {
         heartFullTexture.dispose();
         heartHalfTexture.dispose();
         heartEmptyTexture.dispose();
+        itemFont.dispose();
+        dynamiteTexture.dispose();
+        bearTrapTexture.dispose();
+        boosterTexture.dispose();
+        compassTexture.dispose();
     }
 
 }
