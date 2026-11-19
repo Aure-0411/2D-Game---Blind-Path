@@ -2,6 +2,7 @@ package com.blindpath.domain.character;
 
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Collidable;
+import com.blindpath.domain.inventory.Inventory;
 
 public abstract class Character implements Movable, Collidable{
     private int life;
@@ -10,6 +11,11 @@ public abstract class Character implements Movable, Collidable{
     private float x, y;
     private float width, height;
     private Direction facing = Direction.DOWN;
+    public static final int MONSTER_DAMAGE = 2;
+    public static final float IMMUNITY_DURATION = 2f;
+
+    private final Inventory inventory = new Inventory();
+    private float immunityTimer = 0f;
 
     public Character (float speed, float x, float y, float width, float height){
         this.maxLife = 6;
@@ -64,5 +70,39 @@ public abstract class Character implements Movable, Collidable{
     @Override
     public Bounds getBounds() {
         return new Bounds(x, y, width, height);
+    }
+
+    // ---- Gestion de vie ----
+    public void takeMonsterHit() {
+        if (isImmune()) {
+            return;
+        }
+        setLife(Math.max(0, getLife() - MONSTER_DAMAGE));
+        immunityTimer = IMMUNITY_DURATION;
+    }
+
+    public boolean isImmune() {
+        return immunityTimer > 0;
+    }
+
+    public void updateImmunity(float deltaTime) {
+        immunityTimer = Math.max(0f, immunityTimer - deltaTime);
+    }
+
+    public boolean isDead() {
+        return getLife() == 0;
+    }
+
+    // ---- Inventaire ----
+    public Inventory getInventory() {
+        return inventory;
+    }
+    public void resetForRetry() {
+        life = maxLife;
+        immunityTimer = 0f;
+        // monsterCollisionDisabledRemaining = 0;
+        // compassEffects.clear();
+        // light.reset();
+        // inventory et skills sont conservés
     }
 }
