@@ -8,6 +8,7 @@ import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.time.TickListener;
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Collidable;
+import com.blindpath.domain.time.GameTimer;
 
 /**
  * Classe de base des monstres. Possèdent tous : grid position, target,
@@ -28,6 +29,7 @@ public abstract class Monster implements SnapListener, TickListener, Collidable 
     private int casePerMove = DEFAULT_CASE_PER_MOVE;
     private int snapDistance = DEFAULT_SNAP_DISTANCE;
     private boolean visible = false;
+    private final GameTimer immobilization = new GameTimer();
 
     protected Monster(LabyrinthGrid grid, MovementStrategy strategy, GridPosition start) {
         if (grid == null || strategy == null || start == null)
@@ -69,6 +71,33 @@ public abstract class Monster implements SnapListener, TickListener, Collidable 
         this.visible = visible;
     }
 
+    public void immobilize(float duration) {
+        startLongest(immobilization, duration);
+    }
+
+    private static void startLongest(GameTimer timer, float duration) {
+        if (!(duration >= 0)) {
+            throw new IllegalArgumentException("duration must be >= 0");
+        }
+        
+        if (duration > timer.getRemaining()) {
+            timer.start(duration);
+        }
+
+    }
+
+    public boolean isImmobilized() {
+        return immobilization.isRunning();
+    }
+
+    public boolean canMove() {
+        return !isImmobilized();
+    }
+
+    public void update(float deltaTime) {
+        immobilization.update(deltaTime);
+    }
+
     protected void moveTowards(GridPosition goal, int steps) {
         for (int i = 0; i < steps; i++)
             position = strategy.nextStep(grid, position, goal);
@@ -76,13 +105,15 @@ public abstract class Monster implements SnapListener, TickListener, Collidable 
 
     @Override
     public void onTick(long tick) {
+        if (!canMove()) return;
         if (target != null && tick % ticksPerMove == 0) moveTowards(target, casePerMove);
     }
 
     @Override
     public void onSnap(SnapEvent event) {
-        GridPosition origin = new GridPosition(
-            (int) Math.floor(event.getSourceX()), (int) Math.floor(event.getSourceY()));
+        if (!canMove()) return;
+        GridPosition origin = grid.anchorCovering(new GridPosition(
+            (int) Math.floor(event.getSourceX()), (int) Math.floor(event.getSourceY())));
         moveTowards(origin, snapDistance);
     }
 
