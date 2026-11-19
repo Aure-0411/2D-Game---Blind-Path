@@ -41,6 +41,7 @@ class LabyrinthGridAgentSizeTest {
     @Test
     void agentSizeBelowOneIsRejected() {
         assertThrows(IllegalArgumentException.class, () -> grid(0, List.of()));
+        assertThrows(IllegalArgumentException.class, () -> grid(-1, List.of()));
     }
 
     @Test
@@ -95,5 +96,23 @@ class LabyrinthGridAgentSizeTest {
     void anchorCoveringWithSizeOneIsTheCellItself() {
         LabyrinthGrid small = grid(1, List.of(new Wall(3, 0, 1, 10)));
         assertEquals(cell(2, 4), small.anchorCovering(cell(2, 4)));
+    }
+
+    @Test
+    void anchorCoveringShiftsBothCoordinatesAtTopRightCorner() {
+        assertEquals(cell(8, 8), grid(2, List.of()).anchorCovering(cell(9, 9)));
+    }
+
+    @Test
+    void anchorCoveringReturnsOriginalCellWhenNoBlockFits() {
+        LabyrinthGrid blocked = grid(2, List.of(new Wall(0, 0, 10, 10)));
+        assertEquals(cell(4, 4), blocked.anchorCovering(cell(4, 4)));
+    }
+
+    @Test
+    void agentBiggerThanMapCannotWalkOrFindNeighbors() {
+        LabyrinthGrid oversized = grid(11, List.of());
+        assertFalse(oversized.isWalkable(cell(0, 0)));
+        assertTrue(oversized.getNeighbors(cell(0, 0)).isEmpty());
     }
 }
