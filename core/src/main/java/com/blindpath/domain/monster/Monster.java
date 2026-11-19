@@ -1,6 +1,5 @@
 package com.blindpath.domain.monster;
 
-import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapListener;
 import com.blindpath.domain.pathfinding.GridPosition;
