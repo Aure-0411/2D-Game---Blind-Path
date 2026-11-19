@@ -6,12 +6,18 @@ public class Gnome extends Character{
     public static final float IMMUNITY_DURATION = 2f;
 
     private float immunityTimer = 0f;
+    private boolean invincible;
 
     public Gnome() {
         super(2.75f, 0, 0, HITBOX_SIZE, HITBOX_SIZE);
     }
 
     public void takeMonsterHit() {
+
+        if (invincible) {
+            return;
+        }
+
         if (isImmune()) {
             return;
         }
@@ -29,5 +35,9 @@ public class Gnome extends Character{
 
     public boolean isDead() {
         return getLife() == 0;
+    }
+
+    public void toggleInvincible() {
+        invincible = !invincible;
     }
 }
