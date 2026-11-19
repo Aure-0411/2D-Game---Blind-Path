@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.inventory.Heart;
 import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.light.SnapEvent;
+import com.blindpath.domain.light.SnapSource;
 
 public class ChestTest {
 
@@ -26,6 +28,47 @@ public class ChestTest {
                 () -> assertTrue(chest.isOpened()),
                 () -> assertEquals(1, gnome.getInventory().getStacks().size()),
                 () -> assertEquals(1, gnome.getInventory().getStacks().get(0).getQuantity()));
+    }
+
+    @Test
+    void onSnap_opensChestWhenWithinTwoCellsOfCenter() {
+        Gnome gnome = new Gnome();
+        // Coffre BOTTOM en (0, 0) -> taille 2x1, centre en (1.0f, 0.5f)
+        Chest chest = new Chest(0, 0, Border.BOTTOM, new LootResult(new Heart(), 1));
+        chest.setOpener(gnome);
+
+        // Snap à exactement 2.0f du centre (3.0f, 0.5f)
+        chest.onSnap(new SnapEvent(3.0f, 0.5f, SnapSource.HERO, 0));
+
+        assertAll(
+                () -> assertTrue(chest.isOpened()),
+                () -> assertEquals(2f, chest.getActivationRadius()),
+                () -> assertEquals(1, gnome.getInventory().getStacks().size()));
+    }
+
+    @Test
+    void onSnap_doesNotOpenChestWhenBeyondTwoCells() {
+        Gnome gnome = new Gnome();
+        // Centre en (1.0f, 0.5f)
+        Chest chest = new Chest(0, 0, Border.BOTTOM, new LootResult(new Heart(), 1));
+        chest.setOpener(gnome);
+
+        // Snap à 2.1f du centre (3.1f, 0.5f) -> hors de portée
+        chest.onSnap(new SnapEvent(3.1f, 0.5f, SnapSource.HERO, 0));
+
+        assertAll(
+                () -> assertFalse(chest.isOpened()),
+                () -> assertTrue(gnome.getInventory().getStacks().isEmpty()));
+    }
+
+    @Test
+    void onSnap_withoutOpenerOrNullEvent_doesNothing() {
+        Chest chest = new Chest(0, 0, Border.BOTTOM, new LootResult(new Heart(), 1));
+
+        chest.onSnap(null);
+        chest.onSnap(new SnapEvent(1.0f, 0.5f, SnapSource.HERO, 0));
+
+        assertFalse(chest.isOpened());
     }
 
     @Test
