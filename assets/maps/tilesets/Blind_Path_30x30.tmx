@@ -627,6 +627,9 @@
  </objectgroup>
  <objectgroup id="11" name="monstre_start">
   <object id="340" name="Monster" x="7000" y="500">
+   <properties>
+    <property name="monsterType" value="JUMPER"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>
