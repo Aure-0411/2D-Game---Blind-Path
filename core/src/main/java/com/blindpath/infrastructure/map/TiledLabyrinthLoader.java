@@ -7,17 +7,42 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
+import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.labyrinth.Wall;
+import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.LabyrinthLoader;
 
-public class TiledLabyrinthLoader {
+public class TiledLabyrinthLoader implements LabyrinthLoader {
 
     // Même conversion que dans LabyrinthRenderer : 250 pixels = une case.
     private static final float UNIT_SCALE = 1f / 250f;
+
+    @Override
+    public Labyrinth load(String mapPath) {
+        if (mapPath == null || mapPath.isBlank()) {
+            throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
+        }
+
+        TiledMap map = new TmxMapLoader().load(mapPath);
+        try {
+            List<Obstacle> obstacles = loadObstacles(map);
+            Entrance entrance = loadEntrance(map);
+            Exit exit = loadExit(map);
+
+            int width = map.getProperties().get("width", Integer.class);
+            int height = map.getProperties().get("height", Integer.class);
+
+            return new Labyrinth(width, height, entrance, exit, obstacles);
+        } finally {
+            map.dispose();
+        }
+    }
 
     /**
      * Convertit les rectangles Tiled en obstacles indépendants de LibGDX.
@@ -82,6 +107,93 @@ public class TiledLabyrinthLoader {
         validateOpeningSize(rectangle, border);
         return new Exit(toGridCoordinate(rectangle.x), toGridCoordinate(rectangle.y), border);
     }
+
+    @Override
+    public List<ChestSpawn> loadChestSpawns(String mapPath) {
+        if (mapPath == null || mapPath.isBlank()) {
+            throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
+        }
+        TiledMap map = new TmxMapLoader().load(mapPath);
+        try {
+            return loadChestSpawns(map);
+        } finally {
+            map.dispose();
+        }
+    }
+
+    public List<ChestSpawn> loadChestSpawns(TiledMap map) {
+        if (map == null) {
+            throw new IllegalArgumentException("La carte doit être renseignée.");
+        }
+        MapLayer layer = map.getLayers().get("Coffre");
+        if (layer == null) {
+            return List.of();
+        }
+
+        List<ChestSpawn> spawns = new ArrayList<>();
+        for (MapObject object : layer.getObjects()) {
+            if (!(object instanceof RectangleMapObject rectObj)) {
+                throw new IllegalArgumentException("Le calque Coffre doit contenir uniquement des rectangles.");
+            }
+            Rectangle rect = rectObj.getRectangle();
+            String rawOrientation = object.getProperties().get("Orientation", String.class);
+            if (rawOrientation == null || rawOrientation.isBlank()) {
+                throw new IllegalArgumentException("Propriété Orientation manquante sur le coffre.");
+            }
+            Border orientation = Border.valueOf(rawOrientation.toUpperCase());
+            validateOpeningSize(rect, orientation);
+
+            spawns.add(new ChestSpawn(
+                toGridCoordinate(rect.x),
+                toGridCoordinate(rect.y),
+                orientation));
+        }
+        return spawns;
+    }
+
+    @Override
+    public GridPosition loadMonsterSpawn(String mapPath) {
+        if (mapPath == null || mapPath.isBlank()) {
+            throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
+        }
+        TiledMap map = new TmxMapLoader().load(mapPath);
+        try {
+            return loadMonsterSpawn(map);
+        } finally {
+            map.dispose();
+        }
+    }
+
+    public GridPosition loadMonsterSpawn(TiledMap map) {
+        if (map == null) {
+            throw new IllegalArgumentException("La carte doit être renseignée.");
+        }
+        MapLayer layer = map.getLayers().get("monstre_start");
+        if (layer == null || layer.getObjects().getCount() != 1) {
+            throw new IllegalArgumentException("Le calque monstre_start doit contenir exactement un objet.");
+        }
+
+        MapObject object = layer.getObjects().get(0);
+        float px;
+        float py;
+
+        if (object instanceof com.badlogic.gdx.maps.objects.PointMapObject pointObj) {
+            px = pointObj.getPoint().x;
+            py = pointObj.getPoint().y;
+        } else if (object instanceof RectangleMapObject rectObj) {
+            px = rectObj.getRectangle().x;
+            py = rectObj.getRectangle().y;
+        } else {
+            throw new IllegalArgumentException(
+                "L'objet dans monstre_start doit être un point ou un rectangle : " + object.getName());
+        }
+
+        return new GridPosition(
+                toGridCoordinate(px),
+                toGridCoordinate(py));
+    }
+
+
 
     // Entrée et sortie suivent les mêmes règles : on partage leur validation.
     private RectangleMapObject loadOpening(TiledMap map, String name) {
