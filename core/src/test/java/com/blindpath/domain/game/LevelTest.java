@@ -13,6 +13,7 @@ import com.blindpath.domain.labyrinth.Wall;
 import com.blindpath.domain.monster.ChaseStrategy;
 import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.monster.MovementStrategy;
+import com.blindpath.domain.object.PlacedBearTrap;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.physics.AabbCollisionWorld;
@@ -150,5 +151,19 @@ class LevelTest {
         level.update(0.1f);
 
         assertEquals(gnome.getMaxLife() - 2, gnome.getLife());
+    }
+
+    @Test
+    void update_monsterOnBearTrap_monsterIsImmobilized() {
+        LabyrinthGrid grid = new LabyrinthGrid(level.getLabyrinth());
+        MovementStrategy strategy = new ChaseStrategy(new GdxAiPathfinder());
+        Monster monster = new TestMonster(grid, strategy, new GridPosition(5, 4));
+        level.setMonster(monster);
+        PlacedBearTrap placedBearTrap = new PlacedBearTrap(5f,4f);
+        level.addPlacedObject(placedBearTrap);
+
+        level.update(0.1f);
+
+        assertTrue(monster.isImmobilized());
     }
 }
