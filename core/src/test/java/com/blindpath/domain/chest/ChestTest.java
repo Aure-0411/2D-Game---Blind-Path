@@ -31,34 +31,20 @@ public class ChestTest {
     }
 
     @Test
-    void onSnap_opensChestWhenWithinTwoCellsOfCenter() {
+    void onSnap_usesEllipticalRangeMatchingChestOrientation() {
         Gnome gnome = new Gnome();
         // Coffre BOTTOM en (0, 0) -> taille 2x1, centre en (1.0f, 0.5f)
+        // Avec DEFAULT_ACTIVATION_MARGIN = 1.0f : rx = 2.0f, ry = 1.5f
         Chest chest = new Chest(0, 0, Border.BOTTOM, new LootResult(new Heart(), 1));
         chest.setOpener(gnome);
 
-        // Snap à exactement 2.0f du centre (3.0f, 0.5f)
-        chest.onSnap(new SnapEvent(3.0f, 0.5f, SnapSource.HERO, 0));
+        // À 1.9f horizontalement du centre (2.9f, 0.5f) : dans l'ellipse (1.9 <= 2.0), alors que verticalement (ry = 1.5) ce serait rejeté
+        chest.onSnap(new SnapEvent(2.9f, 0.5f, SnapSource.HERO, 0));
 
         assertAll(
                 () -> assertTrue(chest.isOpened()),
-                () -> assertEquals(2f, chest.getActivationRadius()),
-                () -> assertEquals(1, gnome.getInventory().getStacks().size()));
-    }
-
-    @Test
-    void onSnap_doesNotOpenChestWhenBeyondTwoCells() {
-        Gnome gnome = new Gnome();
-        // Centre en (1.0f, 0.5f)
-        Chest chest = new Chest(0, 0, Border.BOTTOM, new LootResult(new Heart(), 1));
-        chest.setOpener(gnome);
-
-        // Snap à 2.1f du centre (3.1f, 0.5f) -> hors de portée
-        chest.onSnap(new SnapEvent(3.1f, 0.5f, SnapSource.HERO, 0));
-
-        assertAll(
-                () -> assertFalse(chest.isOpened()),
-                () -> assertTrue(gnome.getInventory().getStacks().isEmpty()));
+                () -> assertEquals(2.0f, chest.getActivationRadiusX()),
+                () -> assertEquals(1.5f, chest.getActivationRadiusY()));
     }
 
     @Test
@@ -106,5 +92,18 @@ public class ChestTest {
                         () -> new Chest(0, 0, null, new LootResult(new Heart(), 1))),
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> new Chest(0, 0, Border.BOTTOM, null)));
+    }
+
+    @Test
+    void onSnap_rejectsPointOutsideEllipseShortAxis() {
+        Gnome gnome = new Gnome();
+        // Coffre BOTTOM en (0, 0) -> centre en (1.0f, 0.5f), ry = 1.5f
+        Chest chest = new Chest(0, 0, Border.BOTTOM, new LootResult(new Heart(), 1));
+        chest.setOpener(gnome);
+
+        // À 1.6f verticalement du centre (1.0f, 2.1f) : hors du petit axe (1.6 > 1.5)
+        chest.onSnap(new SnapEvent(1.0f, 2.1f, SnapSource.HERO, 0));
+
+        assertFalse(chest.isOpened());
     }
 }
