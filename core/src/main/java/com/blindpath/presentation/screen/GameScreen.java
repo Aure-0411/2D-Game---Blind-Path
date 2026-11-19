@@ -240,8 +240,9 @@ public class GameScreen implements Screen {
             monsterVisible = !monsterVisible;
         }
 
-        if (Gdx.input.isKeyJustPressed(Keys.I)) monster.immobilize(3f);
-
+        
+        if (Gdx.input.isKeyJustPressed(Keys.I)) level.getGnome().toggleInvincible();
+        
         // 2. Dessin
         // Efface l'image précédente, y compris les bandes autour du viewport.
         ScreenUtils.clear(0f, 0f, 0f, 1f);
