@@ -11,11 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.chest.Chest;
+import com.blindpath.domain.chest.LootResult;
+import com.blindpath.domain.inventory.Heart;
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Wall;
+import com.blindpath.domain.light.SnapEvent;
+import com.blindpath.domain.light.SnapSource;
 import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
@@ -188,4 +193,27 @@ class LevelTest {
         assertEquals(gnome.getMaxLife() - 2, gnome.getLife());
     }
 
+        @Test
+    void emitSnap_opensChestWithinTwoCellsAndAddsLootToGnome() {
+        Chest chest = new Chest(2f, 4f, Border.RIGHT, new LootResult(new Heart(), 1));
+        Level lvl = new Level(gnome, labyrinth, new AabbCollisionWorld(), monster, pathfinder, List.of(chest));
+
+        // Centre du coffre en (2.5f, 5.0f) ; snap émis en (1.5f, 4.5f) -> distance < 2
+        lvl.emitSnap(new SnapEvent(1.5f, 4.5f, SnapSource.HERO, 0));
+
+        assertAll(
+                () -> assertTrue(chest.isOpened()),
+                () -> assertEquals(1, gnome.getInventory().getStacks().size()));
+    }
+
+    @Test
+    void emitSnap_ignoresChestFurtherThanTwoCells() {
+        Chest chest = new Chest(6f, 4f, Border.RIGHT, new LootResult(new Heart(), 1));
+        Level lvl = new Level(gnome, labyrinth, new AabbCollisionWorld(), monster, pathfinder, List.of(chest));
+
+        // Centre du coffre en (6.5f, 5.0f) ; snap émis en (1.5f, 4.5f) -> distance > 2
+        lvl.emitSnap(new SnapEvent(1.5f, 4.5f, SnapSource.HERO, 0));
+
+        assertFalse(chest.isOpened());
+    }
 }

@@ -8,6 +8,7 @@ import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.chest.Chest;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
+import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.CollisionWorld;
@@ -42,10 +43,12 @@ public class Level {
             collisions.addStatic(wall.getBounds());
         }
         for (Chest chest : this.chests) {
-            if (chest.canCollide()) {
+            chest.setOpener(gnome);
+            if (chest.canCollide()) { 
                 collisions.addStatic(chest.getBounds());
             }
         }
+
         collisions.addDynamic(gnome);
     }
 
@@ -88,9 +91,18 @@ public class Level {
 
     // }
 
-    // public void emitSnap (SnapEvent event) {
+    public void emitSnap(SnapEvent event) {
+    if (event == null) {
+        return;
+    }
+    if (monster != null) {
+        monster.onSnap(event);
+    }
+    for (Chest chest : chests) {
+        chest.onSnap(event);
+    }
+}
 
-    // }
 
     // public void addPlacedObject(PlacedObject object){
 
