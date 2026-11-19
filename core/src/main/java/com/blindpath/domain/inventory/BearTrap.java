@@ -2,7 +2,7 @@ package com.blindpath.domain.inventory;
 
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
-import com.blindpath.domain.game.object;
+import com.blindpath.domain.object.PlacedBearTrap;
 
 public class BearTrap extends Item {
 
@@ -20,6 +20,11 @@ public class BearTrap extends Item {
 
     @Override
     public void use(Gnome user, Level level) {
-        // BearTrap utilise la méthode immobililize(float duration) sur le monstre, de type void, et appelle la méthode stun(float duration), de type void.
+        // Pose un piège à la position du gnome ; c'est le piège posé qui immobilisera le monstre.
+        if (!canUse(user, level)) {
+            return;
+        }
+        PlacedBearTrap placedBearTrap = new PlacedBearTrap(user.getX(), user.getY());
+        level.addPlacedObject(placedBearTrap);
     }
 }
