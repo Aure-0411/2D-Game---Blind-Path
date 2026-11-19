@@ -196,8 +196,31 @@ class LightTest {
         defaults.update(0.5f);
         assertFalse(defaults.isRevealing());
         assertTrue(defaults.isOnCooldown());
-        defaults.update(1f);
+        defaults.update(0.5f);
         assertFalse(defaults.isOnCooldown());
+        assertTrue(defaults.snap());
+    }
+
+    @Test
+    void cooldownBarStartsFullThenFillsOverOnePointFiveSeconds() {
+        Light defaults = new Light();
+        assertEquals(1f, defaults.getCooldownProgress(), DELTA);
+        defaults.snap();
+        assertEquals(0f, defaults.getCooldownProgress(), DELTA);
+        defaults.update(0.375f);
+        assertEquals(0.25f, defaults.getCooldownProgress(), DELTA);
+        defaults.update(0.375f);
+        assertEquals(0.5f, defaults.getCooldownProgress(), DELTA);
+        assertFalse(defaults.snap());
+        assertEquals(0.5f, defaults.getCooldownProgress(), DELTA);
+        defaults.update(0.375f);
+        assertEquals(0.75f, defaults.getCooldownProgress(), DELTA);
+        defaults.update(0.375f);
+        assertEquals(1f, defaults.getCooldownProgress(), DELTA);
+        defaults.update(10f);
+        assertEquals(1f, defaults.getCooldownProgress(), DELTA);
+        assertTrue(defaults.snap());
+        assertEquals(0f, defaults.getCooldownProgress(), DELTA);
     }
 
     @Test

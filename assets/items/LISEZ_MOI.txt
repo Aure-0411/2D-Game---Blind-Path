@@ -1,0 +1,8 @@
+BLIND PATH — PACK OBJETS
+
+8 PNG avec transparence, visuels et résolutions sources conservés.
+
+carte/ : coffre fermé et ouvert ; piège à ours en vue du dessus ; dynamite avec étincelles.
+inventaire/ : piège en trois-quarts ; dynamite à perspective corrigée avec étincelles ; recharge magique n°5 (flamme captive) ; boussole.
+
+Ce pack contient les images, sans atlas ni animation. Les tailles des PNG ne correspondent pas encore à une grille commune. Prévoir une emprise de 2 x 1 cases pour le coffre et 1 x 1 pour les objets posés ; conserver les proportions et adapter les marges de chaque état du coffre.
