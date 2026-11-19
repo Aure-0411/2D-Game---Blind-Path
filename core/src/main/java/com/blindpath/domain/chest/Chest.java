@@ -11,14 +11,12 @@ public class Chest implements SnapListener, Collidable {
 
     public static final float SHORT_SIDE = 1f;
     public static final float LONG_SIDE = 2f;
-    public static final float SNAP_ACTIVATION_RADIUS = 2f;
+    public static final float DEFAULT_ACTIVATION_MARGIN = 1f;
 
-    private final float x;
-    private final float y;
-    private final float width;
-    private final float height;
+    private final float x, y;
+    private final float width, height;
     private final Border orientation;
-    private final float activationRadius;
+    private final float activationRadiusX, activationRadiusY;
     private final LootResult loot;
     private boolean opened;
     private Character opener;
@@ -38,7 +36,8 @@ public class Chest implements SnapListener, Collidable {
         this.width = horizontal ? LONG_SIDE : SHORT_SIDE;
         this.height = horizontal ? SHORT_SIDE : LONG_SIDE;
 
-        this.activationRadius = SNAP_ACTIVATION_RADIUS;
+        this.activationRadiusX = (this.width / 2f) + DEFAULT_ACTIVATION_MARGIN;
+        this.activationRadiusY = (this.height / 2f) + DEFAULT_ACTIVATION_MARGIN;
         this.loot = loot;
     }
 
@@ -47,6 +46,8 @@ public class Chest implements SnapListener, Collidable {
     public float getWidth() { return width; }
     public float getHeight() { return height; }
     public Border getOrientation() { return orientation; }
+    public float getActivationRadiusX() { return activationRadiusX; }
+    public float getActivationRadiusY() { return activationRadiusY; }
 
     public void setOpener(Character character) {
         this.opener = character;
@@ -61,10 +62,6 @@ public class Chest implements SnapListener, Collidable {
         return true;
     }
 
-    public float getActivationRadius() {
-        return activationRadius;
-    }
-
     public boolean isOpened() {
         return opened;
     }
@@ -72,9 +69,9 @@ public class Chest implements SnapListener, Collidable {
     public boolean isInRange(float px, float py) {
         float centerX = x + width / 2f;
         float centerY = y + height / 2f;
-        float dx = px - centerX;
-        float dy = py - centerY;
-        return dx * dx + dy * dy <= activationRadius * activationRadius;
+        float normX = (px - centerX) / activationRadiusX;
+        float normY = (py - centerY) / activationRadiusY;
+        return normX * normX + normY * normY <= 1f;
     }
 
     @Override

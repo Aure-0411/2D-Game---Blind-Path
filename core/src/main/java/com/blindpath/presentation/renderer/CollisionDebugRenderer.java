@@ -35,11 +35,17 @@ public class CollisionDebugRenderer implements Disposable {
             shapes.rect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
 
             if (!chest.isOpened()) {
-                shapes.circle(
-                        b.getX() + b.getWidth() / 2f,
-                        b.getY() + b.getHeight() / 2f,
-                        chest.getActivationRadius(),
-                        24);
+                float rx = chest.getActivationRadiusX();
+                float ry = chest.getActivationRadiusY();
+                float centerX = b.getX() + b.getWidth() / 2f;
+                float centerY = b.getY() + b.getHeight() / 2f;
+
+                shapes.ellipse(
+                    centerX - rx,
+                    centerY - ry,
+                    rx * 2f,
+                    ry * 2f,
+                    32);
             }
         }
 
