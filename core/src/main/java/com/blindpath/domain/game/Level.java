@@ -1,12 +1,13 @@
 package com.blindpath.domain.game;
 
-// import java.util.ArrayList;
-// import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.object.PlacedObject;
 import com.blindpath.domain.physics.CollisionWorld;
 
 public class Level {
@@ -17,7 +18,7 @@ public class Level {
     private Monster monster;
     // private Pathfinder pathfinder;
     // private List<Chest> chests;
-    // private List<PlacedObject> placedObjects;
+    private List<PlacedObject> placedObjects;
 
     public Level(Gnome gnome, Labyrinth labyrinth, CollisionWorld collisions/*, Monster monster, Pathfinder pathfinder*/) {
         if (gnome == null || labyrinth == null || collisions == null /*|| pathfinder == null*/) {
@@ -29,8 +30,8 @@ public class Level {
         this.collisions = collisions;
         /*this.monster = monster;
         this.pathfinder = pathfinder;
-        this.chests = new ArrayList<>();
-        this.placedObjects = new ArrayList<>();*/
+        this.chests = new ArrayList<>();*/
+        this.placedObjects = new ArrayList<>();
 
         for (Obstacle obstacle : labyrinth.getObstacles()) {
             if (obstacle.canCollide()) {
@@ -52,7 +53,13 @@ public class Level {
         if (monster != null && gnome.collide(monster)) {
             gnome.takeMonsterHit();
         }
-        // Plus tard : lumière, objets posés...
+        for (int i = placedObjects.size() - 1; i >= 0; i--) {
+            PlacedObject object = placedObjects.get(i);
+            if (monster != null && object.collide(monster)) {
+                object.onTouch(monster);
+                placedObjects.remove(i);
+            }
+        }
     }
 
     /** Déplace le personnage en respectant les murs. Renvoie true s'il a bougé. */
@@ -73,9 +80,12 @@ public class Level {
 
     // }
 
-    // public void addPlacedObject(PlacedObject object){
-
-    // }
+    public void addPlacedObject(PlacedObject object){
+        if (object == null) {
+            throw new IllegalArgumentException("L'objet doit être renseigné.");
+        }
+        this.placedObjects.add(object);
+    }
 
     /**
     * Checks if the labyrinth's exit is reached by the gnome.

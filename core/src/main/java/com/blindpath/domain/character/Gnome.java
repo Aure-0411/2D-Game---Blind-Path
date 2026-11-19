@@ -10,6 +10,7 @@ public class Gnome extends Character {
     private final Inventory<Gnome> inventory;
 
     private float immunityTimer = 0f;
+    private boolean invincible;
 
     public Gnome() {
         super(2.75f, 0, 0, HITBOX_SIZE, HITBOX_SIZE);
@@ -17,6 +18,11 @@ public class Gnome extends Character {
     }
 
     public void takeMonsterHit() {
+
+        if (invincible) {
+            return;
+        }
+
         if (isImmune()) {
             return;
         }
@@ -40,4 +46,8 @@ public class Gnome extends Character {
         return this.inventory;
     }
 
+}
+    public void toggleInvincible() {
+        invincible = !invincible;
+    }
 }
