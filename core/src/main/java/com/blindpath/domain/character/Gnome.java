@@ -1,14 +1,19 @@
 package com.blindpath.domain.character;
 
-public class Gnome extends Character{
+import com.blindpath.domain.inventory.Inventory;
+
+public class Gnome extends Character {
+
     public static final float HITBOX_SIZE = 1f;
     public static final int MONSTER_DAMAGE = 2;
     public static final float IMMUNITY_DURATION = 2f;
+    private final Inventory<Gnome> inventory;
 
     private float immunityTimer = 0f;
 
     public Gnome() {
         super(2.75f, 0, 0, HITBOX_SIZE, HITBOX_SIZE);
+        this.inventory = new Inventory<>(this);
     }
 
     public void takeMonsterHit() {
@@ -30,4 +35,9 @@ public class Gnome extends Character{
     public boolean isDead() {
         return getLife() == 0;
     }
+
+    public Inventory<Gnome> getInventory() {
+        return this.inventory;
+    }
+
 }

@@ -293,7 +293,7 @@ public class GameScreen implements Screen {
             shapes.rect(hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
             shapes.end();
         }
-        hud.update(light.getCooldownProgress(), level.getGnome().getLife());;
+        hud.update(light.getCooldownProgress(), level.getGnome().getLife(),level.getGnome().getInventory().getStacks());
         hud.render(paused ? 0f : delta);
         if (paused) {
             pauseStage.getViewport().apply();
