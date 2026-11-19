@@ -159,7 +159,7 @@ class LevelTest {
         MovementStrategy strategy = new ChaseStrategy(new GdxAiPathfinder());
         Monster monster = new TestMonster(grid, strategy, new GridPosition(5, 4));
         level.setMonster(monster);
-        PlacedBearTrap placedBearTrap = new PlacedBearTrap(5f,4f);
+        PlacedBearTrap placedBearTrap = new PlacedBearTrap(5f, 4f);
         level.addPlacedObject(placedBearTrap);
 
         level.update(0.1f);
