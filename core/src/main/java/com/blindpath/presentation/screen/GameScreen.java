@@ -50,6 +50,8 @@ import com.blindpath.infrastructure.pathfinding.GdxAiPathfinder;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 import com.blindpath.presentation.renderer.MonsterRenderer;
+import com.blindpath.presentation.renderer.JumpscareRenderer;
+import com.blindpath.presentation.renderer.DamageOverlayRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameScreen implements Screen {
@@ -84,6 +86,8 @@ public class GameScreen implements Screen {
     private LabyrinthGrid monsterGrid;
     private final GameClock clock = new GameClock();
     private ShapeRenderer shapes;
+    private JumpscareRenderer jumpscare;
+    private DamageOverlayRenderer damageOverlay;
 
     private boolean paused = false;
     private final Main main;
@@ -133,6 +137,8 @@ public class GameScreen implements Screen {
             level.setMonster(monster);
             clock.addListener(monster);
             monsterRenderer = new MonsterRenderer("jumper");
+            jumpscare = new JumpscareRenderer("jumper");
+            damageOverlay = new DamageOverlayRenderer();
 
             camera = new OrthographicCamera();
             // FitViewport conserve les proportions et peut ajouter des bandes noires.
@@ -182,6 +188,8 @@ public class GameScreen implements Screen {
 
         // true centre la caméra dans le monde, ici en (15, 15).
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        jumpscare.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        damageOverlay.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -202,7 +210,18 @@ public class GameScreen implements Screen {
 
             // 1. Entrées + logique (déplacement avec collisions)
             input.handleInput(delta);
+            int lifeBefore = level.getGnome().getLife();
             level.update(delta);
+            // Coup fatal (3e coup du monstre) : jumpscare ; sinon : contour rouge.
+            if (level.getGnome().getLife() < lifeBefore) {
+                if (level.getGnome().isDead()) {
+                    jumpscare.trigger();
+                } else {
+                    damageOverlay.trigger();
+                }
+            }
+            jumpscare.update(delta);
+            damageOverlay.update(delta);
             // La règle de victoire appartient au modèle ; l'écran choisit l'affichage.
             if (level.isCompleted()) {
                 main.setScreen(new EndScreen(main));
@@ -296,6 +315,9 @@ public class GameScreen implements Screen {
             shapes.end();
         }
 
+        damageOverlay.render(batch);
+        jumpscare.render(batch);
+
         if (paused) {
             pauseStage.getViewport().apply();
             pauseStage.act(delta);
@@ -312,6 +334,12 @@ public class GameScreen implements Screen {
         }
         if (pauseStage != null) {
             pauseStage.getViewport().update(width, height, true);
+        }
+        if (jumpscare != null) {
+            jumpscare.resize(width, height);
+        }
+        if (damageOverlay != null) {
+            damageOverlay.resize(width, height);
         }
     }
 
@@ -374,6 +402,16 @@ public class GameScreen implements Screen {
         if (shapes != null) {
             shapes.dispose();
             shapes = null;
+        }
+
+        if (jumpscare != null) {
+            jumpscare.dispose();
+            jumpscare = null;
+        }
+
+        if (damageOverlay != null) {
+            damageOverlay.dispose();
+            damageOverlay = null;
         }
 
         if (pauseStage != null) {
