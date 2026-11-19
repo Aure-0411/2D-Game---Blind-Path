@@ -63,6 +63,7 @@ public class GameScreen implements Screen {
     private final Light light = new Light();
 
     private Level level;
+    private LevelFactory factory;
     private InputController input;
     private SpriteBatch batch;
     private CharacterRenderer<Gnome> characterRenderer;
@@ -91,7 +92,7 @@ public class GameScreen implements Screen {
     public void show() {
         if (map == null) {
             LevelRegistry registry = new LevelRegistry();
-            LevelFactory factory = new LevelFactory(registry, new TiledLabyrinthLoader(), new LootTable(), new Random());
+            factory = new LevelFactory(registry, new TiledLabyrinthLoader(), new LootTable(), new Random());
             Gnome gnome = new Gnome();
 
             session = new GameSession(factory, gnome);
@@ -112,7 +113,8 @@ public class GameScreen implements Screen {
             monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
             monster = level.getMonster();
             clock.addListener(monster);
-            monsterRenderer = new MonsterRenderer(config.monsterType().name().toLowerCase());
+            monsterRenderer = new MonsterRenderer(monster.getClass().getSimpleName().toLowerCase());
+
             chestRenderer = new ChestRenderer();
 
             input = new InputController(level);
@@ -184,8 +186,19 @@ public class GameScreen implements Screen {
             level.update(delta);
 
             if (level.isCompleted()) {
-                main.setScreen(new EndScreen(main));
-                dispose();
+                session.nextLevel();
+                if (session.isWon()) {
+                    main.setScreen(new EndScreen(main));
+                    dispose();
+                    return;
+                }
+                loadCurrentLevelResources();
+                return;
+            }
+
+            if (level.getGnome().isDead()) {
+                session.retry();
+                loadCurrentLevelResources();
                 return;
             }
 
@@ -278,6 +291,34 @@ public class GameScreen implements Screen {
         pauseStage.draw();
         }
     }
+
+    private void loadCurrentLevelResources() {
+        if (renderer != null) renderer.dispose();
+        if (map != null) map.dispose();
+        if (monsterRenderer != null) monsterRenderer.dispose();
+        if (monster != null) clock.removeListener(monster);
+
+        level = session.getLevel();
+        Gnome gnome = level.getGnome();
+        Labyrinth labyrinth = level.getLabyrinth();
+        Entrance entrance = labyrinth.getEntrance();
+
+        gnome.setPosition(
+                entrance.getX() + (entrance.getWidth() - gnome.getWidth()) / 2f,
+                entrance.getY() + (entrance.getHeight() - gnome.getHeight()) / 2f);
+
+        LevelConfig config = factory.configFor(session.getCurrentLevelNumber());
+        map = new TmxMapLoader().load(config.mapPath());
+        renderer = new LabyrinthRenderer(map);
+
+        monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
+        monster = level.getMonster();
+        clock.addListener(monster);
+        monsterRenderer = new MonsterRenderer(monster.getClass().getSimpleName().toLowerCase());
+
+        input = new InputController(level);
+    }
+
 
     @Override
     public void resize(int width, int height) {
