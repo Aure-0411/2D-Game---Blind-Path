@@ -1,19 +1,21 @@
 package com.blindpath.infrastructure.map;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.objects.PointMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.LabyrinthLoader.ChestSpawn;
+import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.pathfinding.GridPosition;
 
 class TiledLabyrinthLoaderTest {
@@ -59,19 +61,46 @@ class TiledLabyrinthLoaderTest {
     }
 
     @Test
-    void loadMonsterSpawn_readsPointMapObjectOnGrid() {
+    void loadMonsterSpawn_centersTwoByTwoAnchorAndInvertsTiledYAxis() {
         TiledMap map = new TiledMap();
+        map.getProperties().put("height", 30);
+
         MapLayer monsterLayer = new MapLayer();
         monsterLayer.setName("monstre_start");
 
-        // Point à (28, 28) -> (7000px, 7000px)
+        // Point Tiled au centre de la zone 2x2 en haut à droite : x=7000 (col 28), y=7000 (row 28)
+        // Coin bas-gauche attendu : (28 - 1, 28 - 1) = (27, 27)
         PointMapObject spawnPoint = new PointMapObject(7000f, 7000f);
         monsterLayer.getObjects().add(spawnPoint);
         map.getLayers().add(monsterLayer);
 
         GridPosition pos = loader.loadMonsterSpawn(map);
 
-        assertEquals(new GridPosition(28, 28), pos);
+        assertEquals(new GridPosition(27, 27), pos);
         map.dispose();
+    }
+
+    @Test
+    void loadMonsterType_readsCustomPropertyOrReturnsNullWhenAbsent() {
+        TiledMap mapWithType = new TiledMap();
+        MapLayer layerWithType = new MapLayer();
+        layerWithType.setName("monstre_start");
+        PointMapObject objWithType = new PointMapObject(7000f, 500f);
+        objWithType.getProperties().put("monsterType", "jumper");
+        layerWithType.getObjects().add(objWithType);
+        mapWithType.getLayers().add(layerWithType);
+
+        TiledMap mapWithoutType = new TiledMap();
+        MapLayer layerWithoutType = new MapLayer();
+        layerWithoutType.setName("monstre_start");
+        layerWithoutType.getObjects().add(new PointMapObject(7000f, 500f));
+        mapWithoutType.getLayers().add(layerWithoutType);
+
+        assertAll(
+                () -> assertEquals(MonsterType.JUMPER, loader.loadMonsterType(mapWithType)),
+                () -> assertNull(loader.loadMonsterType(mapWithoutType)));
+
+        mapWithType.dispose();
+        mapWithoutType.dispose();
     }
 }
