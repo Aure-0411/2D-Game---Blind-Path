@@ -3,7 +3,9 @@ package com.blindpath.domain.character;
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Collidable;
 
-public abstract class Character implements Movable, Collidable{
+public abstract class Character implements Movable, Collidable, Damageable {
+
+    public static final int MAX_LIFE = 6;
     private int life;
     private int maxLife;
     private float speed;
@@ -12,7 +14,7 @@ public abstract class Character implements Movable, Collidable{
     private Direction facing = Direction.DOWN;
 
     public Character (float speed, float x, float y, float width, float height){
-        this.maxLife = 6;
+        this.maxLife = MAX_LIFE;
         this.life = maxLife;
         this.speed = speed;
         this.x = x;

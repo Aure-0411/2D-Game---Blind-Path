@@ -209,6 +209,13 @@ public class GameScreen implements Screen {
                 dispose();
                 return;
             }
+
+            if (level.getGnome().isDead()) {
+                main.setScreen(new GameScreen(main));
+                dispose();
+                return;
+            }
+
             light.update(delta);
             // La position du modèle est le coin inférieur gauche : Light reçoit le centre.
             Gnome gnome = level.getGnome();
