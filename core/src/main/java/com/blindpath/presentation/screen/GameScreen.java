@@ -225,6 +225,7 @@ public class GameScreen implements Screen {
             // Le monstre vise un bloc praticable qui recouvre la case du gnome.
             monster.setTarget(monsterGrid.anchorCovering(gnomeCell));
             clock.update(delta);
+            monster.update(delta);
 
             if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
                 if (light.snap()) {
@@ -238,6 +239,8 @@ public class GameScreen implements Screen {
             debugCollisions = !debugCollisions;
             monsterVisible = !monsterVisible;
         }
+
+        if (Gdx.input.isKeyJustPressed(Keys.I)) monster.immobilize(3f);
 
         // 2. Dessin
         // Efface l'image précédente, y compris les bandes autour du viewport.
