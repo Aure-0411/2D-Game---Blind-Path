@@ -46,7 +46,6 @@ public class Gnome extends Character {
         return this.inventory;
     }
 
-}
     public void toggleInvincible() {
         invincible = !invincible;
     }
