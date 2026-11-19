@@ -22,7 +22,7 @@ import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.physics.AabbCollisionWorld;
 
-class GameSessionTest {
+public class GameSessionTest {
 
     private Gnome gnome;
     private GameSession session;
@@ -30,8 +30,8 @@ class GameSessionTest {
     @BeforeEach
     void setUp() {
         gnome = new Gnome();
-        
-        // Bouchon 100% local au test
+
+        // Simule 2 paliers : Palier 1 = niveaux 1..3, Palier 2 = niveaux 4..5
         LevelCatalog testCatalog = new LevelCatalog() {
             @Override
             public LevelConfig getLevel(int levelNumber) {
@@ -40,7 +40,12 @@ class GameSessionTest {
 
             @Override
             public int totalLevels() {
-                return 5; // Simule une partie à 5 niveaux pour le test finishingLevelFiveWinsTheGame
+                return 5;
+            }
+
+            @Override
+            public int tierStartLevel(int levelNumber) {
+                return (levelNumber <= 3) ? 1 : 4;
             }
         };
 
@@ -49,8 +54,8 @@ class GameSessionTest {
                 path -> simpleLabyrinth(),
                 new LootTable(),
                 new Random(3),
-                AabbCollisionWorld::new
-        );
+                AabbCollisionWorld::new);
+
         session = new GameSession(factory, gnome);
     }
 
@@ -107,19 +112,26 @@ class GameSessionTest {
 
         assertAll(
                 () -> assertEquals(gnome.getMaxLife(), gnome.getLife()),
-                () -> assertNotSame(first, session.getLevel().getMonster())
-        );
+                () -> assertNotSame(first, session.getLevel().getMonster()));
+    }
+
+    @Test
+    void retryReturnsToFirstLevelOfCurrentTier() {
+        session.startLevel(5); // Niveau 5 appartient au palier 2 (niveaux 4..5)
+        gnome.takeMonsterHit();
+
+        session.retry();
+
+        assertAll(
+                () -> assertEquals(4, session.getCurrentLevelNumber()),
+                () -> assertEquals(1, session.getRetryCount()),
+                () -> assertEquals(gnome.getMaxLife(), gnome.getLife()));
     }
 
     @Test
     void finishingLevelFiveWinsTheGame() {
         session.startLevel(5);
-
         session.nextLevel();
-
         assertTrue(session.isWon());
     }
-
-        
-
 }

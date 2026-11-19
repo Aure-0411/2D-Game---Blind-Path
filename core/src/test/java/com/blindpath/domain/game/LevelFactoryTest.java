@@ -51,6 +51,7 @@ class LevelFactoryTest {
             public int totalLevels() {
                 return configs.size();
             }
+            @Override public int tierStartLevel(int levelNumber) { return 1; }
         };
 
         factory = new LevelFactory(

@@ -9,9 +9,12 @@ import com.blindpath.domain.game.LevelCatalog;
 import com.blindpath.domain.game.LevelConfig;
 import com.blindpath.domain.monster.MonsterType;
 
-public class LevelRegistry implements LevelCatalog{
+public class LevelRegistry implements LevelCatalog {
 
     private final List<LevelConfig> levels = new ArrayList<>();
+    private final int mediumStart;
+    private final int hardStart;
+    private final int extremeStart;
 
     public LevelRegistry() {
         this(readIndexFile());
@@ -37,7 +40,10 @@ public class LevelRegistry implements LevelCatalog{
             else if (path.startsWith("maps/4_extreme/")) extreme.add(path);
         }
 
-        // EASY : 50% premières = JUMPER, 50% suivantes = RUNAWAY (décalage automatique)
+        this.mediumStart = easy.size() + 1;
+        this.hardStart = mediumStart + medium.size();
+        this.extremeStart = hardStart + hard.size();
+
         int jumperLimit = (int) Math.ceil(easy.size() / 2.0);
         for (int i = 0; i < easy.size(); i++) {
             MonsterType type = (i < jumperLimit) ? MonsterType.JUMPER : MonsterType.RUNAWAY;
@@ -56,6 +62,7 @@ public class LevelRegistry implements LevelCatalog{
         return indexFile.readString("UTF-8");
     }
 
+    @Override
     public LevelConfig getLevel(int levelNumber) {
         int index = levelNumber - 1;
         if (index < 0 || index >= levels.size()) {
@@ -64,7 +71,19 @@ public class LevelRegistry implements LevelCatalog{
         return levels.get(index);
     }
 
+    @Override
     public int totalLevels() {
         return levels.size();
+    }
+
+    @Override
+    public int tierStartLevel(int levelNumber) {
+        if (levelNumber < 1 || levelNumber > levels.size()) {
+            throw new IllegalArgumentException("Niveau inconnu : " + levelNumber);
+        }
+        if (levelNumber < mediumStart) return 1;
+        if (levelNumber < hardStart) return mediumStart;
+        if (levelNumber < extremeStart) return hardStart;
+        return extremeStart;
     }
 }

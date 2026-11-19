@@ -87,4 +87,9 @@ public class LevelFactory {
 
         return new Level(gnome, labyrinth, collisionWorldFactory.get(), monster, pathfinder, chests);
     }
+
+    public int tierStartFor(int number) {
+        return registry.tierStartLevel(number);
+    }
+
 }

@@ -39,11 +39,13 @@ public class GameSession {
         startLevel(currentLevelNumber + 1);
     }
 
-    public void retry() {
+        public void retry() {
         retryCount++;
         gnome.resetForRetry();
-        startLevel(currentLevelNumber);
+        int checkpointLevel = factory.tierStartFor(currentLevelNumber);
+        startLevel(checkpointLevel);
     }
+
 
     public Level getLevel() { return level; }
     public int getCurrentLevelNumber() { return currentLevelNumber; }
