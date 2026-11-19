@@ -21,12 +21,15 @@ import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Wall;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
+import com.blindpath.domain.monster.ChaseStrategy;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.MovementStrategy;
+import com.blindpath.domain.object.PlacedBearTrap;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.AabbCollisionWorld;
-
+import com.blindpath.infrastructure.pathfinding.GdxAiPathfinder;
 
 class LevelTest {
 
@@ -42,10 +45,10 @@ class LevelTest {
     @BeforeEach
     void setUp() {
         labyrinth = new Labyrinth(
-        10, 10,
-        new Entrance(0, 4, Border.LEFT),
-        new Exit(9, 4, Border.RIGHT),
-        List.of(new Wall(5f, 0f, 1f, 10f))
+                10, 10,
+                new Entrance(0, 4, Border.LEFT),
+                new Exit(9, 4, Border.RIGHT),
+                List.of(new Wall(5f, 0f, 1f, 10f))
         );
         gnome = new Gnome();
         gnome.setPosition(1f, 4f);
@@ -193,12 +196,11 @@ class LevelTest {
         assertEquals(gnome.getMaxLife() - 2, gnome.getLife());
     }
 
-        @Test
+    @Test
     void emitSnap_opensChestWithinTwoCellsAndAddsLootToGnome() {
         Chest chest = new Chest(2f, 4f, Border.RIGHT, new LootResult(new Heart(), 1));
         Level lvl = new Level(gnome, labyrinth, new AabbCollisionWorld(), monster, pathfinder, List.of(chest));
 
-        // Centre du coffre en (2.5f, 5.0f) ; snap émis en (1.5f, 4.5f) -> distance < 2
         lvl.emitSnap(new SnapEvent(1.5f, 4.5f, SnapSource.HERO, 0));
 
         assertAll(
@@ -211,9 +213,22 @@ class LevelTest {
         Chest chest = new Chest(6f, 4f, Border.RIGHT, new LootResult(new Heart(), 1));
         Level lvl = new Level(gnome, labyrinth, new AabbCollisionWorld(), monster, pathfinder, List.of(chest));
 
-        // Centre du coffre en (6.5f, 5.0f) ; snap émis en (1.5f, 4.5f) -> distance > 2
         lvl.emitSnap(new SnapEvent(1.5f, 4.5f, SnapSource.HERO, 0));
 
         assertFalse(chest.isOpened());
+    }
+
+    @Test
+    void update_monsterOnBearTrap_monsterIsImmobilized() {
+        LabyrinthGrid grid = new LabyrinthGrid(level.getLabyrinth());
+        MovementStrategy strategy = new ChaseStrategy(new GdxAiPathfinder());
+        Monster trappedMonster = new Monster(grid, strategy, new GridPosition(5, 4)) {};
+        level.setMonster(trappedMonster);
+        PlacedBearTrap placedBearTrap = new PlacedBearTrap(5f, 4f);
+        level.addPlacedObject(placedBearTrap);
+
+        level.update(0.1f);
+
+        assertTrue(trappedMonster.isImmobilized());
     }
 }
