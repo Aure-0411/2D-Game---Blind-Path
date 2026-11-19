@@ -1,26 +1,28 @@
 package com.blindpath.domain.chest;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
+import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Collidable;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapListener;
-import com.blindpath.domain.labyrinth.Border;
-import com.blindpath.domain.labyrinth.Bounds;
 
 public class Chest implements SnapListener, Collidable {
-    
+
     public static final float SHORT_SIDE = 1f;
     public static final float LONG_SIDE = 2f;
-    private static final float DEFAULT_ACTIVATION_RADIUS = 1.5f;
+    public static final float SNAP_ACTIVATION_RADIUS = 2f;
 
-    private final float x, y;
-    private final float width, height;
+    private final float x;
+    private final float y;
+    private final float width;
+    private final float height;
     private final Border orientation;
     private final float activationRadius;
     private final LootResult loot;
     private boolean opened;
+    private Character opener;
 
-    /** Constructeur principal : impose 2x1 (TOP/BOTTOM) ou 1x2 (LEFT/RIGHT). */
     public Chest(float x, float y, Border orientation, LootResult loot) {
         if (orientation == null) {
             throw new IllegalArgumentException("L'orientation du coffre doit être renseignée.");
@@ -35,7 +37,8 @@ public class Chest implements SnapListener, Collidable {
         boolean horizontal = (orientation == Border.TOP || orientation == Border.BOTTOM);
         this.width = horizontal ? LONG_SIDE : SHORT_SIDE;
         this.height = horizontal ? SHORT_SIDE : LONG_SIDE;
-        this.activationRadius = DEFAULT_ACTIVATION_RADIUS;
+
+        this.activationRadius = SNAP_ACTIVATION_RADIUS;
         this.loot = loot;
     }
 
@@ -45,13 +48,21 @@ public class Chest implements SnapListener, Collidable {
     public float getHeight() { return height; }
     public Border getOrientation() { return orientation; }
 
-    public boolean open(Gnome gnome) {
-        if (opened) {
+    public void setOpener(Character character) {
+        this.opener = character;
+    }
+
+    public boolean open(Character character) {
+        if (opened || character == null) {
             return false;
         }
-        gnome.getInventory().add(loot.item(), loot.quantity());
+        character.getInventory().add(loot.item(), loot.quantity());
         opened = true;
         return true;
+    }
+
+    public float getActivationRadius() {
+        return activationRadius;
     }
 
     public boolean isOpened() {
@@ -68,10 +79,14 @@ public class Chest implements SnapListener, Collidable {
 
     @Override
     public void onSnap(SnapEvent event) {
-        // inchangé
+        if (event == null || opened || opener == null) {
+            return;
+        }
+        if (isInRange(event.getSourceX(), event.getSourceY())) {
+            open(opener);
+        }
     }
 
-    // ---- Collidable ----
     @Override
     public boolean canCollide() { return true; }
 
