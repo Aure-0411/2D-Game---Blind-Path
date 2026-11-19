@@ -1,5 +1,6 @@
 package com.blindpath.domain.game;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.object.PlacedObject;
 import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.CollisionWorld;
 
@@ -18,9 +20,10 @@ public class Level {
     private final Gnome gnome;
     private final Labyrinth labyrinth;
     private final CollisionWorld collisions;
-    private final Monster monster;
+    private Monster monster;
     private final Pathfinder pathfinder;
     private final List<Chest> chests;
+    private final List<PlacedObject> placedObjects;
 
     public Level(Gnome gnome, Labyrinth labyrinth, CollisionWorld collisions, Monster monster, Pathfinder pathfinder, List<Chest> chests) {
         if (gnome == null || labyrinth == null || collisions == null || monster == null || pathfinder == null) {
@@ -33,6 +36,7 @@ public class Level {
         this.monster = monster;
         this.pathfinder = pathfinder;
         this.chests = (chests != null) ? chests : Collections.emptyList();
+        this.placedObjects = new ArrayList<>();
 
         for (Obstacle obstacle : labyrinth.getObstacles()) {
             if (obstacle.canCollide()) {
@@ -44,7 +48,7 @@ public class Level {
         }
         for (Chest chest : this.chests) {
             chest.setOpener(gnome);
-            if (chest.canCollide()) { 
+            if (chest.canCollide()) {
                 collisions.addStatic(chest.getBounds());
             }
         }
@@ -55,15 +59,23 @@ public class Level {
     public Gnome getGnome() { return gnome; }
     public Labyrinth getLabyrinth() { return labyrinth; }
     public Monster getMonster() { return monster; }
+    public void setMonster(Monster monster) { this.monster = monster; }
     public List<Chest> getChests() { return chests; }
     public Pathfinder getPathfinder() { return pathfinder; }
+    public List<PlacedObject> getPlacedObjects() { return placedObjects; }
 
     public void update(float deltaTime) {
         gnome.updateImmunity(deltaTime);
         if (monster != null && gnome.collide(monster)) {
             gnome.takeMonsterHit();
         }
-        // Plus tard : lumière, objets posés...
+        for (int i = placedObjects.size() - 1; i >= 0; i--) {
+            PlacedObject object = placedObjects.get(i);
+            if (monster != null && object.collide(monster)) {
+                object.onTouch(monster);
+                placedObjects.remove(i);
+            }
+        }
     }
 
     /** Déplace le personnage en respectant les murs. Renvoie true s'il a bougé. */
@@ -74,46 +86,26 @@ public class Level {
         return collisions.move(character, dx, dy, deltaTime);
     }
 
-    /** Tente d'ouvrir un coffre fermé à portée du gnome. Renvoie true si un coffre a été ouvert. */
-    public boolean tryOpenNearbyChest() {
-        float gnomeCenterX = gnome.getX() + gnome.getWidth() / 2f;
-        float gnomeCenterY = gnome.getY() + gnome.getHeight() / 2f;
-
-        for (Chest chest : chests) {
-            if (!chest.isOpened() && chest.isInRange(gnomeCenterX, gnomeCenterY)) {
-                return chest.open(gnome);
-            }
-        }
-        return false;
-    }
-
-    // public  Boolean tryMoveMonster( Monster monster , GridPosition target){
-
-    // }
-
     public void emitSnap(SnapEvent event) {
-    if (event == null) {
-        return;
+        if (event == null) {
+            return;
+        }
+        if (monster != null) {
+            monster.onSnap(event);
+        }
+        for (Chest chest : chests) {
+            chest.onSnap(event);
+        }
     }
-    if (monster != null) {
-        monster.onSnap(event);
+
+    public void addPlacedObject(PlacedObject object) {
+        if (object == null) {
+            throw new IllegalArgumentException("L'objet doit être renseigné.");
+        }
+        this.placedObjects.add(object);
     }
-    for (Chest chest : chests) {
-        chest.onSnap(event);
-    }
-}
 
-
-    // public void addPlacedObject(PlacedObject object){
-
-    // }
-
-    /**
-    * Checks if the labyrinth's exit is reached by the gnome.
-    *
-    * @return answers "Did the gnome reach the labyrinth's exit?" with true or false.
-    */
-    public boolean isCompleted(){
+    public boolean isCompleted() {
         return labyrinth.getExit().isReached(gnome);
     }
 }
