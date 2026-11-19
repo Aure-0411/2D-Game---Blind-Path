@@ -2,6 +2,8 @@ package com.blindpath.domain.inventory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
 
@@ -10,7 +12,7 @@ import static com.blindpath.domain.inventory.InventoryTestSupport.*;
 class InventoryTest {
     @Test void fiveHudItemTypesKeepTheirAcquisitionOrderAndQuantities() {
         Gnome hero = new Gnome();
-        Inventory<Gnome> inventory = hero.getInventory();
+        Inventory<Character> inventory = hero.getInventory();
         Item[] items = {new Compass(), new Heart(), new Dynamite(), new BearTrap(), new Booster()};
         for (int i = 0; i < items.length; i++) {
             inventory.add(items[i], i + 1);
@@ -27,7 +29,7 @@ class InventoryTest {
 
     @Test void consumingLastHeartShiftsFollowingStacksAndFreesSlot() {
         Gnome hero = new Gnome();
-        Inventory<Gnome> inventory = hero.getInventory();
+        Inventory<Character> inventory = hero.getInventory();
         inventory.add(new Heart(), 1);
         Compass compass = new Compass();
         inventory.add(compass, 3);
