@@ -57,6 +57,11 @@ public class MonsterRenderer implements Disposable {
         updateOrientation(currentPosition);
         String state = "move";
         if (monster instanceof Jumper jumper && jumper.getState() == JumperState.ALERT) state = "idle";
+
+        if (monster.isImmobilized()) {
+            state = "stunned";
+        }
+
         TextureRegion frame = animations.get(state + "_" + direction).getKeyFrame(stateTime, true);
         // La position du monstre est la case en bas à gauche de son bloc SIZE x SIZE
         // (comme sa hitbox, Monster.getBounds()). Le sprite recouvre exactement ce bloc :
