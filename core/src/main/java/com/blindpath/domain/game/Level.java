@@ -1,36 +1,37 @@
 package com.blindpath.domain.game;
 
-// import java.util.ArrayList;
-// import java.util.List;
+import java.util.Collections;
+import java.util.List;
+
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.chest.Chest;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.CollisionWorld;
 
 public class Level {
 
-    private Gnome gnome;
-    private Labyrinth labyrinth;
+    private final Gnome gnome;
+    private final Labyrinth labyrinth;
     private final CollisionWorld collisions;
-    private Monster monster;
-    // private Pathfinder pathfinder;
-    // private List<Chest> chests;
-    // private List<PlacedObject> placedObjects;
+    private final Monster monster;
+    private final Pathfinder pathfinder;
+    private final List<Chest> chests;
 
-    public Level(Gnome gnome, Labyrinth labyrinth, CollisionWorld collisions/*, Monster monster, Pathfinder pathfinder*/) {
-        if (gnome == null || labyrinth == null || collisions == null /*|| pathfinder == null*/) {
-            throw new IllegalArgumentException("Le gnome, le labyrinthe, les collisions et le pathfinder doivent être renseignés.");
+    public Level(Gnome gnome, Labyrinth labyrinth, CollisionWorld collisions, Monster monster, Pathfinder pathfinder, List<Chest> chests) {
+        if (gnome == null || labyrinth == null || collisions == null || monster == null || pathfinder == null) {
+            throw new IllegalArgumentException("Le gnome, le labyrinthe, les collisions, le monstre et le pathfinder doivent être renseignés.");
         }
 
         this.gnome = gnome;
         this.labyrinth = labyrinth;
         this.collisions = collisions;
-        /*this.monster = monster;
+        this.monster = monster;
         this.pathfinder = pathfinder;
-        this.chests = new ArrayList<>();
-        this.placedObjects = new ArrayList<>();*/
+        this.chests = (chests != null) ? chests : Collections.emptyList();
 
         for (Obstacle obstacle : labyrinth.getObstacles()) {
             if (obstacle.canCollide()) {
@@ -40,12 +41,19 @@ public class Level {
         for (Obstacle wall : labyrinth.getBoundaryWalls()) {
             collisions.addStatic(wall.getBounds());
         }
+        for (Chest chest : this.chests) {
+            if (chest.canCollide()) {
+                collisions.addStatic(chest.getBounds());
+            }
+        }
         collisions.addDynamic(gnome);
     }
 
     public Gnome getGnome() { return gnome; }
-
     public Labyrinth getLabyrinth() { return labyrinth; }
+    public Monster getMonster() { return monster; }
+    public List<Chest> getChests() { return chests; }
+    public Pathfinder getPathfinder() { return pathfinder; }
 
     public void update(float deltaTime) {
         gnome.updateImmunity(deltaTime);
@@ -63,7 +71,18 @@ public class Level {
         return collisions.move(character, dx, dy, deltaTime);
     }
 
-    public void setMonster(Monster monster) { this.monster = monster; }
+    /** Tente d'ouvrir un coffre fermé à portée du gnome. Renvoie true si un coffre a été ouvert. */
+    public boolean tryOpenNearbyChest() {
+        float gnomeCenterX = gnome.getX() + gnome.getWidth() / 2f;
+        float gnomeCenterY = gnome.getY() + gnome.getHeight() / 2f;
+
+        for (Chest chest : chests) {
+            if (!chest.isOpened() && chest.isInRange(gnomeCenterX, gnomeCenterY)) {
+                return chest.open(gnome);
+            }
+        }
+        return false;
+    }
 
     // public  Boolean tryMoveMonster( Monster monster , GridPosition target){
 
