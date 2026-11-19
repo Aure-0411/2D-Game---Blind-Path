@@ -1,9 +1,12 @@
 package com.blindpath.domain.pathfinding;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
@@ -11,8 +14,6 @@ import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.labyrinth.Wall;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests of {@link LabyrinthGrid} for an agent bigger than one cell (the 2x2 monster),
