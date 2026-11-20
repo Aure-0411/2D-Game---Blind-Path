@@ -2,6 +2,7 @@ package com.blindpath.infrastructure.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -10,40 +11,87 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
+import com.blindpath.domain.inventory.ItemType;
+import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
+import com.blindpath.domain.labyrinth.LabyrinthLoader;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.labyrinth.Wall;
 import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.pathfinding.GridPosition;
-import com.blindpath.domain.labyrinth.Border;
-import com.blindpath.domain.labyrinth.LabyrinthLoader;
 
 public class TiledLabyrinthLoader implements LabyrinthLoader {
 
     // Même conversion que dans LabyrinthRenderer : 250 pixels = une case.
     private static final float UNIT_SCALE = 1f / 250f;
 
-    @Override
-    public Labyrinth load(String mapPath) {
+    // Optionnel : quand il est fourni, la carte est chargée une seule fois et partagée avec le rendu.
+    private final TiledMapStore store;
+
+    public TiledLabyrinthLoader() {
+        this(null);
+    }
+
+    public TiledLabyrinthLoader(TiledMapStore store) {
+        this.store = store;
+    }
+
+    private <T> T read(String mapPath, Function<TiledMap, T> reader) {
         if (mapPath == null || mapPath.isBlank()) {
             throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
         }
-
+        if (store != null) {
+            return reader.apply(store.get(mapPath)); // la carte appartient au store : on ne la libère pas
+        }
         TiledMap map = new TmxMapLoader().load(mapPath);
         try {
-            List<Obstacle> obstacles = loadObstacles(map);
-            Entrance entrance = loadEntrance(map);
-            Exit exit = loadExit(map);
-
-            int width = map.getProperties().get("width", Integer.class);
-            int height = map.getProperties().get("height", Integer.class);
-
-            return new Labyrinth(width, height, entrance, exit, obstacles);
+            return reader.apply(map);
         } finally {
             map.dispose();
         }
+    }
+
+    private static ItemType parseLootType(MapObject object) {
+        String rawLoot = object.getProperties().get("loot", String.class);
+        if (rawLoot == null || rawLoot.isBlank()) {
+            return null;
+        }
+        return ItemType.valueOf(rawLoot.trim().toUpperCase());
+    }
+
+    @Override
+    public Labyrinth load(String mapPath) {
+        return read(mapPath, map -> load(map));
+    }
+
+    public Labyrinth load(TiledMap map) {
+        if (map == null) {
+            throw new IllegalArgumentException("La carte doit être renseignée.");
+        }
+        int width = map.getProperties().get("width", Integer.class);
+        int height = map.getProperties().get("height", Integer.class);
+        Entrance entrance = loadEntrance(map);
+        Exit exit = loadExit(map);
+        List<Obstacle> obstacles = loadObstacles(map);
+        return new Labyrinth(width, height, entrance, exit, obstacles);
+    }
+
+    @Override
+    public LabyrinthData loadAll(String mapPath) {
+        return read(mapPath, map -> loadAll(map));
+    }
+
+    public LabyrinthData loadAll(TiledMap map) {
+        if (map == null) {
+            throw new IllegalArgumentException("La carte doit être renseignée.");
+        }
+        return new LabyrinthData(
+                load(map),
+                loadChestSpawns(map),
+                loadMonsterSpawn(map),
+                loadMonsterType(map));
     }
 
     /**
@@ -112,21 +160,14 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
 
     @Override
     public List<ChestSpawn> loadChestSpawns(String mapPath) {
-        if (mapPath == null || mapPath.isBlank()) {
-            throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
-        }
-        TiledMap map = new TmxMapLoader().load(mapPath);
-        try {
-            return loadChestSpawns(map);
-        } finally {
-            map.dispose();
-        }
+        return read(mapPath, map -> loadChestSpawns(map));
     }
 
     public List<ChestSpawn> loadChestSpawns(TiledMap map) {
         if (map == null) {
             throw new IllegalArgumentException("La carte doit être renseignée.");
         }
+
         MapLayer layer = map.getLayers().get("Coffre");
         if (layer == null) {
             return List.of();
@@ -145,25 +186,20 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
             Border orientation = Border.valueOf(rawOrientation.toUpperCase());
             validateOpeningSize(rect, orientation);
 
+            ItemType fixedLoot = parseLootType(object);
             spawns.add(new ChestSpawn(
                 toGridCoordinate(rect.x),
                 toGridCoordinate(rect.y),
-                orientation));
+                orientation,
+                fixedLoot
+            ));
         }
         return spawns;
     }
 
     @Override
     public MonsterType loadMonsterType(String mapPath) {
-        if (mapPath == null || mapPath.isBlank()) {
-            throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
-        }
-        TiledMap map = new TmxMapLoader().load(mapPath);
-        try {
-            return loadMonsterType(map);
-        } finally {
-            map.dispose();
-        }
+        return read(mapPath, map -> loadMonsterType(map));
     }
 
     public MonsterType loadMonsterType(TiledMap map) {
@@ -175,7 +211,7 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
             return null;
         }
         MapObject object = layer.getObjects().get(0);
-        String rawType = object.getProperties().get("monsterType", String.class);
+            String rawType = object.getProperties().get("monsterType", String.class);
         if (rawType == null || rawType.isBlank()) {
             return null;
         }
@@ -185,15 +221,7 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
     
     @Override
     public GridPosition loadMonsterSpawn(String mapPath) {
-        if (mapPath == null || mapPath.isBlank()) {
-            throw new IllegalArgumentException("Le chemin de la carte doit être renseigné.");
-        }
-        TiledMap map = new TmxMapLoader().load(mapPath);
-        try {
-            return loadMonsterSpawn(map);
-        } finally {
-            map.dispose();
-        }
+        return read(mapPath, map -> loadMonsterSpawn(map));
     }
 
     public GridPosition loadMonsterSpawn(TiledMap map) {
