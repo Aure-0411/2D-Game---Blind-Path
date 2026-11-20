@@ -26,9 +26,9 @@ public class Labyrinth {
         this.width = width;
         this.height = height;
         validateOpening(entrance.getX(), entrance.getY(), entrance.getWidth(),
-            entrance.getHeight(), entrance.getBorder());
+            entrance.getHeight());
         validateOpening(exit.getX(), exit.getY(), exit.getWidth(),
-            exit.getHeight(), exit.getBorder());
+            exit.getHeight());
 
         this.entrance = entrance;
         this.exit = exit;
@@ -51,23 +51,11 @@ public class Labyrinth {
         return boundaryWalls;
     }
 
-    private void validateOpening(int x, int y, int openingWidth, int openingHeight, Border border) {
+    private void validateOpening(int x, int y, int openingWidth, int openingHeight) {
         // Vérifie le rectangle entier, avec l'origine du monde en bas à gauche.
         // Les additions en long évitent un dépassement de capacité des int.
         if (x < 0 || y < 0 || (long) x + openingWidth > width || (long) y + openingHeight > height) {
             throw new IllegalArgumentException("L'ouverture doit rester dans les limites du labyrinthe.");
-        }
-        if (border == null) {
-            throw new IllegalArgumentException("Le bord de l'ouverture doit être renseigné.");
-        }
-        boolean onBorder = switch (border) {
-            case LEFT -> x == 0;
-            case RIGHT -> (long) x + openingWidth == width;
-            case BOTTOM -> y == 0;
-            case TOP -> (long) y + openingHeight == height;
-        };
-        if (!onBorder) {
-            throw new IllegalArgumentException("L'ouverture doit se trouver sur le bord annoncé : " + border);
         }
     }
 

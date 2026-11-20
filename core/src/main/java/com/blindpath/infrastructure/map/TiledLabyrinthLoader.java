@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.blindpath.domain.inventory.ItemType;
 import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -144,18 +145,18 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
     public Entrance loadEntrance(TiledMap map) {
         RectangleMapObject object = loadOpening(map, "Entrance");
         Rectangle rectangle = object.getRectangle();
-        Border border = readBorder(object);
-        validateOpeningSize(rectangle, border);
-        return new Entrance(toGridCoordinate(rectangle.x), toGridCoordinate(rectangle.y), border);
+        OpeningOrientation orientation = readOrientation(object);
+        validateOpeningSize(rectangle, orientation == OpeningOrientation.HORIZONTAL, orientation.toString());
+        return new Entrance(toGridCoordinate(rectangle.x), toGridCoordinate(rectangle.y), orientation);
     }
 
     /** Lit l'ouverture de sortie dans le calque Exit. */
     public Exit loadExit(TiledMap map) {
         RectangleMapObject object = loadOpening(map, "Exit");
         Rectangle rectangle = object.getRectangle();
-        Border border = readBorder(object);
-        validateOpeningSize(rectangle, border);
-        return new Exit(toGridCoordinate(rectangle.x), toGridCoordinate(rectangle.y), border);
+        OpeningOrientation orientation = readOrientation(object);
+        validateOpeningSize(rectangle, orientation == OpeningOrientation.HORIZONTAL, orientation.toString());
+        return new Exit(toGridCoordinate(rectangle.x), toGridCoordinate(rectangle.y), orientation);
     }
 
     @Override
@@ -279,18 +280,17 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return (RectangleMapObject) object;
     }
 
-    private Border readBorder(MapObject object) {
-        String text = object.getProperties().get("border", String.class);
+    private OpeningOrientation readOrientation(MapObject object) {
+        String text = object.getProperties().get("orientation", String.class);
         if (text == null || text.isBlank()) {
-            throw new IllegalArgumentException("Propriété border manquante : " + object.getName());
+            throw new IllegalArgumentException("Propriété orientation manquante : " + object.getName());
         }
         try {
-            // Les valeurs Tiled doivent correspondre exactement à l'énumération Java.
-            return Border.valueOf(text);
+            return OpeningOrientation.valueOf(text);
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(
-                "Bord invalide pour " + object.getName() + " : " + text
-                    + ". Valeurs attendues : TOP, BOTTOM, LEFT, RIGHT.", exception);
+                "Orientation invalide pour " + object.getName() + " : " + text
+                    + ". Valeurs attendues : HORIZONTAL, VERTICAL.", exception);
         }
     }
 
@@ -305,13 +305,16 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
     }
 
     private void validateOpeningSize(Rectangle rectangle, Border border) {
-        boolean horizontal = border == Border.TOP || border == Border.BOTTOM;
+        validateOpeningSize(rectangle, border == Border.TOP || border == Border.BOTTOM, border.toString());
+    }
+
+    private void validateOpeningSize(Rectangle rectangle, boolean horizontal, String orientation) {
         int expectedWidth = horizontal ? 2 : 1;
         int expectedHeight = horizontal ? 1 : 2;
         if (toGridCoordinate(rectangle.width) != expectedWidth
                 || toGridCoordinate(rectangle.height) != expectedHeight) {
             throw new IllegalArgumentException(
-                "L'ouverture doit mesurer " + expectedWidth + " x " + expectedHeight + " cases pour " + border);
+                "L'ouverture doit mesurer " + expectedWidth + " x " + expectedHeight + " cases pour " + orientation);
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.blindpath.domain.game;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -46,8 +48,8 @@ class LevelTest {
     void setUp() {
         labyrinth = new Labyrinth(
                 10, 10,
-                new Entrance(0, 4, Border.LEFT),
-                new Exit(9, 4, Border.RIGHT),
+                new Entrance(0, 4, OpeningOrientation.VERTICAL),
+                new Exit(9, 4, OpeningOrientation.VERTICAL),
                 List.of(new Wall(5f, 0f, 1f, 10f))
         );
         gnome = new Gnome();
@@ -90,7 +92,7 @@ class LevelTest {
 
     @Test
     void updateHealsAfterNonLethalMonsterHit() {
-        monster.setPosition(gnome.getX(), gnome.getY());
+        gnome.setPosition(monster.getPosition().getColumn(), monster.getPosition().getRow());
         gnome.getInventory().add(new Heart(), 1);
 
         level.update(TICK);
@@ -145,8 +147,8 @@ class LevelTest {
         ghost.setCollide(false);
         Labyrinth l = new Labyrinth(
                 10, 10,
-                new Entrance(0, 4, Border.LEFT),
-                new Exit(9, 4, Border.RIGHT),
+                new Entrance(0, 4, OpeningOrientation.VERTICAL),
+                new Exit(9, 4, OpeningOrientation.VERTICAL),
                 List.of(ghost)
         );
         Gnome g = new Gnome();
@@ -174,8 +176,8 @@ class LevelTest {
     void boundary_stopsGnomeAtTheExitOpening() {
         Labyrinth open = new Labyrinth(
                 10, 10,
-                new Entrance(0, 4, Border.LEFT),
-                new Exit(9, 4, Border.RIGHT),
+                new Entrance(0, 4, OpeningOrientation.VERTICAL),
+                new Exit(9, 4, OpeningOrientation.VERTICAL),
                 List.of()
         );
         Gnome g = new Gnome();

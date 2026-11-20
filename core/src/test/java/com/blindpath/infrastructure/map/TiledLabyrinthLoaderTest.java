@@ -16,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 
 import com.blindpath.domain.inventory.ItemType;
 import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.LabyrinthLoader.ChestSpawn;
 import com.blindpath.domain.labyrinth.LabyrinthLoader.LabyrinthData;
 import com.blindpath.domain.monster.MonsterType;
@@ -24,6 +25,29 @@ import com.blindpath.domain.pathfinding.GridPosition;
 class TiledLabyrinthLoaderTest {
 
     private final TiledLabyrinthLoader loader = new TiledLabyrinthLoader();
+
+    @Test
+    void loadExitReadsOrientationForAnInteriorOpening() {
+        TiledMap map = new TiledMap();
+        MapLayer layer = new MapLayer();
+        layer.setName("Exit");
+        RectangleMapObject exit = new RectangleMapObject(1000f, 1000f, 500f, 250f);
+        exit.setName("Exit");
+        exit.getProperties().put("orientation", "HORIZONTAL");
+        layer.getObjects().add(exit);
+        map.getLayers().add(layer);
+        try {
+            assertEquals(OpeningOrientation.HORIZONTAL, loader.loadExit(map).getOrientation());
+            assertEquals(4, loader.loadExit(map).getX());
+            assertEquals(4, loader.loadExit(map).getY());
+            exit.getProperties().put("orientation", "TOP");
+            assertThrows(IllegalArgumentException.class, () -> loader.loadExit(map));
+            exit.getProperties().put("orientation", "VERTICAL");
+            assertThrows(IllegalArgumentException.class, () -> loader.loadExit(map));
+        } finally {
+            map.dispose();
+        }
+    }
 
     @Test
     void loadChestSpawns_readsGridCoordinatesAndOrientation() {
@@ -152,7 +176,7 @@ class TiledLabyrinthLoaderTest {
         entranceLayer.setName("Entrance");
         RectangleMapObject entrance = new RectangleMapObject(0f, 1000f, 250f, 500f);
         entrance.setName("Entrance");
-        entrance.getProperties().put("border", "LEFT");
+        entrance.getProperties().put("orientation", "VERTICAL");
         entranceLayer.getObjects().add(entrance);
         map.getLayers().add(entranceLayer);
 
@@ -160,7 +184,7 @@ class TiledLabyrinthLoaderTest {
         exitLayer.setName("Exit");
         RectangleMapObject exit = new RectangleMapObject(2250f, 1000f, 250f, 500f);
         exit.setName("Exit");
-        exit.getProperties().put("border", "RIGHT");
+        exit.getProperties().put("orientation", "VERTICAL");
         exitLayer.getObjects().add(exit);
         map.getLayers().add(exitLayer);
 

@@ -170,14 +170,14 @@
  <objectgroup id="6" name="Entrance">
   <object id="2" name="Entrance" x="7250" y="6750" width="250" height="500">
    <properties>
-    <property name="border" value="RIGHT"/>
+    <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="7" name="Exit">
   <object id="316" name="Exit" x="3250" y="3250" width="500" height="250">
    <properties>
-    <property name="border" value="TOP"/>
+    <property name="orientation" value="HORIZONTAL"/>
    </properties>
   </object>
  </objectgroup>
@@ -536,6 +536,5 @@
    </properties>
    <point/>
   </object>
-  <object id="347" x="4250" y="-3872" width="6" height="122"/>
  </objectgroup>
 </map>
