@@ -10,20 +10,30 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
+import com.blindpath.domain.inventory.ItemType;
+import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
+import com.blindpath.domain.labyrinth.LabyrinthLoader;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.labyrinth.Wall;
 import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.pathfinding.GridPosition;
-import com.blindpath.domain.labyrinth.Border;
-import com.blindpath.domain.labyrinth.LabyrinthLoader;
 
 public class TiledLabyrinthLoader implements LabyrinthLoader {
 
     // Même conversion que dans LabyrinthRenderer : 250 pixels = une case.
     private static final float UNIT_SCALE = 1f / 250f;
+
+    private static ItemType parseLootType(MapObject object) {
+        String rawLoot = object.getProperties().get("loot", String.class);
+        if (rawLoot == null || rawLoot.isBlank()) {
+            return null;
+        }
+        return ItemType.valueOf(rawLoot.trim().toUpperCase());
+    }
+
 
     @Override
     public Labyrinth load(String mapPath) {
@@ -127,6 +137,7 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         if (map == null) {
             throw new IllegalArgumentException("La carte doit être renseignée.");
         }
+
         MapLayer layer = map.getLayers().get("Coffre");
         if (layer == null) {
             return List.of();
@@ -145,10 +156,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
             Border orientation = Border.valueOf(rawOrientation.toUpperCase());
             validateOpeningSize(rect, orientation);
 
+            ItemType fixedLoot = parseLootType(object);
             spawns.add(new ChestSpawn(
                 toGridCoordinate(rect.x),
                 toGridCoordinate(rect.y),
-                orientation));
+                orientation,
+                fixedLoot
+            ));
         }
         return spawns;
     }
@@ -175,7 +189,7 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
             return null;
         }
         MapObject object = layer.getObjects().get(0);
-        String rawType = object.getProperties().get("monsterType", String.class);
+            String rawType = object.getProperties().get("monsterType", String.class);
         if (rawType == null || rawType.isBlank()) {
             return null;
         }
