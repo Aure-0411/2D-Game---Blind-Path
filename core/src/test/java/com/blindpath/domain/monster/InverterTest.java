@@ -19,8 +19,9 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests of the Inverter (POC_EXTREME-3, #82).
  *
- * <p>Rules (GDD 4.2): it chases the gnome, 2 cells per move, and inverts the gnome's
- * movement controls while the gnome is within 4 cells. Distance = square around the
+ * <p>Rules: it chases the gnome, CASE_PER_MOVE cells per move, and inverts the gnome's
+ * movement controls while the gnome is within INVERT_RANGE cells. The tests read the
+ * constants, so the values can be tuned without touching them. Distance = square around the
  * monster: the largest of the column gap and the row gap.</p>
  */
 class InverterTest {
@@ -51,17 +52,19 @@ class InverterTest {
 
     // ---------- Configuration ----------
 
+    private static final int R = Inverter.INVERT_RANGE;
+
     @Test
-    void movesTwoCellsPerMove() {
-        assertEquals(2, inverter.getCasePerMove());
+    void movesCasePerMoveCellsPerMove() {
+        assertEquals(Inverter.CASE_PER_MOVE, inverter.getCasePerMove());
         assertEquals(Monster.DEFAULT_TICKS_PER_MOVE, inverter.getTicksPerMove(), "default rhythm");
     }
 
     @Test
-    void chasesTwoCellsOnAMoveTick() {
-        inverter.setTarget(cell(15, 10));
+    void chasesCasePerMoveCellsOnAMoveTick() {
+        inverter.setTarget(cell(18, 10));
         inverter.onTick(Monster.DEFAULT_TICKS_PER_MOVE);
-        assertEquals(cell(12, 10), inverter.getPosition());
+        assertEquals(cell(10 + Inverter.CASE_PER_MOVE, 10), inverter.getPosition());
     }
 
     // ---------- Inversion range ----------
@@ -78,36 +81,36 @@ class InverterTest {
     }
 
     @Test
-    void exactlyFourCellsAwayInverts() {
-        inverter.setTarget(cell(14, 10));
-        assertTrue(inverter.invertsControls(), "4 cells to the right: inside");
-        inverter.setTarget(cell(10, 6));
-        assertTrue(inverter.invertsControls(), "4 cells down: inside");
+    void exactlyAtTheRangeInverts() {
+        inverter.setTarget(cell(10 + R, 10));
+        assertTrue(inverter.invertsControls(), "INVERT_RANGE cells to the right: inside");
+        inverter.setTarget(cell(10, 10 - R));
+        assertTrue(inverter.invertsControls(), "INVERT_RANGE cells down: inside");
     }
 
     @Test
-    void fiveCellsAwayDoesNotInvert() {
-        inverter.setTarget(cell(15, 10));
-        assertFalse(inverter.invertsControls(), "5 cells to the right: outside");
-        inverter.setTarget(cell(5, 10));
-        assertFalse(inverter.invertsControls(), "5 cells to the left: outside");
+    void oneCellBeyondTheRangeDoesNotInvert() {
+        inverter.setTarget(cell(10 + R + 1, 10));
+        assertFalse(inverter.invertsControls(), "one cell too far to the right: outside");
+        inverter.setTarget(cell(10 - R - 1, 10));
+        assertFalse(inverter.invertsControls(), "one cell too far to the left: outside");
     }
 
     @Test
     void diagonalCornerOfTheSquareInverts() {
-        inverter.setTarget(cell(14, 14));
-        assertTrue(inverter.invertsControls(), "4 right and 4 up: corner of the square, inside");
+        inverter.setTarget(cell(10 + R, 10 + R));
+        assertTrue(inverter.invertsControls(), "corner of the square: inside");
     }
 
     @Test
     void oneGapTooBigIsEnoughToBeOutside() {
-        inverter.setTarget(cell(13, 15));
-        assertFalse(inverter.invertsControls(), "3 right but 5 up: outside");
+        inverter.setTarget(cell(10 + R - 1, 10 + R + 1));
+        assertFalse(inverter.invertsControls(), "close in columns but too far in rows: outside");
     }
 
     @Test
     void followsTheGnomeWhenTheTargetChanges() {
-        inverter.setTarget(cell(12, 10));
+        inverter.setTarget(cell(10 + R, 10));
         assertTrue(inverter.invertsControls());
         inverter.setTarget(cell(18, 10));
         assertFalse(inverter.invertsControls(), "the gnome ran away");
@@ -119,6 +122,6 @@ class InverterTest {
     void monsterTypeCreatesAnInverter() {
         Monster m = MonsterType.INVERTER.create(grid, cell(10, 10), STRAIGHT);
         assertInstanceOf(Inverter.class, m);
-        assertEquals(2, m.getCasePerMove());
+        assertEquals(Inverter.CASE_PER_MOVE, m.getCasePerMove());
     }
 }
