@@ -5,15 +5,18 @@ import java.util.List;
 
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
+import com.blindpath.domain.character.Character ;
 
-public class Inventory {
+public class Inventory<T extends Character> {
 
     private int maxSlots = 5;
     private int maxStackSize = 5;
     private List<ItemStack> stacks;
+    private final T owner;
 
-    public Inventory() {
+    public Inventory(T owner) {
         this.stacks = new ArrayList<ItemStack>();
+        this.owner = owner; 
     }
 
     public void add(Item items, int quantity) {

@@ -22,6 +22,17 @@ class GnomeTest {
     }
 
     @Test
+    void eachGnomeOwnsItsOwnPersistentInventory() {
+        Gnome other = new Gnome();
+        assertNotNull(gnome.getInventory());
+        assertSame(gnome.getInventory(), gnome.getInventory());
+        assertNotSame(gnome.getInventory(), other.getInventory());
+        gnome.getInventory().add(new com.blindpath.domain.inventory.Heart(), 2);
+        assertEquals(2, gnome.getInventory().getStacks().get(0).getQuantity());
+        assertTrue(other.getInventory().getStacks().isEmpty());
+    }
+
+    @Test
     void newGnome_defaultSpeed() {
         assertEquals(2.75f, gnome.getSpeed());
     }

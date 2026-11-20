@@ -2,8 +2,6 @@ package com.blindpath.domain.inventory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import com.blindpath.domain.character.Gnome;
-import com.blindpath.domain.game.Level;
 
 class ItemStackTest {
     @Test void constructorPreservesItemAndQuantity() {

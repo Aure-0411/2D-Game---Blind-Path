@@ -88,4 +88,37 @@ class LabyrinthGridTest {
     void labyrinthIsRequired() {
         assertThrows(IllegalArgumentException.class, () -> new LabyrinthGrid(null), "labyrinth required");
     }
+
+    @Test
+    void smallTiledRoundingErrorDoesNotBlockAdjacentCell() {
+        LabyrinthGrid rounded = grid(List.of(new Wall(3f, 0f, 1.000001f, 5f)));
+        assertFalse(rounded.isWalkable(cell(3, 2)), "le mur lui-même reste bloquant");
+        assertTrue(rounded.isWalkable(cell(4, 2)), "un dépassement minuscule ne bloque pas la case voisine");
+    }
+
+    @Test
+    void significantWallOverlapStillBlocksAdjacentCell() {
+        LabyrinthGrid overlapping = grid(List.of(new Wall(3f, 0f, 1.2f, 5f)));
+        assertFalse(overlapping.isWalkable(cell(4, 2)), "la marge ne doit pas masquer un vrai chevauchement");
+    }
+
+    @Test
+    void changingWallCollisionUpdatesWalkabilityOfExistingGrid() {
+        Wall wall = new Wall(3, 0, 1, 5);
+        LabyrinthGrid grid = grid(List.of(wall));
+        assertFalse(grid.isWalkable(cell(3, 2)));
+        wall.setCollide(false);
+        assertTrue(grid.isWalkable(cell(3, 2)));
+        wall.setCollide(true);
+        assertFalse(grid.isWalkable(cell(3, 2)));
+    }
+
+    @Test
+    void enclosedCellHasNoWalkableNeighbor() {
+        LabyrinthGrid enclosed = grid(List.of(
+                new Wall(4, 5, 1, 1), new Wall(6, 5, 1, 1),
+                new Wall(5, 4, 1, 1), new Wall(5, 6, 1, 1)));
+        assertTrue(enclosed.isWalkable(cell(5, 5)));
+        assertTrue(enclosed.getNeighbors(cell(5, 5)).isEmpty());
+    }
 }

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <tileset version="1.10" name="Murs_valides" tilewidth="250" tileheight="250" tilecount="291" columns="16">
-  <image source="assets/murs_valides_250.png" width="4000" height="4750" />
+  <image source="../tilesets/assets/murs_valides_250.png" width="4000" height="4750" />
   <tile id="0">
     <properties>
       <property name="connexions" value="E" />
