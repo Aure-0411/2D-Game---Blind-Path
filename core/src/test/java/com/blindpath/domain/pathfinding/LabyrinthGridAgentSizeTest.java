@@ -1,9 +1,12 @@
 package com.blindpath.domain.pathfinding;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
@@ -11,8 +14,6 @@ import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.labyrinth.Wall;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests of {@link LabyrinthGrid} for an agent bigger than one cell (the 2x2 monster),
@@ -40,6 +41,7 @@ class LabyrinthGridAgentSizeTest {
     @Test
     void agentSizeBelowOneIsRejected() {
         assertThrows(IllegalArgumentException.class, () -> grid(0, List.of()));
+        assertThrows(IllegalArgumentException.class, () -> grid(-1, List.of()));
     }
 
     @Test
@@ -94,5 +96,23 @@ class LabyrinthGridAgentSizeTest {
     void anchorCoveringWithSizeOneIsTheCellItself() {
         LabyrinthGrid small = grid(1, List.of(new Wall(3, 0, 1, 10)));
         assertEquals(cell(2, 4), small.anchorCovering(cell(2, 4)));
+    }
+
+    @Test
+    void anchorCoveringShiftsBothCoordinatesAtTopRightCorner() {
+        assertEquals(cell(8, 8), grid(2, List.of()).anchorCovering(cell(9, 9)));
+    }
+
+    @Test
+    void anchorCoveringReturnsOriginalCellWhenNoBlockFits() {
+        LabyrinthGrid blocked = grid(2, List.of(new Wall(0, 0, 10, 10)));
+        assertEquals(cell(4, 4), blocked.anchorCovering(cell(4, 4)));
+    }
+
+    @Test
+    void agentBiggerThanMapCannotWalkOrFindNeighbors() {
+        LabyrinthGrid oversized = grid(11, List.of());
+        assertFalse(oversized.isWalkable(cell(0, 0)));
+        assertTrue(oversized.getNeighbors(cell(0, 0)).isEmpty());
     }
 }
