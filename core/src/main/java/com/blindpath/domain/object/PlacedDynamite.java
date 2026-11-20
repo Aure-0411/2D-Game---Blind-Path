@@ -31,4 +31,9 @@ public class PlacedDynamite extends PlacedObject {
             level.emitSnap(new SnapEvent(this.getBounds().getCenterX(), this.getBounds().getCenterY(), SnapSource.DYNAMITE, 0L));
         }
     }
+
+    @Override
+    public boolean isDone() {
+        return hasExploded;
+    }
 }
