@@ -12,10 +12,12 @@ import java.util.Random;
 
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.chest.LootTable;
+import com.blindpath.domain.inventory.ItemType;
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
+import com.blindpath.domain.labyrinth.LabyrinthLoader;
 import com.blindpath.domain.monster.Chameleon;
 import com.blindpath.domain.monster.Inverter;
 import com.blindpath.domain.monster.Jumper;
@@ -110,5 +112,37 @@ class LevelFactoryTest {
     @Test
     void unknownLevelIsRejected() {
         assertThrows(IllegalArgumentException.class, () -> factory.configFor(6));
+    }
+
+    @Test
+    void create_usesFixedLootEvenIfExcludedFromRandomDrop() {
+        LabyrinthLoader fixedLootLoader = new LabyrinthLoader() {
+            @Override
+            public Labyrinth load(String path) {
+                return new Labyrinth(10, 10, new Entrance(0, 4, Border.LEFT), new Exit(9, 4, Border.RIGHT), List.of());
+            }
+
+            @Override
+            public List<ChestSpawn> loadChestSpawns(String path) {
+                return List.of(new ChestSpawn(2f, 2f, Border.BOTTOM, ItemType.HEART));
+            }
+        };
+
+        LevelFactory customFactory = new LevelFactory(
+                new LevelCatalog() {
+                    @Override public LevelConfig getLevel(int n) { return new LevelConfig("map.tmx", MonsterType.JUMPER); }
+                    @Override public int totalLevels() { return 1; }
+                    @Override public int tierStartLevel(int n) { return 1; }
+                },
+                fixedLootLoader,
+                new LootTable(),
+                new Random(1),
+                AabbCollisionWorld::new);
+
+        Gnome gnome = new Gnome();
+        Level level = customFactory.create(1, gnome, customFactory.createChests(1));
+        level.getChests().get(0).open(gnome);
+
+        assertEquals("Heart", gnome.getInventory().getStacks().get(0).getItem().getName());
     }
 }

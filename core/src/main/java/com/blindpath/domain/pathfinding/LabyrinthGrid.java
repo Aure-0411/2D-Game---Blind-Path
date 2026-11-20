@@ -40,6 +40,10 @@ public class LabyrinthGrid {
         this.agentSize = agentSize;
     }
 
+    public GridPosition getExitCell() {
+        return new GridPosition(labyrinth.getExit().getX(), labyrinth.getExit().getY());
+    }
+
     public int getAgentSize() {
         return agentSize;
     }
