@@ -1,5 +1,7 @@
 package com.blindpath.domain.inventory;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import java.util.List;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
@@ -14,8 +16,8 @@ import com.blindpath.domain.pathfinding.Pathfinder;
 // Objets de test en Java pur : aucun contexte graphique ni Box2D natif.
 final class InventoryTestSupport {
     static Level level(Gnome hero) {
-        Labyrinth map = new Labyrinth(10, 10, new Entrance(0, 2, Border.LEFT),
-            new Exit(9, 2, Border.RIGHT), List.of());
+        Labyrinth map = new Labyrinth(10, 10, new Entrance(0, 2, OpeningOrientation.VERTICAL),
+            new Exit(9, 2, OpeningOrientation.VERTICAL), List.of());
         Monster dummyMonster = new Monster(
         new LabyrinthGrid(map),
         (grid, current, goal) -> current,
