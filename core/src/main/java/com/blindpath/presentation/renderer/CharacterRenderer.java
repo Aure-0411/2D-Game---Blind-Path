@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Direction;
-import com.blindpath.domain.character.Gnome;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;

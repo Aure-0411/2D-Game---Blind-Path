@@ -4,9 +4,9 @@
   <property name="lumiere_apercu" value="Le calque Eclairage_apercu est statique. Utiliser Lumieres pour le rendu dynamique du jeu."/>
   <property name="version_visuelle" value="Murs naturels et decors stylises valides - lumiere 02"/>
  </properties>
- <tileset firstgid="1" source="murs_valides.tsx"/>
- <tileset firstgid="305" source="sols_valides.tsx"/>
- <tileset firstgid="317" source="decors_stylises.tsx"/>
+ <tileset firstgid="1" source="../tilesets/murs_valides.tsx"/>
+ <tileset firstgid="305" source="../tilesets/sols_valides.tsx"/>
+ <tileset firstgid="317" source="../tilesets/decors_stylises.tsx"/>
  <layer id="1" name="Sols" width="30" height="30">
   <data encoding="csv">
 309,313,309,306,305,309,306,308,306,305,310,313,305,312,309,306,307,309,307,309,310,310,312,313,311,307,312,312,306,307,
@@ -76,7 +76,7 @@
 </data>
  </layer>
  <imagelayer id="9" name="Ombres_contact" visible="0">
-  <image source="assets/ombres_contact.png" width="7500" height="7500"/>
+  <image source="../tilesets/assets/ombres_contact.png" width="7500" height="7500"/>
  </imagelayer>
  <objectgroup draworder="index" id="3" name="Decors" visible="0">
   <object id="1" name="caisse_a" gid="317" x="1809.38" y="442.394" width="131.25" height="134.798">
@@ -288,7 +288,7 @@
   </object>
  </objectgroup>
  <imagelayer id="5" name="Eclairage_apercu" opacity="0.53">
-  <image source="assets/eclairage_apercu.png" width="7500" height="7500"/>
+  <image source="../tilesets/assets/eclairage_apercu.png" width="7500" height="7500"/>
   <properties>
    <property name="usage" value="Apercu statique des deux lanternes. Masquer ce calque pour le moteur de lumiere dynamique."/>
   </properties>
@@ -627,6 +627,9 @@
  </objectgroup>
  <objectgroup id="11" name="monstre_start">
   <object id="340" name="Monster" x="7000" y="500">
+   <properties>
+    <property name="monsterType" value="JUMPER"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>

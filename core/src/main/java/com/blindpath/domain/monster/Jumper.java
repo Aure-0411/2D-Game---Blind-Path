@@ -12,13 +12,17 @@ public class Jumper extends Monster {
         this(grid, start, new JumperStrategy(pathfinder));
     }
 
+    public Jumper(LabyrinthGrid grid, MovementStrategy strategy, GridPosition start) {
+        super(grid, strategy, start);
+        this.jumperStrategy = (strategy instanceof JumperStrategy js) ? js : null;
+    }
+
     private Jumper(LabyrinthGrid grid, GridPosition start, JumperStrategy strategy) {
         super(grid, strategy, start);
         this.jumperStrategy = strategy;
     }
 
     public JumperState getState() {
-        return jumperStrategy.getState();
+        return jumperStrategy != null ? jumperStrategy.getState() : null;
     }
-
 }
