@@ -2,6 +2,7 @@ package com.blindpath.domain.inventory;
 
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
+import com.blindpath.domain.object.PlacedDynamite;
 
 public class Dynamite extends Item {
 
@@ -10,7 +11,18 @@ public class Dynamite extends Item {
     }
 
     @Override
+    public boolean canUse(Gnome user, Level level) {
+        // Réutilise le contrôle des paramètres défini dans Item.
+        return super.canUse(user, level)
+                && !user.isDead();
+    }
+
+    @Override
     public void use(Gnome user, Level level) {
-        // À compléter.
+        if (!canUse(user, level)) {
+            return;
+        }
+        PlacedDynamite placedDynamite = new PlacedDynamite(user.getX(), user.getY(), level);
+        level.addPlacedObject(placedDynamite);
     }
 }
