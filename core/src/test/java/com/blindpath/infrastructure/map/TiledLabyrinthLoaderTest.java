@@ -1,5 +1,6 @@
 package com.blindpath.infrastructure.map;
 
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -7,12 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.objects.PointMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+
+import com.blindpath.domain.inventory.ItemType;
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.LabyrinthLoader.ChestSpawn;
 import com.blindpath.domain.monster.MonsterType;
@@ -102,5 +103,36 @@ class TiledLabyrinthLoaderTest {
 
         mapWithType.dispose();
         mapWithoutType.dispose();
+    }
+
+    @Test
+    void loadChestSpawns_readsOptionalLootPropertyAndRejectsUnknownItem() {
+        TiledMap validMap = new TiledMap();
+        MapLayer validLayer = new MapLayer();
+        validLayer.setName("Coffre");
+        RectangleMapObject customChest = new RectangleMapObject(250f, 3500f, 250f, 500f);
+        customChest.getProperties().put("Orientation", "RIGHT");
+        customChest.getProperties().put("loot", "dynamite");
+        validLayer.getObjects().add(customChest);
+        validMap.getLayers().add(validLayer);
+
+        TiledMap invalidMap = new TiledMap();
+        MapLayer invalidLayer = new MapLayer();
+        invalidLayer.setName("Coffre");
+        RectangleMapObject badChest = new RectangleMapObject(0f, 0f, 500f, 250f);
+        badChest.getProperties().put("Orientation", "BOTTOM");
+        badChest.getProperties().put("loot", "EXCALIBUR");
+        invalidLayer.getObjects().add(badChest);
+        invalidMap.getLayers().add(invalidLayer);
+
+        List<ChestSpawn> spawns = loader.loadChestSpawns(validMap);
+
+        assertAll(
+                () -> assertEquals(1, spawns.size()),
+                () -> assertEquals(ItemType.DYNAMITE, spawns.get(0).fixedLoot()),
+                () -> assertThrows(IllegalArgumentException.class, () -> loader.loadChestSpawns(invalidMap)));
+
+        validMap.dispose();
+        invalidMap.dispose();
     }
 }
