@@ -14,6 +14,7 @@ import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.object.PlacedObject;
 import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.CollisionWorld;
+import com.blindpath.domain.monster.Screamer;
 
 public class Level {
 
@@ -66,6 +67,7 @@ public class Level {
 
     public void update(float deltaTime) {
         gnome.updateImmunity(deltaTime);
+        gnome.updateStun(deltaTime);
         if (monster != null && gnome.collide(monster)) {
             gnome.takeMonsterHit();
         }
@@ -83,6 +85,11 @@ public class Level {
         if (character == null) {
             throw new IllegalArgumentException("Le personnage doit être renseigné.");
         }
+
+        if (character.isStunned()) {
+            return false;
+        }
+
         return collisions.move(character, dx, dy, deltaTime);
     }
 
@@ -90,9 +97,15 @@ public class Level {
         if (event == null) {
             return;
         }
+        
         if (monster != null) {
             monster.onSnap(event);
         }
+
+        if (monster instanceof Screamer screamer && screamer.consumeScream()) {
+            gnome.stun(Screamer.STUN_DURATION);
+        }
+
         for (Chest chest : chests) {
             chest.onSnap(event);
         }

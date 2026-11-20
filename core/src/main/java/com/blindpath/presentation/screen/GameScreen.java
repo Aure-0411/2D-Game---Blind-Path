@@ -52,6 +52,7 @@ import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.JumpscareRenderer;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
 import com.blindpath.presentation.renderer.MonsterRenderer;
+import com.blindpath.domain.monster.Screamer;
 
 public class GameScreen implements Screen {
 
@@ -249,15 +250,16 @@ public class GameScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.render(camera);
+        boolean monsterOnTop = monsterVisible || (monster instanceof Screamer screamer && screamer.isScreaming());
 
         // 1. Avant le brouillard (mode normal)
-        if (!monsterVisible || !debugCollisions) {
+        if (!monsterOnTop || !debugCollisions) {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             if (!debugCollisions) {
                 chestRenderer.render(batch, level.getChests());
             }
-            if (!monsterVisible) {
+            if (!monsterOnTop) {
                 monsterRenderer.render(batch, monster, stateTime);
             }
             batch.end();
@@ -283,7 +285,7 @@ public class GameScreen implements Screen {
             chestRenderer.render(batch, level.getChests());
         }
         characterRenderer.render(batch, level.getGnome(), stateTime, input.isMoving());
-        if (monsterVisible) {
+        if (monsterOnTop) {
         monsterRenderer.render(batch, monster, stateTime);
         }
         batch.end();
