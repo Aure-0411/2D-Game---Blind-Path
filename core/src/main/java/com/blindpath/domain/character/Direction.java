@@ -32,7 +32,6 @@ public enum Direction {
     public float getNormalizedX() {return normalizedX; }
     public float getNormalizedY() {return normalizedY; }
 
-
     public static Direction fromKeys(boolean up, boolean down, boolean left, boolean right) {
         int x = (right ? 1 : 0) - (left ? 1 : 0);
         int y = (up ? 1 : 0) - (down ? 1 : 0);
