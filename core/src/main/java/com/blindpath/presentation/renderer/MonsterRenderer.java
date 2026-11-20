@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.monster.Jumper;
+import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.monster.JumperState;
 import com.blindpath.domain.pathfinding.GridPosition;
 import java.util.HashMap;
@@ -22,8 +23,8 @@ import java.util.Map;
 public class MonsterRenderer implements Disposable {
     // Même taille que la hitbox du monstre (Monster.SIZE = 2 cases) : ce qu'on voit = ce qui touche.
     private static final float SIZE = Monster.SIZE;
-    private static final String[] STATES = {"move", "idle","stunned"};
-    private static final float[] DURATIONS = {0.14f, 0.35f, 0.18f};
+    private static final String[] STATES = {"move", "idle","stunned", "scream"};
+    private static final float[] DURATIONS = {0.14f, 0.35f, 0.18f, 0.15f};
     private static final String[] ORIENTATION = {"left", "right", "up_left", "up_right", "down_left", "down_right"};
     private final TextureAtlas atlas;
     private final Map<String, Animation<TextureRegion>> animations = new HashMap<>();
@@ -36,6 +37,7 @@ public class MonsterRenderer implements Disposable {
             for (String orientation : ORIENTATION) {
                 String key = STATES[i] + "_" + orientation;
                 Array<AtlasRegion> frames = atlas.findRegions(name + "_" + key);
+                if (frames.isEmpty() && STATES[i].equals("scream")) continue;
                 if (frames.isEmpty()) throw new IllegalStateException("nothing found for : " + name + "_" + key);
                 animations.put(key, new Animation<>(DURATIONS[i], frames, Animation.PlayMode.LOOP));
             }
@@ -57,6 +59,8 @@ public class MonsterRenderer implements Disposable {
         updateOrientation(currentPosition);
         String state = "move";
         if (monster instanceof Jumper jumper && jumper.getState() == JumperState.ALERT) state = "idle";
+
+        if (monster instanceof Screamer screamer && screamer.isScreaming()) state = "scream";
 
         if (monster.isImmobilized()) {
             state = "stunned";
