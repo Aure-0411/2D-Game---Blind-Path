@@ -15,30 +15,28 @@ public class ExitTest {
 
     @ParameterizedTest
     @CsvSource({
-        "TOP, 2, 1",
-        "BOTTOM, 2, 1",
-        "LEFT, 1, 2",
-        "RIGHT, 1, 2"
+        "HORIZONTAL, 2, 1",
+        "VERTICAL, 1, 2"
     })
-    void dimensionsMatchBorder(Border border, int expectedWidth, int expectedHeight) {
-        Exit exit = new Exit(3, 4, border);
+    void dimensionsMatchOrientation(OpeningOrientation orientation, int expectedWidth, int expectedHeight) {
+        Exit exit = new Exit(3, 4, orientation);
 
         assertEquals(expectedWidth, exit.getWidth());
         assertEquals(expectedHeight, exit.getHeight());
-        assertEquals(border, exit.getBorder());
+        assertEquals(orientation, exit.getOrientation());
     }
 
     @ParameterizedTest
     @CsvSource({"3, 7", "0, 0", "-3, -7"})
     void exitKeepsProvidedPosition(int x, int y) {
-        Exit exit = new Exit(x, y, Border.TOP);
+        Exit exit = new Exit(x, y, OpeningOrientation.HORIZONTAL);
 
         assertEquals(x, exit.getX());
         assertEquals(y, exit.getY());
     }
 
     @Test
-    void missingBorderIsRejected() {
+    void missingOrientationIsRejected() {
         assertThrows(IllegalArgumentException.class,
             () -> new Exit(0, 0, null));
     }
@@ -46,7 +44,7 @@ public class ExitTest {
     @Test
     void shouldReachExitWhenOverlapsIt() {
         // Arrange
-        Exit exit = new Exit(0, 0, Border.TOP);
+        Exit exit = new Exit(0, 0, OpeningOrientation.HORIZONTAL);
         Gnome gnome = new Gnome();
         gnome.setPosition(1f, 0f);
 
@@ -60,7 +58,7 @@ public class ExitTest {
     @Test
     void shouldNotReachExitWhenDoesNotOverlapIt() {
         // Arrange
-        Exit exit = new Exit(0, 0, Border.TOP);
+        Exit exit = new Exit(0, 0, OpeningOrientation.HORIZONTAL);
         Gnome gnome = new Gnome();
         gnome.setPosition(10f, 10f);
 
@@ -74,7 +72,7 @@ public class ExitTest {
     @Test
     void shouldNotReachExitWhenBordersOnlyTouch() {
         // Arrange
-        Exit exit = new Exit(0, 0, Border.TOP);
+        Exit exit = new Exit(0, 0, OpeningOrientation.HORIZONTAL);
         Gnome gnome = new Gnome();
         gnome.setPosition(1f, 1f);
 

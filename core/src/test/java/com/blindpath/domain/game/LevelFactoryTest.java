@@ -1,5 +1,7 @@
 package com.blindpath.domain.game;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -66,8 +68,8 @@ class LevelFactoryTest {
     }
 
     private static Labyrinth simpleLabyrinth() {
-        Entrance entrance = new Entrance(0, 2, Border.LEFT);
-        Exit exit = new Exit(9, 2, Border.RIGHT);
+        Entrance entrance = new Entrance(0, 2, OpeningOrientation.VERTICAL);
+        Exit exit = new Exit(9, 2, OpeningOrientation.VERTICAL);
         return new Labyrinth(10, 10, entrance, exit, List.of());
     }
 
@@ -119,7 +121,7 @@ class LevelFactoryTest {
         LabyrinthLoader fixedLootLoader = new LabyrinthLoader() {
             @Override
             public Labyrinth load(String path) {
-                return new Labyrinth(10, 10, new Entrance(0, 4, Border.LEFT), new Exit(9, 4, Border.RIGHT), List.of());
+                return new Labyrinth(10, 10, new Entrance(0, 4, OpeningOrientation.VERTICAL), new Exit(9, 4, OpeningOrientation.VERTICAL), List.of());
             }
 
             @Override

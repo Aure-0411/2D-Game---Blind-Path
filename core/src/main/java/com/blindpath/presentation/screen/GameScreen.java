@@ -22,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import com.blindpath.Main;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.character.Gnome;
@@ -38,6 +37,7 @@ import com.blindpath.domain.light.Light;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.time.GameClock;
@@ -46,6 +46,7 @@ import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
 import com.blindpath.infrastructure.map.TiledMapStore;
 import com.blindpath.presentation.hud.Hud;
 import com.blindpath.presentation.input.InputController;
+import com.blindpath.presentation.renderer.BrambleRenderer;
 import com.blindpath.presentation.renderer.CharacterRenderer;
 import com.blindpath.presentation.renderer.ChestRenderer;
 import com.blindpath.presentation.renderer.CollisionDebugRenderer;
@@ -54,6 +55,7 @@ import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.JumpscareRenderer;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
+import com.blindpath.presentation.renderer.LeverWallRenderer;
 import com.blindpath.presentation.renderer.MonsterRenderer;
 
 public class GameScreen implements Screen {
@@ -80,6 +82,8 @@ public class GameScreen implements Screen {
     private float stateTime;
     private GameSession session;
     private ChestRenderer chestRenderer;
+    private BrambleRenderer brambleRenderer;
+    private LeverWallRenderer leverWallRenderer;
     private Monster monster;
     private MonsterRenderer monsterRenderer;
     private String currentMonsterName;
@@ -115,6 +119,8 @@ public class GameScreen implements Screen {
 
             fogRenderer = new FogRenderer();
             chestRenderer = new ChestRenderer();
+            brambleRenderer = new BrambleRenderer();
+            leverWallRenderer = new LeverWallRenderer();
             damageOverlay = new DamageOverlayRenderer();
             batch = new SpriteBatch();
             characterRenderer = new CharacterRenderer<>(
@@ -258,15 +264,22 @@ public class GameScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.render(camera);
+        // Les ronces sont dessinées dans le monde, avant le voile de brouillard.
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        brambleRenderer.render(batch, level.getLabyrinth().getBrambles());
+        leverWallRenderer.render(batch, level.getLabyrinth().getRotatingWalls(), level.getLabyrinth().getLevers());
+        batch.end();
+        boolean monsterOnTop = monsterVisible || (monster instanceof Screamer screamer && screamer.isScreaming());
 
         // 1. Avant le brouillard (mode normal)
-        if (!monsterVisible || !debugCollisions) {
+        if (!monsterOnTop || !debugCollisions) {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             if (!debugCollisions) {
                 chestRenderer.render(batch, level.getChests());
             }
-            if (!monsterVisible) {
+            if (!monsterOnTop) {
                 monsterRenderer.render(batch, monster, stateTime);
             }
             batch.end();
@@ -292,7 +305,7 @@ public class GameScreen implements Screen {
             chestRenderer.render(batch, level.getChests());
         }
         characterRenderer.render(batch, level.getGnome(), stateTime, input.isMoving());
-        if (monsterVisible) {
+        if (monsterOnTop) {
         monsterRenderer.render(batch, monster, stateTime);
         }
         batch.end();
@@ -308,7 +321,8 @@ public class GameScreen implements Screen {
             shapes.end();
         }
 
-        hud.update(light.getCooldownProgress(), level.getGnome().getLife(),level.getGnome().getInventory().getStacks());
+        hud.update(light.getCooldownProgress(), level.getGnome().getLife(),
+                level.getGnome().getInventory().getStacks(), session.getCurrentLevelNumber());
         hud.render(paused ? 0f : delta);
 
         damageOverlay.render(batch);
@@ -419,6 +433,8 @@ public class GameScreen implements Screen {
         if (pauseStage != null) { pauseStage.dispose(); pauseStage = null; }
         if (pauseSkin != null) { pauseSkin.dispose(); pauseSkin = null; }
         if (chestRenderer != null) { chestRenderer.dispose(); chestRenderer = null; }
+        if (brambleRenderer != null) { brambleRenderer.dispose(); brambleRenderer = null; }
+        if (leverWallRenderer != null) { leverWallRenderer.dispose(); leverWallRenderer = null; }
         if (hud != null) { hud.dispose(); hud = null; }
     }
 }
