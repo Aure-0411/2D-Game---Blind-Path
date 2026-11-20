@@ -65,7 +65,9 @@ public class LevelFactory {
         List<Chest> chests = new ArrayList<>();
 
         for (LabyrinthLoader.ChestSpawn spawn : spawns) {
-            LootResult loot = lootTable.roll(random);
+            LootResult loot = (spawn.fixedLoot() != null)
+                    ? new LootResult(spawn.fixedLoot().create(), 1)
+                    : lootTable.roll(random);
             chests.add(new Chest(spawn.x(), spawn.y(), spawn.orientation(), loot));
         }
         return chests;
