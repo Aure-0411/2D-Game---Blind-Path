@@ -14,6 +14,13 @@ public interface LabyrinthLoader {
         }
     }
 
+    record LabyrinthData(
+        Labyrinth labyrinth,
+        List<ChestSpawn> chestSpawns,
+        GridPosition monsterSpawn,
+        MonsterType monsterType
+    ) {}    
+
     Labyrinth load(String path);
 
     default List<ChestSpawn> loadChestSpawns(String path) {
@@ -27,4 +34,13 @@ public interface LabyrinthLoader {
     default GridPosition loadMonsterSpawn(String path) {
         return new GridPosition(5, 5);
     }
+
+    default LabyrinthData loadAll(String path) {
+        return new LabyrinthData(
+            load(path),
+            loadChestSpawns(path),
+            loadMonsterSpawn(path),
+            loadMonsterType(path)
+        );
+    }    
 }

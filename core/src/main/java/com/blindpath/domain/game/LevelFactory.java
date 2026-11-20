@@ -11,9 +11,9 @@ import com.blindpath.domain.chest.LootResult;
 import com.blindpath.domain.chest.LootTable;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.LabyrinthLoader;
+import com.blindpath.domain.labyrinth.LabyrinthLoader.LabyrinthData;
 import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.monster.MonsterType;
-import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.CollisionWorld;
@@ -35,19 +35,19 @@ public class LevelFactory {
     }
 
     public LevelFactory(
-            LevelCatalog registry,
-            LabyrinthLoader loader,
-            LootTable lootTable,
-            Random random,
-            Supplier<CollisionWorld> collisionWorldFactory) {
+        LevelCatalog registry,
+        LabyrinthLoader loader,
+        LootTable lootTable,
+        Random random,
+        Supplier<CollisionWorld> collisionWorldFactory) { 
         if (registry == null || loader == null || lootTable == null || random == null || collisionWorldFactory == null) {
             throw new IllegalArgumentException("Tous les paramètres de LevelFactory doivent être renseignés.");
         }
-        this.registry = registry;
-        this.loader = loader;
-        this.lootTable = lootTable;
-        this.random = random;
-        this.collisionWorldFactory = collisionWorldFactory;
+            this.registry = registry;
+            this.loader = loader;
+            this.lootTable = lootTable;
+            this.random = random;
+            this.collisionWorldFactory = collisionWorldFactory;
     }
 
     public LevelConfig configFor(int number) {
@@ -76,16 +76,13 @@ public class LevelFactory {
     public Level create(int number, Gnome gnome, List<Chest> chests) {
         LevelConfig cfg = configFor(number);
 
-        Labyrinth labyrinth = loader.load(cfg.mapPath());
+        LabyrinthData data = loader.loadAll(cfg.mapPath());
+        Labyrinth labyrinth = data.labyrinth();
         LabyrinthGrid monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
         Pathfinder pathfinder = new GdxAiPathfinder();
 
-        MonsterType mapMonsterType = loader.loadMonsterType(cfg.mapPath());
-        MonsterType effectiveType = (mapMonsterType != null) ? mapMonsterType : cfg.monsterType();
-
-        GridPosition monsterSpawn = loader.loadMonsterSpawn(cfg.mapPath());
-        Monster monster = effectiveType.create(monsterGrid, monsterSpawn, pathfinder);
-
+        MonsterType effectiveType = (data.monsterType() != null) ? data.monsterType() : cfg.monsterType();
+        Monster monster = effectiveType.create(monsterGrid, data.monsterSpawn(), pathfinder);
 
         gnome.setPosition(
                 labyrinth.getEntrance().getX(),
