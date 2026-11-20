@@ -69,6 +69,8 @@ public class Level {
         if (monster != null && gnome.collide(monster)) {
             gnome.takeMonsterHit();
         }
+        // Déclenche le soin automatique après les dégâts ; ne ressuscite pas le gnome.
+        gnome.getInventory().useHealthNeeded(gnome, this);
         for (int i = placedObjects.size() - 1; i >= 0; i--) {
             PlacedObject object = placedObjects.get(i);
             if (monster != null && object.collide(monster)) {
