@@ -288,11 +288,7 @@
   </object>
  </objectgroup>
  <imagelayer id="5" name="Eclairage_apercu" opacity="0.53">
-<<<<<<< HEAD
   <image source="../tilesets/assets/eclairage_apercu_easy_02.png" width="7500" height="7500"/>
-=======
-  <image source="../tilesets/assets/eclairage_apercu.png" width="7500" height="7500"/>
->>>>>>> bf935c15df0dcf10fb254d566690ad5395736734
   <properties>
    <property name="usage" value="Apercu statique des deux lanternes. Masquer ce calque pour le moteur de lumiere dynamique."/>
   </properties>
@@ -305,11 +301,7 @@
   </object>
  </objectgroup>
  <objectgroup id="6" name="Lumieres" visible="0">
-<<<<<<< HEAD
   <object id="42" name="Lumiere_1" x="250" y="387.5" visible="0">
-=======
-  <object id="42" name="Lumiere_1" x="250" y="387.5">
->>>>>>> bf935c15df0dcf10fb254d566690ad5395736734
    <properties>
     <property name="bloquee_par_murs" type="bool" value="true"/>
     <property name="couleur" type="color" value="#ffffb45c"/>
@@ -318,11 +310,7 @@
    </properties>
    <point/>
   </object>
-<<<<<<< HEAD
   <object id="43" name="Lumiere_2" x="7200" y="6837.5" visible="0">
-=======
-  <object id="43" name="Lumiere_2" x="7200" y="6837.5">
->>>>>>> bf935c15df0dcf10fb254d566690ad5395736734
    <properties>
     <property name="bloquee_par_murs" type="bool" value="true"/>
     <property name="couleur" type="color" value="#ffffb45c"/>
@@ -640,17 +628,9 @@
  <objectgroup id="11" name="monstre_start">
   <object id="340" name="Monster" x="7000" y="500">
    <properties>
-<<<<<<< HEAD
     <property name="typeMonster" value="RUNAWAY"/>
-=======
-    <property name="monsterType" value="JUMPER"/>
->>>>>>> bf935c15df0dcf10fb254d566690ad5395736734
    </properties>
    <point/>
   </object>
  </objectgroup>
-<<<<<<< HEAD
 </map>
-=======
-</map>
->>>>>>> bf935c15df0dcf10fb254d566690ad5395736734

@@ -66,6 +66,40 @@ class LevelTest {
     }
 
     @Test
+    void updateAutomaticallyConsumesHeartForInjuredGnome() {
+        gnome.setLife(gnome.getMaxLife() - 1);
+        gnome.getInventory().add(new Heart(), 1);
+
+        level.update(TICK);
+
+        assertEquals(gnome.getMaxLife(), gnome.getLife());
+        assertTrue(gnome.getInventory().getStacks().isEmpty());
+    }
+
+    @Test
+    void updatePreservesHeartAtFullHealthAndAfterDeath() {
+        gnome.getInventory().add(new Heart(), 1);
+        level.update(TICK);
+        assertEquals(1, gnome.getInventory().getStacks().get(0).getQuantity());
+
+        gnome.setLife(0);
+        level.update(TICK);
+        assertEquals(0, gnome.getLife());
+        assertEquals(1, gnome.getInventory().getStacks().get(0).getQuantity());
+    }
+
+    @Test
+    void updateHealsAfterNonLethalMonsterHit() {
+        monster.setPosition(gnome.getX(), gnome.getY());
+        gnome.getInventory().add(new Heart(), 1);
+
+        level.update(TICK);
+
+        assertEquals(gnome.getMaxLife() - Gnome.MONSTER_DAMAGE + 1, gnome.getLife());
+        assertTrue(gnome.getInventory().getStacks().isEmpty());
+    }
+
+    @Test
     void constructor_rejectsNulls() {
         assertAll(
             () -> assertThrows(IllegalArgumentException.class,

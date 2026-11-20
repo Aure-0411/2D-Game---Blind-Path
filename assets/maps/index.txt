@@ -1,2 +1,3 @@
 maps/1_easy/001_Blind_Path_30x30.tmx
 maps/1_easy/002_Blind_Path_30x30.tmx
+maps/1_easy/003_Blind_Path_30x30.tmx
