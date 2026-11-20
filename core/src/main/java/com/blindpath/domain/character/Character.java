@@ -76,10 +76,17 @@ public abstract class Character implements Movable, Collidable{
 
     // ---- Gestion de vie ----
     public void takeMonsterHit() {
+        takeDamage(MONSTER_DAMAGE);
+    }
+
+    /** Dégâts partagés par les monstres et les dangers du niveau. */
+    public void takeDamage(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("Les dégâts doivent être positifs ou nuls.");
+        if (amount == 0 || isDead()) return;
         if (invincible || isImmune()) {
             return;
         }
-        setLife(Math.max(0, getLife() - MONSTER_DAMAGE));
+        setLife(Math.max(0, getLife() - amount));
         immunityTimer = IMMUNITY_DURATION;
     }
 

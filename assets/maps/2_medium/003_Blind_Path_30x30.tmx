@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="11" nextobjectid="348">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="12" nextobjectid="352">
  <properties>
   <property name="gabarit_monstre" value="2x2"/>
   <property name="titre" value="Anneaux imbriqués"/>
@@ -56,10 +56,10 @@
 82,0,0,230,0,0,77,0,0,0,0,0,0,0,0,0,0,0,0,0,109,0,0,0,0,0,0,0,0,58,
 32,0,0,233,0,0,229,0,0,0,0,0,0,0,0,0,0,0,0,0,134,0,0,0,0,0,0,0,0,114,
 250,0,0,102,0,0,194,0,0,133,0,0,65,21,155,245,0,0,0,0,225,0,0,49,0,0,89,284,15,75,
-54,0,0,0,0,0,0,0,0,57,0,0,229,0,0,172,0,0,0,0,0,0,0,0,0,0,0,0,0,173,
-117,0,0,0,0,0,0,0,0,235,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,212,
-76,0,0,0,0,0,199,0,0,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,259,
-61,0,0,0,0,0,114,0,0,135,0,0,206,0,0,195,0,0,0,0,0,0,0,0,0,0,0,0,0,59,
+54,0,0,0,0,0,0,0,0,57,0,0,229,0,0,172,0,0,0,0,236,0,0,0,0,0,0,0,0,173,
+117,0,0,0,0,0,0,0,0,235,0,0,0,0,0,0,0,0,0,0,283,0,0,0,0,0,0,0,0,212,
+76,0,0,0,0,0,199,0,0,52,0,0,0,0,0,0,0,0,0,0,170,0,0,0,0,0,0,0,0,259,
+61,0,0,0,0,0,114,0,0,135,0,0,206,0,0,195,0,0,0,0,289,0,0,0,0,0,0,0,0,59,
 221,0,0,130,0,0,187,0,0,112,0,0,187,0,0,45,0,0,0,0,182,0,0,291,0,0,39,0,0,256,
 254,0,0,0,0,0,0,0,0,235,0,0,0,0,0,0,0,0,0,0,236,0,0,0,0,0,196,0,0,79,
 79,0,0,0,0,0,0,0,0,141,0,0,0,0,0,0,0,0,0,0,142,0,0,0,0,0,59,0,0,54,
@@ -83,7 +83,7 @@
   </object>
   <object id="322" name="ronces" x="3750" y="3500" width="250" height="500">
    <properties>
-    <property name="orientation" value="Vertical"/>
+    <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
   <object id="326" name="ronces" x="0" y="1000" width="250" height="500">
@@ -98,7 +98,7 @@
   </object>
   <object id="329" name="ronces" x="1500" y="3250" width="250" height="500">
    <properties>
-    <property name="orientation" value="VERCTICAL"/>
+    <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
   <object id="330" name="ronces" x="750" y="4500" width="250" height="500">
@@ -106,7 +106,7 @@
     <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
-  <object id="331" name="ronces" x="1500" y="4500" width="250" height="500">
+  <object id="331" name="ronces" x="1500" y="5250" width="250" height="500">
    <properties>
     <property name="orientation" value="VERTICAL"/>
    </properties>
@@ -215,7 +215,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="Collisions" visible="0">
+ <objectgroup id="4" name="Collisions">
   <object id="3" name="Mur" x="0" y="0" width="250" height="250"/>
   <object id="4" name="Mur" x="250" y="0" width="250" height="250"/>
   <object id="5" name="Mur" x="500" y="0" width="250" height="250"/>
@@ -352,10 +352,12 @@
   <object id="136" name="Mur" x="3250" y="3000" width="250" height="250"/>
   <object id="137" name="Mur" x="3500" y="3000" width="250" height="250"/>
   <object id="138" name="Mur" x="3750" y="3000" width="250" height="250"/>
-  <object id="139" name="Mur" x="4000" y="3000" width="250" height="250"/>
-  <object id="140" name="Mur" x="4250" y="3000" width="250" height="250"/>
   <object id="141" name="Mur" x="5000" y="3000" width="250" height="250"/>
   <object id="142" name="Mur" x="5250" y="3000" width="250" height="250"/>
+  <object id="348" name="Mur" x="5000" y="3250" width="250" height="250"/>
+  <object id="349" name="Mur" x="5000" y="3500" width="250" height="250"/>
+  <object id="350" name="Mur" x="5000" y="3750" width="250" height="250"/>
+  <object id="351" name="Mur" x="5000" y="4000" width="250" height="250"/>
   <object id="143" name="Mur" x="5500" y="3000" width="250" height="250"/>
   <object id="144" name="Mur" x="5750" y="3000" width="250" height="250"/>
   <object id="145" name="Mur" x="6500" y="3000" width="250" height="250"/>
@@ -366,32 +368,32 @@
   <object id="150" name="Mur" x="1500" y="3250" width="250" height="250"/>
   <object id="151" name="Mur" x="2250" y="3250" width="250" height="250"/>
   <object id="152" name="Mur" x="3000" y="3250" width="250" height="250"/>
-  <object id="153" name="Mur" x="4250" y="3250" width="250" height="250"/>
+  <object id="153" name="Mur" x="3750" y="3250" width="250" height="250"/>
   <object id="154" name="Mur" x="7250" y="3250" width="250" height="250"/>
   <object id="155" name="Mur" x="0" y="3500" width="250" height="250"/>
   <object id="156" name="Mur" x="1500" y="3500" width="250" height="250"/>
   <object id="157" name="Mur" x="2250" y="3500" width="250" height="250"/>
   <object id="158" name="Mur" x="3000" y="3500" width="250" height="250"/>
-  <object id="159" name="Mur" x="4250" y="3500" width="250" height="250"/>
+  <object id="159" name="Mur" x="3750" y="3500" width="250" height="250"/>
   <object id="160" name="Mur" x="7250" y="3500" width="250" height="250"/>
   <object id="161" name="Mur" x="0" y="3750" width="250" height="250"/>
   <object id="162" name="Mur" x="1500" y="3750" width="250" height="250"/>
   <object id="163" name="Mur" x="2250" y="3750" width="250" height="250"/>
   <object id="164" name="Mur" x="3000" y="3750" width="250" height="250"/>
-  <object id="165" name="Mur" x="4250" y="3750" width="250" height="250"/>
+  <object id="165" name="Mur" x="3750" y="3750" width="250" height="250"/>
   <object id="166" name="Mur" x="7250" y="3750" width="250" height="250"/>
   <object id="167" name="Mur" x="0" y="4000" width="250" height="250"/>
   <object id="168" name="Mur" x="1500" y="4000" width="250" height="250"/>
   <object id="169" name="Mur" x="2250" y="4000" width="250" height="250"/>
   <object id="170" name="Mur" x="3000" y="4000" width="250" height="250"/>
-  <object id="171" name="Mur" x="4250" y="4000" width="250" height="250"/>
+  <object id="171" name="Mur" x="3750" y="4000" width="250" height="250"/>
   <object id="172" name="Mur" x="7250" y="4000" width="250" height="250"/>
   <object id="173" name="Mur" x="0" y="4250" width="250" height="250"/>
   <object id="174" name="Mur" x="750" y="4250" width="250" height="250"/>
   <object id="175" name="Mur" x="1500" y="4250" width="250" height="250"/>
   <object id="176" name="Mur" x="2250" y="4250" width="250" height="250"/>
   <object id="177" name="Mur" x="3000" y="4250" width="250" height="250"/>
-  <object id="178" name="Mur" x="4250" y="4250" width="250" height="250"/>
+  <object id="178" name="Mur" x="3750" y="4250" width="250" height="250"/>
   <object id="179" name="Mur" x="5000" y="4250" width="250" height="250"/>
   <object id="180" name="Mur" x="5250" y="4250" width="250" height="250"/>
   <object id="181" name="Mur" x="5500" y="4250" width="250" height="250"/>
@@ -537,4 +539,7 @@
    <point/>
   </object>
  </objectgroup>
+ <imagelayer id="11" name="Calque d'Images 1" opacity="0.53">
+  <image source="../tilesets/assets/eclairage_apercu_easy_03.png" width="7500" height="7500"/>
+ </imagelayer>
 </map>

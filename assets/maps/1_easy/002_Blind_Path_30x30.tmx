@@ -287,12 +287,6 @@
    </properties>
   </object>
  </objectgroup>
- <imagelayer id="5" name="Eclairage_apercu" opacity="0.53">
-  <image source="../tilesets/assets/eclairage_apercu_easy_02.png" width="7500" height="7500"/>
-  <properties>
-   <property name="usage" value="Apercu statique des deux lanternes. Masquer ce calque pour le moteur de lumiere dynamique."/>
-  </properties>
- </imagelayer>
  <objectgroup id="12" name="Coffre">
   <object id="341" name="Coffre_01" x="250" y="3500" width="250" height="500">
    <properties>
@@ -633,4 +627,10 @@
    <point/>
   </object>
  </objectgroup>
+ <imagelayer id="5" name="Eclairage_apercu" opacity="0.53">
+  <image source="../tilesets/assets/eclairage_apercu_easy_02.png" width="7500" height="7500"/>
+  <properties>
+   <property name="usage" value="Apercu statique des deux lanternes. Masquer ce calque pour le moteur de lumiere dynamique."/>
+  </properties>
+ </imagelayer>
 </map>
