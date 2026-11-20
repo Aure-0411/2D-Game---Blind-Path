@@ -22,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import com.blindpath.Main;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.character.Gnome;
@@ -38,6 +37,7 @@ import com.blindpath.domain.light.Light;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.time.GameClock;
@@ -46,18 +46,17 @@ import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
 import com.blindpath.infrastructure.map.TiledMapStore;
 import com.blindpath.presentation.hud.Hud;
 import com.blindpath.presentation.input.InputController;
+import com.blindpath.presentation.renderer.BrambleRenderer;
 import com.blindpath.presentation.renderer.CharacterRenderer;
 import com.blindpath.presentation.renderer.ChestRenderer;
-import com.blindpath.presentation.renderer.BrambleRenderer;
-import com.blindpath.presentation.renderer.LeverWallRenderer;
 import com.blindpath.presentation.renderer.CollisionDebugRenderer;
 import com.blindpath.presentation.renderer.DamageOverlayRenderer;
 import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.JumpscareRenderer;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
+import com.blindpath.presentation.renderer.LeverWallRenderer;
 import com.blindpath.presentation.renderer.MonsterRenderer;
-import com.blindpath.domain.monster.Screamer;
 
 public class GameScreen implements Screen {
 

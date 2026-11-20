@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="11" nextobjectid="331">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="250" tileheight="250" infinite="0" nextlayerid="16" nextobjectid="356">
  <properties>
   <property name="difficulte" value="difficile"/>
   <property name="gabarit_monstre" value="2x2"/>
@@ -42,6 +42,9 @@
 311,306,308,313,309,312,308,309,308,307,314,309,313,305,308,308,306,309,308,312,310,306,310,310,312,307,312,313,315,306
 </data>
  </layer>
+ <imagelayer id="10" name="light" opacity="0.3">
+  <image source="../tilesets/assets/eclairage_apercu_easy_05.png" width="7500" height="7500"/>
+ </imagelayer>
  <layer id="2" name="Murs" width="30" height="30">
   <data encoding="csv">
 72,126,127,17,29,283,14,12,21,68,189,42,92,274,5,167,184,92,150,185,125,29,154,13,184,66,4,282,73,192,
@@ -76,6 +79,43 @@
 46,0,0,285,126,289,98,191,93,272,123,91,275,16,41,184,126,127,264,94,165,91,151,270,150,280,218,281,287,156
 </data>
  </layer>
+ <layer id="5" name="Raccords_murs" width="30" height="30">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <imagelayer id="13" name="light" opacity="0.4">
+  <image source="../tilesets/assets/eclairage_apercu_easy_05.png" width="7500" height="7500"/>
+ </imagelayer>
  <objectgroup id="9" name="ronces">
   <object id="312" name="ronces_312" x="5750" y="4250" width="500" height="250">
    <properties>
@@ -163,61 +203,36 @@
    </properties>
   </object>
  </objectgroup>
- <layer id="5" name="Raccords_murs" width="30" height="30">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
- <objectgroup id="3" name="Entree_sortie">
-  <object id="1" name="Exit" type="Entree" x="754.75" y="7250" width="250" height="500" rotation="90" visible="0">
+ <objectgroup id="11" name="Exit">
+  <object id="331" name="Exit" x="250" y="7250" width="500" height="250">
    <properties>
     <property name="orientation" value="HORIZONTAL"/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup id="14" name="Coffre">
+  <object id="335" name="Coffre_01" x="250" y="250" width="500" height="250">
+   <properties>
+    <property name="Orientation" value="BOTTOM"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="12" name="Entrance">
   <object id="2" name="Entrance" type="Sortie" x="7250" y="6750" width="250" height="500" visible="0">
    <properties>
     <property name="orientation" value="vertical"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="8" name="monster_start">
+ <objectgroup id="8" name="monstre_start">
   <object id="311" name="Monster" x="7000" y="500">
    <properties>
-    <property name="monsterType" value="RUNAWAY"/>
+    <property name="monsterType" value="INVERTER"/>
    </properties>
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="4" name="Collisions">
+ <objectgroup id="4" name="Collisions" visible="0">
   <object id="3" name="Mur" x="0" y="0" width="250" height="250"/>
   <object id="301" name="Mur" x="0" y="500" width="250" height="250"/>
   <object id="302" name="Mur" x="0" y="250" width="250" height="250"/>
@@ -473,11 +488,28 @@
   <object id="298" name="Mur" x="6750" y="7250" width="250" height="250"/>
   <object id="299" name="Mur" x="7000" y="7250" width="250" height="250"/>
   <object id="300" name="Mur" x="7250" y="7250" width="250" height="250"/>
+  <object id="339" name="Mur_ronces_312" x="5750" y="4250" width="500" height="250"/>
+  <object id="340" name="Mur_ronces_313" x="6500" y="2500" width="250" height="500"/>
+  <object id="341" name="Mur_ronces_314" x="6000" y="1500" width="500" height="250"/>
+  <object id="342" name="Mur_ronces_315" x="4500" y="5750" width="500" height="250"/>
+  <object id="343" name="Mur_ronces_316" x="3000" y="6250" width="250" height="500"/>
+  <object id="344" name="Mur_ronces_317" x="2250" y="2750" width="250" height="500"/>
+  <object id="345" name="Mur_ronces_318" x="1500" y="3000" width="250" height="500"/>
+  <object id="346" name="Mur_ronces_319" x="250" y="5750" width="500" height="250"/>
+  <object id="347" name="Mur_ronces_320" x="750" y="1250" width="250" height="500"/>
+  <object id="348" name="Mur_ronces_321" x="1500" y="500" width="250" height="500"/>
+  <object id="349" name="Mur_ronces_322" x="2500" y="1500" width="500" height="250"/>
+  <object id="350" name="Mur_ronces_323" x="2500" y="750" width="500" height="250"/>
+  <object id="351" name="Mur_ronces_324" x="2750" y="4250" width="500" height="250"/>
+  <object id="352" name="Mur_ronces_325" x="2250" y="4250" width="500" height="250"/>
+  <object id="353" name="Mur_ronces_326" x="2750" y="5000" width="500" height="250"/>
+  <object id="354" name="Mur_ronces_327" x="1500" y="5000" width="500" height="250"/>
+  <object id="355" name="Mur_ronces_330" x="6500" y="1750" width="250" height="500"/>
  </objectgroup>
  <objectgroup id="6" name="movableWall">
-  <object id="307" name="movableWall" x="5000" y="1750" width="250" height="504">
+  <object id="307" name="movableWall" x="5000" y="1750" width="250" height="500">
    <properties>
-    <property name="levier" type="object" value="309"/>
+    <property name="levier" type="object" value="338"/>
     <property name="orientation" value="VERTICAL"/>
     <property name="pivot" type="object" value="308"/>
     <property name="rotation" type="int" value="90"/>
@@ -486,11 +518,6 @@
   <object id="308" name="pivot" x="5125" y="1625">
    <point/>
   </object>
-  <object id="309" name="lever" x="2625" y="6150">
-   <point/>
-  </object>
+  <object id="338" name="lever" x="2500" y="6000" width="250" height="250"/>
  </objectgroup>
- <imagelayer id="10" name="light" opacity="0.53">
-  <image source="../tilesets/assets/eclairage_apercu_easy_05.png" width="7500" height="7500"/>
- </imagelayer>
 </map>
