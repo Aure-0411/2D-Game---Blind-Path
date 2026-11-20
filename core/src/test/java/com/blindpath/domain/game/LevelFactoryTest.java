@@ -128,8 +128,6 @@ class LevelFactoryTest {
             }
         };
 
-        // La table aléatoire ne contient que BOOSTER, mais le coffre a fixedLoot = HEART
-        LootTable boosterOnlyTable = new LootTable(List.of(ItemType.BOOSTER));
         LevelFactory customFactory = new LevelFactory(
                 new LevelCatalog() {
                     @Override public LevelConfig getLevel(int n) { return new LevelConfig("map.tmx", MonsterType.JUMPER); }
@@ -137,8 +135,9 @@ class LevelFactoryTest {
                     @Override public int tierStartLevel(int n) { return 1; }
                 },
                 fixedLootLoader,
-                boosterOnlyTable,
-                new Random(1));
+                new LootTable(),
+                new Random(1),
+                AabbCollisionWorld::new);
 
         Gnome gnome = new Gnome();
         Level level = customFactory.create(1, gnome, customFactory.createChests(1));
