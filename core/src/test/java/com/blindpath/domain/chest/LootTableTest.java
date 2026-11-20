@@ -1,21 +1,20 @@
 package com.blindpath.domain.chest;
 
-import com.blindpath.domain.inventory.BearTrap;
-import com.blindpath.domain.inventory.Booster;
-import com.blindpath.domain.inventory.Compass;
-import com.blindpath.domain.inventory.Dynamite;
-import com.blindpath.domain.inventory.Heart;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.blindpath.domain.inventory.ItemType;
 
 class LootTableTest {
 
@@ -41,27 +40,33 @@ class LootTableTest {
         assertNotSame(first.item(), second.item(), "chaque tirage doit créer une nouvelle instance");
     }
 
-    @Test
-    void roll_canProduceAllConfiguredItemTypes() {
-        Random random = new Random(0);
-        Set<Class<?>> rolledTypes = new HashSet<>();
+@Test
+    void roll_onlyProducesRandomDroppableItems() {
+        LootTable table = new LootTable();
+        Random rng = new Random(42);
+
+        Set<String> expectedNames = Stream.of(ItemType.values())
+                .filter(ItemType::isRandomDroppable)
+                .map(type -> type.create().getName())
+                .collect(Collectors.toSet());
 
         for (int i = 0; i < 100; i++) {
-            rolledTypes.add(lootTable.roll(random).item().getClass());
+            LootResult result = table.roll(rng);
+            assertNotNull(result);
+            assertEquals(1, result.quantity());
+            assertTrue(expectedNames.contains(result.item().getName()),
+                    "Objet non autorisé en tirage aléatoire : " + result.item().getName());
         }
-
-        Set<Class<?>> expectedTypes = Set.of(
-                Heart.class,
-                BearTrap.class,
-                Dynamite.class,
-                Compass.class,
-                Booster.class
-        );
-        assertEquals(expectedTypes, rolledTypes);
     }
 
     @Test
     void roll_withNullRandom_throws() {
-        assertThrows(NullPointerException.class, () -> lootTable.roll(null));
+        assertThrows(IllegalArgumentException.class, () -> lootTable.roll(null));
+    }
+
+
+    @Test
+    void constructor_rejectsEmptyPool() {
+        assertThrows(IllegalArgumentException.class, () -> new LootTable(List.of()));
     }
 }
