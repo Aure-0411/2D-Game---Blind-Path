@@ -23,15 +23,23 @@ public class InputController {
     }
 
     public static Direction readDirection(IntPredicate keyDown) {
+        return readDirection(keyDown, false);
+    }
+
+
+    public static Direction readDirection(IntPredicate keyDown, boolean inverted) {
         boolean up = keyDown.test(Keys.W) || keyDown.test(Keys.UP);
         boolean down = keyDown.test(Keys.S) || keyDown.test(Keys.DOWN);
         boolean left = keyDown.test(Keys.A) || keyDown.test(Keys.LEFT);
         boolean right = keyDown.test(Keys.D) || keyDown.test(Keys.RIGHT);
+        if (inverted) {
+            return Direction.fromKeys(down, up, right, left);
+        }
         return Direction.fromKeys(up, down, left, right);
     }
 
     public void handleInput(float deltaTime) {
-        Direction direction = readDirection(keyDown);
+        Direction direction = readDirection(keyDown, level.areControlsInverted());
         Gnome gnome = level.getGnome();
 
         if (direction != Direction.NONE) {

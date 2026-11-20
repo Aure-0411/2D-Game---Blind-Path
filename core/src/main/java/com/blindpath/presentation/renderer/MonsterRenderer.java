@@ -57,7 +57,6 @@ public class MonsterRenderer implements Disposable {
         updateOrientation(currentPosition);
         String state = "move";
         if (monster instanceof Jumper jumper && jumper.getState() == JumperState.ALERT) state = "idle";
-
         if (monster.isImmobilized()) {
             state = "stunned";
         }
