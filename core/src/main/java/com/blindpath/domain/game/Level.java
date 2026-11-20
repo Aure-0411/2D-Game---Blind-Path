@@ -15,6 +15,7 @@ import com.blindpath.domain.object.PlacedObject;
 import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.CollisionWorld;
 import com.blindpath.domain.monster.Screamer;
+import com.blindpath.domain.monster.Inverter;
 
 public class Level {
 
@@ -116,6 +117,10 @@ public class Level {
             throw new IllegalArgumentException("L'objet doit être renseigné.");
         }
         this.placedObjects.add(object);
+    }
+
+    public boolean areControlsInverted() {
+        return monster instanceof Inverter inverter && inverter.invertsControls();
     }
 
     public boolean isCompleted() {

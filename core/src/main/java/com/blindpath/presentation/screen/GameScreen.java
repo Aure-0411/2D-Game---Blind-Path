@@ -1,6 +1,8 @@
 package com.blindpath.presentation.screen;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -11,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import com.blindpath.Main;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.character.Gnome;
@@ -41,6 +43,7 @@ import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.time.GameClock;
 import com.blindpath.infrastructure.map.LevelRegistry;
 import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
+import com.blindpath.infrastructure.map.TiledMapStore;
 import com.blindpath.presentation.hud.Hud;
 import com.blindpath.presentation.input.InputController;
 import com.blindpath.presentation.renderer.CharacterRenderer;
@@ -60,6 +63,7 @@ public class GameScreen implements Screen {
     private static final float WORLD_HEIGHT = 30f;
 
     private TiledMap map;
+    private TiledMapStore mapStore;
     private LabyrinthRenderer renderer;
     private OrthographicCamera camera;
     private FitViewport viewport;
@@ -79,6 +83,7 @@ public class GameScreen implements Screen {
     private ChestRenderer chestRenderer;
     private Monster monster;
     private MonsterRenderer monsterRenderer;
+    private String currentMonsterName;
     private LabyrinthGrid monsterGrid;
     private final GameClock clock = new GameClock();
     private ShapeRenderer shapes;
@@ -101,7 +106,8 @@ public class GameScreen implements Screen {
         if (map == null) {
             hud = new Hud();
             LevelRegistry registry = new LevelRegistry();
-            factory = new LevelFactory(registry, new TiledLabyrinthLoader(), new LootTable(), new Random());
+            mapStore = new TiledMapStore();
+            factory = new LevelFactory(registry, new TiledLabyrinthLoader(mapStore), new LootTable(), new Random());
             Gnome gnome = new Gnome();
 
             session = new GameSession(factory, gnome);
@@ -244,6 +250,9 @@ public class GameScreen implements Screen {
         
         if (Gdx.input.isKeyJustPressed(Keys.I)) level.getGnome().toggleInvincible();
         
+        // Avance le préchargement du niveau suivant (budget de quelques ms par frame).
+        mapStore.update();
+
         // 2. Dessin
         // Efface l'image précédente, y compris les bandes autour du viewport.
         ScreenUtils.clear(0f, 0f, 0f, 1f);
@@ -316,8 +325,6 @@ public class GameScreen implements Screen {
 
     private void loadCurrentLevelResources() {
         if (renderer != null) renderer.dispose();
-        if (map != null) map.dispose();
-        if (monsterRenderer != null) monsterRenderer.dispose();
         if (monster != null) clock.removeListener(monster);
 
         level = session.getLevel();
@@ -330,24 +337,40 @@ public class GameScreen implements Screen {
             entrance.getY() + (entrance.getHeight() - gnome.getHeight()) / 2f);
 
         LevelConfig config = factory.configFor(session.getCurrentLevelNumber());
-        map = new TmxMapLoader().load(config.mapPath());
+        // La carte a déjà été chargée par la factory (même store) : get() est instantané.
+        map = mapStore.get(config.mapPath());
         renderer = new LabyrinthRenderer(map);
+
+        // On garde le niveau courant et on précharge le suivant en arrière-plan ;
+        // le reste est libéré (les textures partagées entre cartes restent en mémoire).
+        Set<String> keep = new HashSet<>();
+        keep.add(config.mapPath());
+        int next = session.getCurrentLevelNumber() + 1;
+        if (next <= factory.totalLevels()) {
+            keep.add(factory.configFor(next).mapPath());
+            mapStore.preload(factory.configFor(next).mapPath());
+        }
+        mapStore.retainOnly(keep);
 
         monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
         monster = level.getMonster();
         clock.addListener(monster);
-
         
         String monsterName = monster.getClass().getSimpleName().toLowerCase();
-        monsterRenderer = new MonsterRenderer(monsterName);
-        jumpscare = new JumpscareRenderer(monsterName);
-        if (Gdx.graphics != null) {
+        if (!monsterName.equals(currentMonsterName)) {
+            if (monsterRenderer != null) monsterRenderer.dispose();
+            if (jumpscare != null) jumpscare.dispose();
+
+            currentMonsterName = monsterName;
+            monsterRenderer = new MonsterRenderer(monsterName);
+            jumpscare = new JumpscareRenderer(monsterName);
+        }
+        if (Gdx.graphics != null && jumpscare != null) {
             jumpscare.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         }
 
         input = new InputController(level);
     }
-
 
     @Override
     public void resize(int width, int height) {
@@ -387,9 +410,11 @@ public class GameScreen implements Screen {
         if (characterRenderer != null) { characterRenderer.dispose(); characterRenderer = null; }
         if (debugRenderer != null) { debugRenderer.dispose(); debugRenderer = null; }
         if (batch != null) { batch.dispose(); batch = null; }
-        if (map != null) { map.dispose(); map = null; }
+        map = null; // la carte appartient au store
+        if (mapStore != null) { mapStore.dispose(); mapStore = null; }
         if (fogRenderer != null) { fogRenderer.dispose(); fogRenderer = null; }
         if (monsterRenderer != null) { monsterRenderer.dispose(); monsterRenderer = null; }
+        currentMonsterName = null;
         if (shapes != null) { shapes.dispose(); shapes = null; }
         if (jumpscare != null) { jumpscare.dispose(); jumpscare = null; }
         if (damageOverlay != null) { damageOverlay.dispose(); damageOverlay = null; }
