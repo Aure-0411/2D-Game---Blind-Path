@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.blindpath.domain.inventory.ItemType;
 import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.LabyrinthLoader.ChestSpawn;
+import com.blindpath.domain.labyrinth.LabyrinthLoader.LabyrinthData;
 import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.pathfinding.GridPosition;
 
@@ -134,5 +136,48 @@ class TiledLabyrinthLoaderTest {
 
         validMap.dispose();
         invalidMap.dispose();
+    }
+
+        @Test
+    void loadAll_extractsLabyrinthChestsMonsterSpawnAndTypeInSinglePass() {
+        TiledMap map = new TiledMap();
+        map.getProperties().put("width", 10);
+        map.getProperties().put("height", 10);
+
+        MapLayer collisionsLayer = new MapLayer();
+        collisionsLayer.setName("Collisions");
+        map.getLayers().add(collisionsLayer);
+
+        MapLayer entranceLayer = new MapLayer();
+        entranceLayer.setName("Entrance");
+        RectangleMapObject entrance = new RectangleMapObject(0f, 1000f, 250f, 500f);
+        entrance.setName("Entrance");
+        entrance.getProperties().put("border", "LEFT");
+        entranceLayer.getObjects().add(entrance);
+        map.getLayers().add(entranceLayer);
+
+        MapLayer exitLayer = new MapLayer();
+        exitLayer.setName("Exit");
+        RectangleMapObject exit = new RectangleMapObject(2250f, 1000f, 250f, 500f);
+        exit.setName("Exit");
+        exit.getProperties().put("border", "RIGHT");
+        exitLayer.getObjects().add(exit);
+        map.getLayers().add(exitLayer);
+
+        MapLayer monsterLayer = new MapLayer();
+        monsterLayer.setName("monstre_start");
+        PointMapObject monsterObj = new PointMapObject(1500f, 1500f);
+        monsterObj.getProperties().put("monsterType", "SCREAMER");
+        monsterLayer.getObjects().add(monsterObj);
+        map.getLayers().add(monsterLayer);
+
+        LabyrinthData data = loader.loadAll(map);
+
+        assertAll(
+                () -> assertEquals(10, data.labyrinth().getWidth()),
+                () -> assertEquals(new GridPosition(5, 5), data.monsterSpawn()),
+                () -> assertEquals(MonsterType.SCREAMER, data.monsterType()),
+                () -> assertTrue(data.chestSpawns().isEmpty()));
+        map.dispose();
     }
 }
