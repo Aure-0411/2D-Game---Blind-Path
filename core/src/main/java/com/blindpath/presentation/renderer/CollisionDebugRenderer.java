@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Disposable;
+import com.blindpath.domain.chest.Chest;
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.game.Level;
@@ -27,6 +28,27 @@ public class CollisionDebugRenderer implements Disposable {
         }
         shapes.setColor(Color.GREEN);
         draw(level.getGnome().getBounds());
+
+        shapes.setColor(Color.GOLD);
+        for (Chest chest : level.getChests()) {
+            Bounds b = chest.getBounds();
+            shapes.rect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
+
+            if (!chest.isOpened()) {
+                float rx = chest.getActivationRadiusX();
+                float ry = chest.getActivationRadiusY();
+                float centerX = b.getX() + b.getWidth() / 2f;
+                float centerY = b.getY() + b.getHeight() / 2f;
+
+                shapes.ellipse(
+                    centerX - rx,
+                    centerY - ry,
+                    rx * 2f,
+                    ry * 2f,
+                    32);
+            }
+        }
+
 
         shapes.end();
     }

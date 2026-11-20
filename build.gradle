@@ -67,3 +67,29 @@ subprojects {
 }
 
 eclipse.project.name = 'Blind_Path' + '-parent'
+
+tasks.register("generateMapIndex") {
+    def mapsDir = file("${rootDir}/assets/maps")
+    def indexFile = file("${mapsDir}/index.txt")
+
+    doLast {
+        mapsDir.mkdirs()
+        def lines = []
+        ["1_easy", "2_medium", "3_hard", "4_extreme"].each { folder ->
+            def subDir = new File(mapsDir, folder)
+            if (subDir.exists()) {
+                subDir.listFiles()
+                      .findAll { it.name.endsWith(".tmx") }
+                      .sort { it.name }
+                      .each { lines << "maps/${folder}/${it.name}" }
+            }
+        }
+        indexFile.text = lines.join("\n")
+    }
+}
+
+subprojects {
+    tasks.matching { it.name in ["processResources", "run", "jar"] }.configureEach {
+        dependsOn(":generateMapIndex")
+    }
+}

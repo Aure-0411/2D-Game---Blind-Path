@@ -1,6 +1,7 @@
 package com.blindpath.presentation.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -65,7 +66,8 @@ public class IntroScreen implements Screen {
             frameTime -= durations[frameIndex];
             frameIndex++;
         }
-        if (frameIndex == frames.length) {
+        // Échap termine l'introduction comme si l'animation était arrivée à sa fin.
+        if (Gdx.input.isKeyJustPressed(Keys.ESCAPE) || frameIndex == frames.length) {
             main.setScreen(new MainMenuScreen(main));
             dispose();
             return;

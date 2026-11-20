@@ -133,4 +133,7 @@ public class Light implements Revealable {
     public float getHeroCenterY() {
         return heroCenterY;
     }
+    public float getCooldownProgress(){
+        return cooldownTimer.getProgress();
+    }
 }
