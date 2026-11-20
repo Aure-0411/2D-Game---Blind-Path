@@ -11,8 +11,21 @@ public class Labyrinth {
     private final List<Obstacle> boundaryWalls;
     private final Entrance entrance;
     private final Exit exit;
+    private final List<Bramble> brambles;
+    private final List<Lever> levers;
+    private final List<RotatingWall> rotatingWalls;
 
     public Labyrinth(int width, int height, Entrance entrance, Exit exit, List<Obstacle> obstacles) {
+        this(width, height, entrance, exit, obstacles, List.of());
+    }
+
+    public Labyrinth(int width, int height, Entrance entrance, Exit exit,
+                     List<Obstacle> obstacles, List<Bramble> brambles) {
+        this(width, height, entrance, exit, obstacles, brambles, List.of());
+    }
+
+    public Labyrinth(int width, int height, Entrance entrance, Exit exit,
+                     List<Obstacle> obstacles, List<Bramble> brambles, List<Lever> levers) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Les dimensions du labyrinthe doivent être strictement positives.");
         }
@@ -21,6 +34,19 @@ public class Labyrinth {
         }
         if (obstacles == null || obstacles.stream().anyMatch(obstacle -> obstacle == null)) {
             throw new IllegalArgumentException("La liste d'obstacles et ses éléments doivent être renseignés.");
+        }
+        if (brambles == null || brambles.stream().anyMatch(bramble -> bramble == null)) {
+            throw new IllegalArgumentException("Les ronces doivent être renseignées.");
+        }
+        this.brambles = List.copyOf(brambles);
+        if (levers == null || levers.stream().anyMatch(lever -> lever == null)) {
+            throw new IllegalArgumentException("Les leviers doivent être renseignés.");
+        }
+        this.levers = List.copyOf(levers);
+        this.rotatingWalls = obstacles.stream().filter(RotatingWall.class::isInstance)
+                .map(RotatingWall.class::cast).toList();
+        if (levers.stream().anyMatch(lever -> !rotatingWalls.contains(lever.getWall()))) {
+            throw new IllegalArgumentException("Le mur de chaque levier doit appartenir au labyrinthe.");
         }
 
         this.width = width;
@@ -70,6 +96,13 @@ public class Labyrinth {
     public List<Obstacle> getObstacles() {
         return obstacles;
     }
+
+    public List<Bramble> getBrambles() {
+        return brambles;
+    }
+
+    public List<Lever> getLevers() { return levers; }
+    public List<RotatingWall> getRotatingWalls() { return rotatingWalls; }
 
     public Entrance getEntrance() {
         return entrance;

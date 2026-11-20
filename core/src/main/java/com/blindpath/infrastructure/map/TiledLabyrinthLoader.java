@@ -2,6 +2,7 @@ package com.blindpath.infrastructure.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 import com.badlogic.gdx.maps.MapLayer;
@@ -13,6 +14,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.blindpath.domain.inventory.ItemType;
 import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.Bramble;
+import com.blindpath.domain.labyrinth.Lever;
+import com.blindpath.domain.labyrinth.RotatingWall;
 import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
@@ -76,7 +80,82 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         Entrance entrance = loadEntrance(map);
         Exit exit = loadExit(map);
         List<Obstacle> obstacles = loadObstacles(map);
-        return new Labyrinth(width, height, entrance, exit, obstacles);
+        List<Lever> levers = loadLevers(map);
+        for (Lever lever : levers) obstacles.add(lever.getWall());
+        return new Labyrinth(width, height, entrance, exit, obstacles, loadBrambles(map), levers);
+    }
+
+    /** Lit les références d'objets pivot et levier du calque movableWall. */
+    public List<Lever> loadLevers(TiledMap map) {
+        if (map == null) throw new IllegalArgumentException("La carte doit être renseignée.");
+        MapLayer layer = map.getLayers().get("movableWall");
+        if (layer == null) return List.of();
+        List<Lever> levers = new ArrayList<>();
+        for (MapObject object : layer.getObjects()) {
+            if (!"movableWall".equals(object.getName())) continue;
+            if (!(object instanceof RectangleMapObject wallObject)) {
+                throw new IllegalArgumentException("Le mur mobile doit être un rectangle.");
+            }
+            OpeningOrientation orientation = readOrientation(object);
+            Rectangle rectangle = wallObject.getRectangle();
+            validateOpeningSize(rectangle, orientation == OpeningOrientation.HORIZONTAL, orientation.toString());
+            MapObject pivot = referencedObject(map, object, "pivot");
+            if (!(pivot instanceof PointMapObject point)) {
+                throw new IllegalArgumentException("Le pivot du mur doit être un point Tiled.");
+            }
+            MapObject lever = referencedObject(map, object, "levier");
+            if (!(lever instanceof RectangleMapObject leverObject)) {
+                throw new IllegalArgumentException("Le levier doit être un rectangle Tiled.");
+            }
+            Object rotation = object.getProperties().get("rotation");
+            if (!(rotation instanceof Number number) || (number.floatValue() != 90f && number.floatValue() != -90f)) {
+                throw new IllegalArgumentException("La propriété rotation du mur doit être 90 ou -90.");
+            }
+            RotatingWall wall = new RotatingWall(rectangle.x * UNIT_SCALE, rectangle.y * UNIT_SCALE,
+                    orientation, point.getPoint().x * UNIT_SCALE, point.getPoint().y * UNIT_SCALE,
+                    number.intValue());
+            Rectangle leverBounds = leverObject.getRectangle();
+            levers.add(new Lever(leverBounds.x * UNIT_SCALE, leverBounds.y * UNIT_SCALE,
+                    leverBounds.width * UNIT_SCALE, leverBounds.height * UNIT_SCALE, wall));
+        }
+        return levers;
+    }
+
+    private MapObject referencedObject(TiledMap map, MapObject source, String property) {
+        Object reference = source.getProperties().get(property);
+        // Selon la version du chargeur, une référence Tiled est résolue en objet ou reste un ID.
+        if (reference instanceof MapObject object) return object;
+        if (reference instanceof Number id) {
+            for (MapLayer layer : map.getLayers()) {
+                for (MapObject object : layer.getObjects()) {
+                    Number candidateId = (Number) object.getProperties().get("id");
+                    if (candidateId != null && candidateId.intValue() == id.intValue()) return object;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Référence objet manquante ou invalide : " + property);
+    }
+
+    /** Les ronces ne sont pas ajoutées aux murs de collision. */
+    public List<Bramble> loadBrambles(TiledMap map) {
+        if (map == null) throw new IllegalArgumentException("La carte doit être renseignée.");
+        MapLayer layer = map.getLayers().get("ronces");
+        if (layer == null) return List.of();
+        List<Bramble> brambles = new ArrayList<>();
+        for (MapObject object : layer.getObjects()) {
+            if (!(object instanceof RectangleMapObject rectangleObject)) {
+                throw new IllegalArgumentException("Les ronces doivent être des rectangles : " + object.getName());
+            }
+            Number rotation = (Number) object.getProperties().get("rotation");
+            if (rotation != null && rotation.floatValue() != 0f) {
+                throw new IllegalArgumentException("Utiliser orientation plutôt que la rotation pour les ronces.");
+            }
+            OpeningOrientation orientation = readOrientation(object);
+            Rectangle rectangle = rectangleObject.getRectangle();
+            validateOpeningSize(rectangle, orientation == OpeningOrientation.HORIZONTAL, orientation.toString());
+            brambles.add(new Bramble(rectangle.x * UNIT_SCALE, rectangle.y * UNIT_SCALE, orientation));
+        }
+        return brambles;
     }
 
     @Override
@@ -286,7 +365,7 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
             throw new IllegalArgumentException("Propriété orientation manquante : " + object.getName());
         }
         try {
-            return OpeningOrientation.valueOf(text);
+            return OpeningOrientation.valueOf(text.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(
                 "Orientation invalide pour " + object.getName() + " : " + text
