@@ -79,14 +79,14 @@
  <objectgroup id="8" name="Entrance">
   <object id="1" name="Entrance" x="0" y="6500" width="250" height="500">
    <properties>
-    <property name="border" value="LEFT"/>
+    <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="9" name="Exit">
   <object id="2" name="Exit" x="7250" y="500" width="250" height="500">
    <properties>
-    <property name="border" value="RIGHT"/>
+    <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
  </objectgroup>

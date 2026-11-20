@@ -1,5 +1,7 @@
 package com.blindpath.domain.monster;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -82,7 +84,7 @@ class ScreamerTest {
     @BeforeEach
     void setUp() {
         grid = new LabyrinthGrid(new Labyrinth(20, 20,
-                new Entrance(0, 10, Border.LEFT), new Exit(19, 2, Border.RIGHT), List.of()),
+                new Entrance(0, 10, OpeningOrientation.VERTICAL), new Exit(19, 2, OpeningOrientation.VERTICAL), List.of()),
                 Monster.SIZE);
     }
 

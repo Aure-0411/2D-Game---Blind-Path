@@ -323,14 +323,14 @@
  <objectgroup id="7" name="Entrance">
   <object id="45" name="Entrance" x="7250" y="6750" width="250" height="500">
    <properties>
-    <property name="border" value="RIGHT"/>
+    <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup id="10" name="Exit">
   <object id="337" name="Exit" x="0" y="250" width="250" height="500">
    <properties>
-    <property name="border" value="LEFT"/>
+    <property name="orientation" value="VERTICAL"/>
    </properties>
   </object>
  </objectgroup>
@@ -628,7 +628,7 @@
  <objectgroup id="11" name="monstre_start">
   <object id="340" name="Monster" x="7000" y="500">
    <properties>
-    <property name="typeMonster" value="RUNAWAY"/>
+    <property name="monsterType" value="RUNAWAY"/>
    </properties>
    <point/>
   </object>
