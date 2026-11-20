@@ -46,7 +46,7 @@ public class LevelRegistry implements LevelCatalog {
 
         int jumperLimit = (int) Math.ceil(easy.size() / 2.0);
         for (int i = 0; i < easy.size(); i++) {
-            MonsterType type = (i < jumperLimit) ? MonsterType.RUNAWAY : MonsterType.RUNAWAY;
+            MonsterType type = (i < jumperLimit) ? MonsterType.JUMPER : MonsterType.RUNAWAY;
             levels.add(new LevelConfig(easy.get(i), type));
         }
         for (String path : medium) levels.add(new LevelConfig(path, MonsterType.SCREAMER));
