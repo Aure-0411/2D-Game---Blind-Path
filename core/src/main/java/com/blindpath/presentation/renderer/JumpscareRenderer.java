@@ -36,8 +36,13 @@ public class JumpscareRenderer implements Disposable {
     }
 
     public void render(SpriteBatch batch) {
+        render(batch, false);
+    }
 
-        if (!isActive()) {
+    /** Maintient l'image tant que le son de mort n'est pas terminé. */
+    public void render(SpriteBatch batch, boolean holdForAudio) {
+
+        if (!isActive() && !holdForAudio) {
             return;
         }
 

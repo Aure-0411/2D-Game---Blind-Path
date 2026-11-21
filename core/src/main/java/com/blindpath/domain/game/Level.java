@@ -148,6 +148,8 @@ public class Level {
             wall.updateClearance(gnome.getBounds(), monster == null ? null : monster.getBounds());
         }
         collisions.syncChangingObstacles();
+    }
+
     public boolean areControlsInverted() {
         return monster instanceof Inverter inverter && inverter.invertsControls();
     }
