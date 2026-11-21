@@ -7,11 +7,13 @@ public class Light implements Revealable {
     public static float DEFAULT_RADIUS = 4.5f;
     public static float DEFAULT_REVEAL_DURATION = 1f;
     public static final float DEFAULT_COOLDOWN = 1.5f;
+    public static final float BOOST_MULTIPLIER = 1.5f;
 
     private final float baseRadius;
     private final float revealDuration;
     private final float cooldown;
     private int bonusPercent;
+    private boolean boosted = false;
     private final GameTimer revealTimer = new GameTimer();
     private final GameTimer cooldownTimer = new GameTimer();
     private float originX;
@@ -70,7 +72,15 @@ public class Light implements Revealable {
     }
 
     public float getRevealRadius() {
-        return baseRadius * (100 + bonusPercent) / 100f;
+        float radius = baseRadius * (100 + bonusPercent) / 100f;
+        if (boosted) {
+            radius = radius * BOOST_MULTIPLIER;
+        }
+        return radius;
+    }
+
+    public void setBoosted(boolean boosted) {
+        this.boosted = boosted;
     }
 
     public int getBonusPercent() {

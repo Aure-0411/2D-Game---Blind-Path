@@ -10,7 +10,8 @@ public abstract class Character implements Movable, Collidable{
     public static final float IMMUNITY_DURATION = 2f;
     private final Inventory<Character> inventory;
     private final CompassEffect compassEffect = new CompassEffect();
-    
+    private int boostedSnapsLeft = 0;
+
     private int life;
     private int maxLife;
     private float speed;
@@ -153,6 +154,23 @@ public abstract class Character implements Movable, Collidable{
         immunityTimer = 0f;
         stunTimer = 0f;
         compassEffect.reset();
+        boostedSnapsLeft = 0;
         // inventory est conservé
+    }
+
+    public void boostLantern(int snaps) {
+        boostedSnapsLeft = snaps;
+    }
+
+    public boolean isLanternBoosted() {
+        return boostedSnapsLeft > 0;
+    }
+
+    public boolean consumeBoostedSnap() {
+        if (boostedSnapsLeft > 0) {
+            boostedSnapsLeft--;
+            return true;
+        }
+        return false;
     }
 }
