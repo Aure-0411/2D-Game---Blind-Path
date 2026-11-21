@@ -1,26 +1,27 @@
 package com.blindpath.domain.monster;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.blindpath.domain.labyrinth.Border;
+import java.util.List;
+
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
+import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests of the Inverter (POC_EXTREME-3, #82).
  *
- * <p>Rules: it chases the gnome, CASE_PER_MOVE cells per move, and inverts the gnome's
- * movement controls while the gnome is within INVERT_RANGE cells. The tests read the
+ * <p>Rules: it chases the hero, CASE_PER_MOVE cells per move, and inverts the hero's
+ * movement controls while the hero is within INVERT_RANGE cells. The tests read the
  * constants, so the values can be tuned without touching them. Distance = square around the
  * monster: the largest of the column gap and the row gap.</p>
  */
@@ -45,7 +46,7 @@ class InverterTest {
     @BeforeEach
     void setUp() {
         grid = new LabyrinthGrid(new Labyrinth(20, 20,
-                new Entrance(0, 10, Border.LEFT), new Exit(19, 2, Border.RIGHT), List.of()),
+                new Entrance(0, 10, OpeningOrientation.VERTICAL), new Exit(19, 2, OpeningOrientation.VERTICAL), List.of()),
                 Monster.SIZE);
         inverter = new Inverter(grid, cell(10, 10), STRAIGHT);
     }
@@ -71,11 +72,11 @@ class InverterTest {
 
     @Test
     void noTargetNoInversion() {
-        assertFalse(inverter.invertsControls(), "the gnome is not known yet");
+        assertFalse(inverter.invertsControls(), "the hero is not known yet");
     }
 
     @Test
-    void gnomeOnTheMonsterInverts() {
+    void heroOnTheMonsterInverts() {
         inverter.setTarget(cell(10, 10));
         assertTrue(inverter.invertsControls());
     }
@@ -113,7 +114,7 @@ class InverterTest {
         inverter.setTarget(cell(10 + R, 10));
         assertTrue(inverter.invertsControls());
         inverter.setTarget(cell(18, 10));
-        assertFalse(inverter.invertsControls(), "the gnome ran away");
+        assertFalse(inverter.invertsControls(), "the hero ran away");
     }
 
     // ---------- Factory ----------
