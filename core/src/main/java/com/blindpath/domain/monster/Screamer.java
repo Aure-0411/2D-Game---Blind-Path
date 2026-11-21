@@ -13,6 +13,7 @@ public class Screamer extends Monster {
     private int screamThreshold;
     private boolean screamed;
     private int snapCount;
+    private long screamSequence;
     private final GameTimer screamAnimation = new GameTimer();
 
     public static final int MIN_SNAPS = 5;
@@ -49,6 +50,7 @@ public class Screamer extends Monster {
 
         if (snapCount >= screamThreshold) {
             screamed = true;
+            screamSequence++;
             screamAnimation.start(SCREAM_ANIMATION_DURATION);
             snapCount = 0;
             screamThreshold = drawThreshold();
@@ -65,6 +67,11 @@ public class Screamer extends Monster {
         boolean result = screamed;
         screamed = false;
         return result;
+    }
+
+    /** Compteur observable par la présentation, indépendant de consumeScream(). */
+    public long getScreamSequence() {
+        return screamSequence;
     }
 
     public int getSnapCount() {
