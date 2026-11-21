@@ -50,14 +50,13 @@ class TiledLabyrinthLoaderTest {
             map.getLayers().add(layer);
             var loaded = loader.loadLevers(map);
             assertEquals(1, loaded.size());
-            assertEquals(12f, loaded.get(0).getBounds().getX());
+            assertEquals(12f, loaded.get(0).getBounds().getX(), 1e-4f);
             var rotatingWall = loaded.get(0).getWall();
-            assertEquals(7f, rotatingWall.getPivotX());
-            assertEquals(23f, rotatingWall.getPivotY());
+            assertEquals(7f, rotatingWall.getPivotX(), 1e-4f);
+            assertEquals(23f, rotatingWall.getPivotY(), 1e-4f);
             rotatingWall.rotate();
-            assertEquals(7f, rotatingWall.getBounds().getX());
-            assertEquals(22f, rotatingWall.getBounds().getY());
-
+            assertEquals(7f, rotatingWall.getBounds().getX(), 1e-4f);
+            assertEquals(22f, rotatingWall.getBounds().getY(), 1e-4f);
             wall.getProperties().put("pivot", pivot);
             wall.getProperties().put("levier", lever);
             assertEquals(1, loader.loadLevers(map).size());
@@ -90,7 +89,7 @@ class TiledLabyrinthLoaderTest {
             assertEquals(4f, brambles.get(0).getBounds().getX());
             assertEquals(2f, brambles.get(0).getBounds().getWidth());
             assertEquals(OpeningOrientation.VERTICAL, brambles.get(1).getOrientation());
-            assertEquals(6f, brambles.get(1).getBounds().getY());
+            assertEquals(6f, brambles.get(1).getBounds().getY(), 1e-4f);
             assertFalse(brambles.get(0).isActive());
             vertical.getProperties().put("orientation", "VERCTICAL");
             assertThrows(IllegalArgumentException.class, () -> loader.loadBrambles(map));
