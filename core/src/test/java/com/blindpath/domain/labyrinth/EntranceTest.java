@@ -11,30 +11,28 @@ public class EntranceTest {
 
     @ParameterizedTest
     @CsvSource({
-        "TOP, 2, 1",
-        "BOTTOM, 2, 1",
-        "LEFT, 1, 2",
-        "RIGHT, 1, 2"
+        "HORIZONTAL, 2, 1",
+        "VERTICAL, 1, 2"
     })
-    void dimensionsMatchBorder(Border border, int expectedWidth, int expectedHeight) {
-        Entrance entrance = new Entrance(3, 4, border);
+    void dimensionsMatchOrientation(OpeningOrientation orientation, int expectedWidth, int expectedHeight) {
+        Entrance entrance = new Entrance(3, 4, orientation);
 
         assertEquals(expectedWidth, entrance.getWidth());
         assertEquals(expectedHeight, entrance.getHeight());
-        assertEquals(border, entrance.getBorder());
+        assertEquals(orientation, entrance.getOrientation());
     }
 
     @ParameterizedTest
     @CsvSource({"3, 7", "0, 0", "-3, -7"})
     void entranceKeepsProvidedPosition(int x, int y) {
-        Entrance entrance = new Entrance(x, y, Border.TOP);
+        Entrance entrance = new Entrance(x, y, OpeningOrientation.HORIZONTAL);
 
         assertEquals(x, entrance.getX());
         assertEquals(y, entrance.getY());
     }
 
     @Test
-    void missingBorderIsRejected() {
+    void missingOrientationIsRejected() {
         assertThrows(IllegalArgumentException.class,
             () -> new Entrance(0, 0, null));
     }

@@ -2,12 +2,7 @@ package com.blindpath.domain.labyrinth;
 
 import com.blindpath.domain.character.Gnome;
 
-/**
-* In the game, an exit is a zone on an edge of the labyrinth and the gnome's goal.
-* Its size depends on its border: it spans two tiles along that edge
-* (2 * 1 on TOP or BOTTOM, 1 * 2 on LEFT or RIGHT).
-* It has a hitbox and answers the question "Am I touched?". If yes, the Level class sends the gnome to the next level.
-*/
+/** Zone de sortie de deux cases, horizontale ou verticale, placée dans le labyrinthe. */
 public class Exit {
 
     private int height;
@@ -15,22 +10,14 @@ public class Exit {
     private int x;
     private int y;
     private Bounds bounds;
-    private Border border;
+    private OpeningOrientation orientation;
 
-    /**
-     * Creates an exit on the labyrinth.
-     *
-     * @param x defines the horizontal position of the exit.
-     * @param y defines the vertical position of the exit.
-     * @param border is the edge on which the exit is placed.
-     * @throws IllegalArgumentException is thrown if border equals null, meaning an exit can't be created.
-     */
-    public Exit(int x, int y, Border border) {
-        if (border == null ) {
-            throw new IllegalArgumentException("Le bord de la sortie doit être renseigné");
+    public Exit(int x, int y, OpeningOrientation orientation) {
+        if (orientation == null ) {
+            throw new IllegalArgumentException("L’orientation de la sortie doit être renseignée");
         }
 
-        if (border== Border.TOP || border==Border.BOTTOM){
+        if (orientation == OpeningOrientation.HORIZONTAL){
             this.height = 1;
             this.width =2;
         }
@@ -40,7 +27,7 @@ public class Exit {
         }
         this.x = x;
         this.y = y;
-        this.border = border;
+        this.orientation = orientation;
 
         this.bounds = new Bounds(this.x, this.y, this.width, this.height);
 
@@ -61,9 +48,9 @@ public class Exit {
     public int getWidth(){
         return this.width;
     }
-    /** @return the border of the exit. */
-    public Border getBorder(){
-        return this.border;
+    /** @return the orientation of the exit. */
+    public OpeningOrientation getOrientation(){
+        return this.orientation;
     }
 
     /**

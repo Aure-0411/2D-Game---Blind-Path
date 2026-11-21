@@ -22,8 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 import com.blindpath.Main;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.chest.LootTable;
@@ -38,6 +38,7 @@ import com.blindpath.domain.light.Light;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.time.GameClock;
@@ -46,20 +47,25 @@ import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
 import com.blindpath.infrastructure.map.TiledMapStore;
 import com.blindpath.presentation.hud.Hud;
 import com.blindpath.presentation.input.InputController;
+import com.blindpath.presentation.renderer.BrambleRenderer;
 import com.blindpath.presentation.renderer.CharacterRenderer;
 import com.blindpath.presentation.renderer.ChestRenderer;
 import com.blindpath.presentation.renderer.CollisionDebugRenderer;
+import com.blindpath.presentation.renderer.CompassArrowRenderer;
 import com.blindpath.presentation.renderer.DamageOverlayRenderer;
 import com.blindpath.presentation.renderer.FogRenderer;
 import com.blindpath.presentation.renderer.GnomeSprites;
 import com.blindpath.presentation.renderer.JumpscareRenderer;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
+import com.blindpath.presentation.renderer.LeverWallRenderer;
 import com.blindpath.presentation.renderer.MonsterRenderer;
 
-public class GameScreen implements Screen {
+public class GameScreen<T extends Character> implements Screen {
 
     private static final float WORLD_WIDTH = 30f;
     private static final float WORLD_HEIGHT = 30f;
+
+    private final T hero;
 
     private TiledMap map;
     private TiledMapStore mapStore;
@@ -69,17 +75,19 @@ public class GameScreen implements Screen {
     private FogRenderer fogRenderer;
     private final Light light = new Light();
 
-    private Level level;
+    private Level<T> level;
     private LevelFactory factory;
     private InputController input;
     private SpriteBatch batch;
-    private CharacterRenderer<Gnome> characterRenderer;
+    private CharacterRenderer<T> characterRenderer;
     private CollisionDebugRenderer debugRenderer;
     private boolean debugCollisions = false;
     private boolean monsterVisible = false;
     private float stateTime;
-    private GameSession session;
+    private GameSession<T> session;
     private ChestRenderer chestRenderer;
+    private BrambleRenderer brambleRenderer;
+    private LeverWallRenderer leverWallRenderer;
     private Monster monster;
     private MonsterRenderer monsterRenderer;
     private String currentMonsterName;
@@ -93,11 +101,21 @@ public class GameScreen implements Screen {
     private final Main main;
     private Stage pauseStage;
     private Skin pauseSkin;
+    private CompassArrowRenderer compassArrowRenderer;
 
     private Hud hud;
 
+    @SuppressWarnings("unchecked")
     public GameScreen(Main main) {
+        this(main, (T) new Gnome());
+    }
+
+    public GameScreen(Main main, T hero) {
+        if (main == null || hero == null) {
+            throw new IllegalArgumentException("L'application principale et le héros doivent être renseignés.");
+        }
         this.main = main;
+        this.hero = hero;
     }
 
     @Override
@@ -107,14 +125,16 @@ public class GameScreen implements Screen {
             LevelRegistry registry = new LevelRegistry();
             mapStore = new TiledMapStore();
             factory = new LevelFactory(registry, new TiledLabyrinthLoader(mapStore), new LootTable(), new Random());
-            Gnome gnome = new Gnome();
 
-            session = new GameSession(factory, gnome);
+            session = new GameSession<>(factory, hero);
             session.startLevel(1);
             loadCurrentLevelResources();
 
             fogRenderer = new FogRenderer();
             chestRenderer = new ChestRenderer();
+            compassArrowRenderer = new CompassArrowRenderer();
+            brambleRenderer = new BrambleRenderer();
+            leverWallRenderer = new LeverWallRenderer();
             damageOverlay = new DamageOverlayRenderer();
             batch = new SpriteBatch();
             characterRenderer = new CharacterRenderer<>(
@@ -182,14 +202,14 @@ public class GameScreen implements Screen {
         }
 
         if (!paused) {
-            int lifeBefore = level.getGnome().getLife();
-            if (!level.getGnome().isDead()) {
+            int lifeBefore = level.getHero().getLife();
+            if (!level.getHero().isDead()) {
                 input.handleInput(delta);
                 level.update(delta);
             }
 
-            if (level.getGnome().getLife() < lifeBefore) {
-                if (level.getGnome().isDead()) {
+            if (level.getHero().getLife() < lifeBefore) {
+                if (level.getHero().isDead()) {
                     jumpscare.trigger();
                 } else {
                     damageOverlay.trigger();
@@ -209,26 +229,26 @@ public class GameScreen implements Screen {
                 return;
             }
 
-            if (level.getGnome().isDead() && !jumpscare.isActive()) {
+            if (level.getHero().isDead() && !jumpscare.isActive()) {
                 session.retry();
                 loadCurrentLevelResources();
                 return;
             }
 
             light.update(delta);
-            Gnome gnome = level.getGnome();
+            T hero = level.getHero();
             light.updateHeroPosition(
-                    gnome.getX() + gnome.getWidth() / 2f,
-                    gnome.getY() + gnome.getHeight() / 2f);
+                    hero.getX() + hero.getWidth() / 2f,
+                    hero.getY() + hero.getHeight() / 2f);
 
             light.setOrigin(
                     light.getHeroCenterX(),
                     light.getHeroCenterY());
 
-            GridPosition gnomeCell = new GridPosition(
+            GridPosition heroCell = new GridPosition(
                     (int) Math.floor(light.getHeroCenterX()),
                     (int) Math.floor(light.getHeroCenterY()));
-            monster.setTarget(monsterGrid.anchorCovering(gnomeCell));
+            monster.setTarget(monsterGrid.anchorCovering(heroCell));
             clock.update(delta);
             monster.update(delta);
 
@@ -247,7 +267,7 @@ public class GameScreen implements Screen {
         }
 
         
-        if (Gdx.input.isKeyJustPressed(Keys.I)) level.getGnome().toggleInvincible();
+        if (Gdx.input.isKeyJustPressed(Keys.I)) level.getHero().toggleInvincible();
         
         // Avance le préchargement du niveau suivant (budget de quelques ms par frame).
         mapStore.update();
@@ -258,15 +278,22 @@ public class GameScreen implements Screen {
         viewport.apply();
         camera.update();
         renderer.render(camera);
+        // Les ronces sont dessinées dans le monde, avant le voile de brouillard.
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        brambleRenderer.render(batch, level.getLabyrinth().getBrambles());
+        leverWallRenderer.render(batch, level.getLabyrinth().getRotatingWalls(), level.getLabyrinth().getLevers());
+        batch.end();
+        boolean monsterOnTop = monsterVisible || (monster instanceof Screamer screamer && screamer.isScreaming());
 
         // 1. Avant le brouillard (mode normal)
-        if (!monsterVisible || !debugCollisions) {
+        if (!monsterOnTop || !debugCollisions) {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             if (!debugCollisions) {
                 chestRenderer.render(batch, level.getChests());
             }
-            if (!monsterVisible) {
+            if (!monsterOnTop) {
                 monsterRenderer.render(batch, monster, stateTime);
             }
             batch.end();
@@ -291,11 +318,12 @@ public class GameScreen implements Screen {
         if (debugCollisions) {
             chestRenderer.render(batch, level.getChests());
         }
-        characterRenderer.render(batch, level.getGnome(), stateTime, input.isMoving());
-        if (monsterVisible) {
+        characterRenderer.render(batch, level.getHero(), stateTime, input.isMoving());
+        if (monsterOnTop) {
         monsterRenderer.render(batch, monster, stateTime);
         }
         batch.end();
+        compassArrowRenderer.render(camera, level.getHero(), level.getLabyrinth().getExit());
         if (debugCollisions) {
         debugRenderer.render(camera, level);
         }
@@ -308,7 +336,8 @@ public class GameScreen implements Screen {
             shapes.end();
         }
 
-        hud.update(light.getCooldownProgress(), level.getGnome().getLife(),level.getGnome().getInventory().getStacks());
+        hud.update(light.getCooldownProgress(), level.getHero().getLife(),
+                level.getHero().getInventory().getStacks(), session.getCurrentLevelNumber());
         hud.render(paused ? 0f : delta);
 
         damageOverlay.render(batch);
@@ -326,13 +355,13 @@ public class GameScreen implements Screen {
         if (monster != null) clock.removeListener(monster);
 
         level = session.getLevel();
-        Gnome gnome = level.getGnome();
+        T hero = level.getHero();
         Labyrinth labyrinth = level.getLabyrinth();
         Entrance entrance = labyrinth.getEntrance();
 
-        gnome.setPosition(
-            entrance.getX() + (entrance.getWidth() - gnome.getWidth()) / 2f,
-            entrance.getY() + (entrance.getHeight() - gnome.getHeight()) / 2f);
+        hero.setPosition(
+            entrance.getX() + (entrance.getWidth() - hero.getWidth()) / 2f,
+            entrance.getY() + (entrance.getHeight() - hero.getHeight()) / 2f);
 
         LevelConfig config = factory.configFor(session.getCurrentLevelNumber());
         // La carte a déjà été chargée par la factory (même store) : get() est instantané.
@@ -419,6 +448,9 @@ public class GameScreen implements Screen {
         if (pauseStage != null) { pauseStage.dispose(); pauseStage = null; }
         if (pauseSkin != null) { pauseSkin.dispose(); pauseSkin = null; }
         if (chestRenderer != null) { chestRenderer.dispose(); chestRenderer = null; }
+        if (brambleRenderer != null) { brambleRenderer.dispose(); brambleRenderer = null; }
+        if (leverWallRenderer != null) { leverWallRenderer.dispose(); leverWallRenderer = null; }
         if (hud != null) { hud.dispose(); hud = null; }
+        if (compassArrowRenderer != null) { compassArrowRenderer.dispose(); compassArrowRenderer = null; }
     }
 }
