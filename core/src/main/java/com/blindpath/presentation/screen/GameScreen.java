@@ -162,6 +162,17 @@ public class GameScreen<T extends Character> implements Screen {
             Table pauseTable = new Table();
             pauseTable.setFillParent(true);
 
+            TextButton resumeButton = new TextButton("Reprendre", pauseSkin);
+            resumeButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    paused = false;
+                    if (Gdx.input.getInputProcessor() == pauseStage) {
+                        Gdx.input.setInputProcessor(null);
+                    }
+                }
+            });
+
             TextButton menuButton = new TextButton("Retour au menu", pauseSkin);
             menuButton.addListener(new ChangeListener() {
                 @Override
@@ -178,7 +189,9 @@ public class GameScreen<T extends Character> implements Screen {
                     Gdx.app.exit();
                 }
             });
-
+            
+            pauseTable.add(resumeButton).width(500).height(100).padBottom(30);
+            pauseTable.row();
             pauseTable.add(menuButton).width(500).height(100).padBottom(30);
             pauseTable.row();
             pauseTable.add(quitButton).width(500).height(100);
