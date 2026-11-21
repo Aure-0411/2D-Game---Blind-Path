@@ -1,5 +1,7 @@
 package com.blindpath.domain.monster;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -64,7 +66,7 @@ class RunawayTest {
     /** Open 20x20 map whose exit is at (exitColumn, exitRow) on the right edge; 2x2 monster like in the game. */
     private static LabyrinthGrid gridWithExit(int exitColumn, int exitRow) {
         return new LabyrinthGrid(new Labyrinth(20, 20,
-                new Entrance(0, 10, Border.LEFT), new Exit(exitColumn, exitRow, Border.RIGHT), List.of()),
+                new Entrance(0, 10, OpeningOrientation.VERTICAL), new Exit(exitColumn, exitRow, OpeningOrientation.VERTICAL), List.of()),
                 Monster.SIZE);
     }
 

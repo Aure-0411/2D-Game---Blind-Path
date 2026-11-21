@@ -1,5 +1,7 @@
 package com.blindpath.domain.game;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -46,8 +48,8 @@ class LevelTest {
     void setUp() {
         labyrinth = new Labyrinth(
                 10, 10,
-                new Entrance(0, 4, Border.LEFT),
-                new Exit(9, 4, Border.RIGHT),
+                new Entrance(0, 4, OpeningOrientation.VERTICAL),
+                new Exit(9, 4, OpeningOrientation.VERTICAL),
                 List.of(new Wall(5f, 0f, 1f, 10f))
         );
         gnome = new Gnome();
@@ -63,6 +65,40 @@ class LevelTest {
 
     private Level createLevel(Gnome g, Labyrinth l) {
         return new Level(g, l, new AabbCollisionWorld(), monster, pathfinder, List.of());
+    }
+
+    @Test
+    void updateAutomaticallyConsumesHeartForInjuredGnome() {
+        gnome.setLife(gnome.getMaxLife() - 1);
+        gnome.getInventory().add(new Heart(), 1);
+
+        level.update(TICK);
+
+        assertEquals(gnome.getMaxLife(), gnome.getLife());
+        assertTrue(gnome.getInventory().getStacks().isEmpty());
+    }
+
+    @Test
+    void updatePreservesHeartAtFullHealthAndAfterDeath() {
+        gnome.getInventory().add(new Heart(), 1);
+        level.update(TICK);
+        assertEquals(1, gnome.getInventory().getStacks().get(0).getQuantity());
+
+        gnome.setLife(0);
+        level.update(TICK);
+        assertEquals(0, gnome.getLife());
+        assertEquals(1, gnome.getInventory().getStacks().get(0).getQuantity());
+    }
+
+    @Test
+    void updateHealsAfterNonLethalMonsterHit() {
+        gnome.setPosition(monster.getPosition().getColumn(), monster.getPosition().getRow());
+        gnome.getInventory().add(new Heart(), 1);
+
+        level.update(TICK);
+
+        assertEquals(gnome.getMaxLife() - Gnome.MONSTER_DAMAGE + 1, gnome.getLife());
+        assertTrue(gnome.getInventory().getStacks().isEmpty());
     }
 
     @Test
@@ -111,8 +147,8 @@ class LevelTest {
         ghost.setCollide(false);
         Labyrinth l = new Labyrinth(
                 10, 10,
-                new Entrance(0, 4, Border.LEFT),
-                new Exit(9, 4, Border.RIGHT),
+                new Entrance(0, 4, OpeningOrientation.VERTICAL),
+                new Exit(9, 4, OpeningOrientation.VERTICAL),
                 List.of(ghost)
         );
         Gnome g = new Gnome();
@@ -140,8 +176,8 @@ class LevelTest {
     void boundary_stopsGnomeAtTheExitOpening() {
         Labyrinth open = new Labyrinth(
                 10, 10,
-                new Entrance(0, 4, Border.LEFT),
-                new Exit(9, 4, Border.RIGHT),
+                new Entrance(0, 4, OpeningOrientation.VERTICAL),
+                new Exit(9, 4, OpeningOrientation.VERTICAL),
                 List.of()
         );
         Gnome g = new Gnome();

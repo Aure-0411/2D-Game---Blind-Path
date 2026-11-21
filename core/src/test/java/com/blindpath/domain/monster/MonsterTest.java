@@ -1,5 +1,7 @@
 package com.blindpath.domain.monster;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,7 +62,7 @@ class MonsterTest {
     @BeforeEach
     void setUp() {
         grid = new LabyrinthGrid(new Labyrinth(10, 10,
-                new Entrance(0, 2, Border.LEFT), new Exit(9, 2, Border.RIGHT),
+                new Entrance(0, 2, OpeningOrientation.VERTICAL), new Exit(9, 2, OpeningOrientation.VERTICAL),
                 List.of(new Wall(3, 0, 1, 5))));
         monster = new TestMonster(grid, new ChaseStrategy(new GdxAiPathfinder()), cell(0, START_ROW));
     }

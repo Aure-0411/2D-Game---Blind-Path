@@ -1,5 +1,7 @@
 package com.blindpath.domain.game;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -62,8 +64,8 @@ public class GameSessionTest {
     private static Labyrinth simpleLabyrinth() {
         return new Labyrinth(
                 30, 30,
-                new Entrance(0, 10, Border.LEFT),
-                new Exit(29, 10, Border.RIGHT),
+                new Entrance(0, 10, OpeningOrientation.VERTICAL),
+                new Exit(29, 10, OpeningOrientation.VERTICAL),
                 List.of());
     }
 
