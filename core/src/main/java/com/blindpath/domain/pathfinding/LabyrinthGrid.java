@@ -105,7 +105,7 @@ public class LabyrinthGrid {
 
     /**
      * Renvoie la position (coin bas-gauche) d'un bloc praticable qui recouvre la case donnée.
-     * Sert à viser le gnome avec un agent de plusieurs cases : on teste d'abord le bloc
+     * Sert à viser le personnage avec un agent de plusieurs cases : on teste d'abord le bloc
      * qui commence sur la case, puis ceux décalés d'une case à gauche et/ou en bas.
      * Si aucun bloc ne convient, renvoie la case telle quelle.
      */
@@ -123,4 +123,3 @@ public class LabyrinthGrid {
 
     
 }
-

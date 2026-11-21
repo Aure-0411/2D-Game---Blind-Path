@@ -1,6 +1,6 @@
 package com.blindpath.domain.labyrinth;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 
 /** Zone de sortie de deux cases, horizontale ou verticale, placée dans le labyrinthe. */
 public class Exit {
@@ -54,17 +54,20 @@ public class Exit {
     }
 
     /**
-    * Checks whether a collision is detected between the exit's and the gnome's hitboxes.
+    * Checks whether a collision is detected between the exit's and the character's hitboxes.
     * In case of border to border, there is no contact.
     *
-    * @param gnome can collide with other hitboxes, including the exit's.
+    * @param character can collide with other hitboxes, including the exit's.
     * @return answers "Is there a collision?" with true or false.
     */
-    public boolean isReached(Gnome gnome){
-        if (this.bounds.intersects(gnome.getBounds())){
-            return true;
-        }
-    return false;
+        public Bounds getBounds() {
+        return this.bounds;
     }
 
+    public boolean isReached(Character character) {
+        if (character == null) {
+            return false;
+        }
+        return this.bounds.intersects(character.getBounds());
+    }
 }

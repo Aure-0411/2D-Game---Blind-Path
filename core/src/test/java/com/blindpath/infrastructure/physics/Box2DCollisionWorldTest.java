@@ -2,7 +2,7 @@ package com.blindpath.infrastructure.physics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.RotatingWall;
@@ -16,7 +16,11 @@ class Box2DCollisionWorldTest {
 
     private static final float EPS = 0.02f; // Box2D garde une petite marge autour des formes
     private Box2DCollisionWorld world;
-    private Gnome gnome;
+    private Character hero;
+
+    private static Character newHero() {
+        return new Character(3f, 1f, 1f, 0.8f, 0.8f) {};
+    }
 
     @BeforeEach
     void setUp() {
@@ -25,9 +29,8 @@ class Box2DCollisionWorldTest {
         } catch (Throwable nativesMissing) {
             Assumptions.abort("Natives Box2D indisponibles : " + nativesMissing);
         }
-        gnome = new Gnome();
-        gnome.setPosition(1f, 1f);
-        world.addDynamic(gnome);
+        hero = newHero();
+        world.addDynamic(hero);
     }
 
     @AfterEach
@@ -37,43 +40,43 @@ class Box2DCollisionWorldTest {
 
     @Test
     void freeSpace_movesBySpeedTimesDelta() {
-        assertTrue(world.move(gnome, 1f, 0f, 1f / 60f));
-        assertEquals(1f + gnome.getSpeed() / 60f, gnome.getX(), 1e-3f);
+        assertTrue(world.move(hero, 1f, 0f, 1f / 60f));
+        assertEquals(1f + hero.getSpeed() / 60f, hero.getX(), 1e-3f);
     }
 
     @Test
-    void wall_blocksTheGnome() {
+    void wall_blocksTheHero() {
         world.addStatic(new Bounds(3f, 0f, 1f, 10f));
-        for (int i = 0; i < 120; i++) world.move(gnome, 1f, 0f, 1f / 60f);
+        for (int i = 0; i < 120; i++) world.move(hero, 1f, 0f, 1f / 60f);
 
-        assertTrue(gnome.getX() + gnome.getWidth() <= 3f + EPS, "x=" + gnome.getX());
+        assertTrue(hero.getX() + hero.getWidth() <= 3f + EPS, "x=" + hero.getX());
     }
 
     @Test
-    void wall_gnomeSlidesAlongIt() {
+    void wall_heroSlidesAlongIt() {
         world.addStatic(new Bounds(3f, 0f, 1f, 10f));
-        for (int i = 0; i < 120; i++) world.move(gnome, 1f, 0f, 1f / 60f);
-        float yBefore = gnome.getY();
+        for (int i = 0; i < 120; i++) world.move(hero, 1f, 0f, 1f / 60f);
+        float yBefore = hero.getY();
 
-        for (int i = 0; i < 30; i++) world.move(gnome, 0.7071f, 0.7071f, 1f / 60f);
+        for (int i = 0; i < 30; i++) world.move(hero, 0.7071f, 0.7071f, 1f / 60f);
 
-        assertTrue(gnome.getY() > yBefore + 0.3f, "doit glisser, y=" + gnome.getY());
+        assertTrue(hero.getY() > yBefore + 0.3f, "doit glisser, y=" + hero.getY());
     }
 
     @Test
     void corridorOfTwoCells_isTraversable() {
         world.addStatic(new Bounds(0f, 0f, 20f, 1f));
         world.addStatic(new Bounds(0f, 3f, 20f, 1f));
-        gnome.setPosition(1f, 1.5f);
+        hero.setPosition(1f, 1.5f);
 
-        for (int i = 0; i < 180; i++) world.move(gnome, 1f, 0f, 1f / 60f);
+        for (int i = 0; i < 180; i++) world.move(hero, 1f, 0f, 1f / 60f);
 
-        assertTrue(gnome.getX() > 3f, "x=" + gnome.getX());
+        assertTrue(hero.getX() > 3f, "x=" + hero.getX());
     }
 
     @Test
     void unregisteredCharacter_isRejected() {
-        assertThrows(IllegalArgumentException.class, () -> world.move(new Gnome(), 1f, 0f, 0.1f));
+        assertThrows(IllegalArgumentException.class, () -> world.move(newHero(), 1f, 0f, 0.1f));
     }
 
     @Test
@@ -82,10 +85,10 @@ class Box2DCollisionWorldTest {
         world.addChangingObstacle(wall);
         wall.rotate(); // Nouvelle zone : x=3..4, y=1..3.
         world.syncChangingObstacles();
-        for (int i = 0; i < 120; i++) world.move(gnome, 1, 0, 1f / 60f);
-        assertTrue(gnome.getX() + gnome.getWidth() <= 3f + EPS);
+        for (int i = 0; i < 120; i++) world.move(hero, 1, 0, 1f / 60f);
+        assertTrue(hero.getX() + hero.getWidth() <= 3f + EPS);
         wall.setCollide(false);
-        for (int i = 0; i < 120; i++) world.move(gnome, 1, 0, 1f / 60f);
-        assertTrue(gnome.getX() > 4f, "la collision désactivée doit laisser sortir le gnome");
+        for (int i = 0; i < 120; i++) world.move(hero, 1, 0, 1f / 60f);
+        assertTrue(hero.getX() > 4f, "la collision désactivée doit laisser sortir le héros");
     }
 }

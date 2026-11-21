@@ -1,9 +1,7 @@
 package com.blindpath.domain.inventory;
 
-import com.blindpath.domain.labyrinth.OpeningOrientation;
-
 import java.util.List;
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.game.Level;
 import com.blindpath.domain.labyrinth.*;
 import com.blindpath.domain.physics.AabbCollisionWorld;
@@ -15,7 +13,7 @@ import com.blindpath.domain.pathfinding.Pathfinder;
 
 // Objets de test en Java pur : aucun contexte graphique ni Box2D natif.
 final class InventoryTestSupport {
-    static Level level(Gnome hero) {
+    static Level<?> level(Character hero) {
         Labyrinth map = new Labyrinth(10, 10, new Entrance(0, 2, OpeningOrientation.VERTICAL),
             new Exit(9, 2, OpeningOrientation.VERTICAL), List.of());
         Monster dummyMonster = new Monster(
@@ -24,20 +22,20 @@ final class InventoryTestSupport {
         new GridPosition(0, 0)) {};
         Pathfinder dummyPathfinder = (grid, start, target) -> List.of();
 
-        return new Level(hero, map, new AabbCollisionWorld(), dummyMonster, dummyPathfinder, List.of());
+        return new Level<>(hero, map, new AabbCollisionWorld(), dummyMonster, dummyPathfinder, List.of());
     }
 
     static class TestItem extends Item {
         int uses;
         boolean allowed = true;
-        Gnome receivedUser;
-        Level receivedLevel;
+        Character receivedUser;
+        Level<?> receivedLevel;
         TestItem() { this("Test item"); }
         TestItem(String name) { super(name); }
-        @Override public boolean canUse(Gnome user, Level level) {
+        @Override public boolean canUse(Character user, Level<?> level) {
             return super.canUse(user, level) && allowed;
         }
-        @Override public void use(Gnome user, Level level) {
+        @Override public void use(Character user, Level<?> level) {
             uses++;
             receivedUser = user;
             receivedLevel = level;
