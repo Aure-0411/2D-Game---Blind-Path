@@ -2,12 +2,14 @@ package com.blindpath.domain.character;
 
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Collidable;
+import com.blindpath.domain.inventory.CompassEffect;
 import com.blindpath.domain.inventory.Inventory;
 
 public abstract class Character implements Movable, Collidable{
     public static final int MONSTER_DAMAGE = 2;
     public static final float IMMUNITY_DURATION = 2f;
     private final Inventory<Character> inventory;
+    private final CompassEffect compassEffect = new CompassEffect();
     
     private int life;
     private int maxLife;
@@ -44,9 +46,7 @@ public abstract class Character implements Movable, Collidable{
         this.x = x;
         this.y = y;
     }
-
     public Direction getFacing() { return facing; }
-
     public void setFacing(Direction facing) {
         if (facing != Direction.NONE) {
             this.facing = facing;
@@ -130,11 +130,29 @@ public abstract class Character implements Movable, Collidable{
         return getLife() == 0;
     }
 
+    // Effet du compas
+    public CompassEffect getCompassEffect() {
+        return compassEffect;
+    }
+
+    public void activateCompass(float durationSeconds) {
+        compassEffect.activate(durationSeconds);
+    }
+
+    public boolean isCompassActive() {
+        return compassEffect.isActive();
+    }
+
+    public void updateCompass(float deltaTime) {
+        compassEffect.update(deltaTime);
+    }
+
+    // Retire effet temporaire après mort
     public void resetForRetry() {
         life = maxLife;
         immunityTimer = 0f;
         stunTimer = 0f;
-        // TODO: réinitialiser ici les effets temporaires actifs (ex: compas) lors de leur implémentation
+        compassEffect.reset();
         // inventory est conservé
     }
 }
