@@ -1,6 +1,6 @@
 package com.blindpath.domain.inventory;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.game.Level;
 
 public class Booster extends Item {
@@ -11,14 +11,14 @@ public class Booster extends Item {
     }
 
     @Override
-    public boolean canUse(Gnome user, Level level) {
+    public boolean canUse(Character user, Level<?> level) {
         return super.canUse(user, level)
             && !user.isDead()
             && !user.isLanternBoosted();
     }
 
     @Override
-    public void use(Gnome user, Level level) {
+    public void use(Character user, Level<?> level) {
         if(!canUse(user, level)) {
             return;
         }
