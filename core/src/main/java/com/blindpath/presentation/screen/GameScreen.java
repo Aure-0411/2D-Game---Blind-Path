@@ -200,7 +200,7 @@ public class GameScreen<T extends Character> implements Screen {
                     Gdx.app.exit();
                 }
             });
-            
+
             pauseTable.add(resumeButton).width(500).height(100).padBottom(30);
             pauseTable.row();
             pauseTable.add(menuButton).width(500).height(100).padBottom(30);
@@ -301,6 +301,7 @@ public class GameScreen<T extends Character> implements Screen {
 
             if (!hero.isDead() && Gdx.input.isKeyJustPressed(Keys.SPACE)) {
                 if (light.snap()) {
+                    light.setBoosted(hero.consumeBoostedSnap());
                     fingerSnap.play(SNAP_VOLUME);
                     level.emitSnap(new SnapEvent(light.getHeroCenterX(), light.getHeroCenterY(), SnapSource.HERO, 0));
                 }
@@ -319,9 +320,9 @@ public class GameScreen<T extends Character> implements Screen {
             monsterVisible = !monsterVisible;
         }
 
-        
+
         if (Gdx.input.isKeyJustPressed(Keys.I)) level.getHero().toggleInvincible();
-        
+
         // Avance le préchargement du niveau suivant (budget de quelques ms par frame).
         mapStore.update();
 
@@ -441,7 +442,7 @@ public class GameScreen<T extends Character> implements Screen {
         monster = level.getMonster();
         clock.addListener(monster);
         if (monsterAudio != null) monsterAudio.update(monster, hero, false);
-        
+
         String monsterName = monster.getClass().getSimpleName().toLowerCase();
         if (!monsterName.equals(currentMonsterName)) {
             if (monsterRenderer != null) monsterRenderer.dispose();

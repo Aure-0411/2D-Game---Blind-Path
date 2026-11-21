@@ -21,6 +21,7 @@ import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
 import com.blindpath.domain.physics.AabbCollisionWorld;
+import com.blindpath.domain.light.SnapSource;
 
 class PlacedDynamiteTest {
     private ArrayList<SnapEvent> receivedSnaps = new ArrayList<>();
@@ -72,5 +73,25 @@ class PlacedDynamiteTest {
 
         assertEquals(1, receivedSnaps.size());
         assertTrue(dynamite.isDone());
+    }
+
+    @Test
+    void update_atEndOfCountdown_monsterReceivesDynamiteSnap() {
+        ArrayList<SnapEvent> monsterSnaps = new ArrayList<>();
+        Labyrinth map = new Labyrinth(10, 10, new Entrance(0, 2, OpeningOrientation.VERTICAL), new Exit(9, 2, OpeningOrientation.VERTICAL), List.of());
+        Monster spyMonster = new Monster(new LabyrinthGrid(map), (grid, current, goal) -> current, new GridPosition(0,0)) {
+            @Override
+            public void onSnap(SnapEvent event) {
+                monsterSnaps.add(event);
+            }
+        };
+        Pathfinder dummyPathfinder = (grid, start, target) -> List.of();
+        Level level = new Level(new Gnome(), map, new AabbCollisionWorld(), spyMonster, dummyPathfinder, List.of());
+        level.addPlacedObject(new PlacedDynamite(5f, 4f, level));
+
+        level.update(3f);
+
+        assertEquals(1, monsterSnaps.size());
+        assertEquals(SnapSource.DYNAMITE, monsterSnaps.get(0).getSource());
     }
 }
