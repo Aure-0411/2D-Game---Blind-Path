@@ -8,7 +8,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.game.Level;
-import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -37,7 +37,7 @@ class InvertedControlsTest {
     @BeforeEach
     void setUp() {
         labyrinth = new Labyrinth(20, 20,
-                new Entrance(0, 10, Border.LEFT), new Exit(19, 10, Border.RIGHT), List.of());
+                new Entrance(0, 10, OpeningOrientation.VERTICAL), new Exit(19, 10, OpeningOrientation.VERTICAL), List.of());
         gnome = new Gnome();
         gnome.setPosition(10f, 10f);
         pathfinder = (grid, start, target) -> List.of();

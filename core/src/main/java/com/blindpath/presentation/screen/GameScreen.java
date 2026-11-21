@@ -7,6 +7,8 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -45,6 +47,7 @@ import com.blindpath.infrastructure.map.LevelRegistry;
 import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
 import com.blindpath.infrastructure.map.TiledMapStore;
 import com.blindpath.presentation.hud.Hud;
+import com.blindpath.presentation.audio.MonsterAudio;
 import com.blindpath.presentation.input.InputController;
 import com.blindpath.presentation.renderer.BrambleRenderer;
 import com.blindpath.presentation.renderer.CharacterRenderer;
@@ -62,6 +65,12 @@ public class GameScreen implements Screen {
 
     private static final float WORLD_WIDTH = 30f;
     private static final float WORLD_HEIGHT = 30f;
+    private static final float FOOTSTEP_VOLUME = 0.3f;
+    private static final float SNAP_VOLUME = 0.7f;
+    private static final float DAMAGE_VOLUME = 0.7f;
+    private static final float JUMPSCARE_VOLUME = 1f;
+    private static final float DONJON_VOLUME = 0.4f;
+    private static final float AMBIANT_SOUND_VOLUME = 0.15f;
 
     private TiledMap map;
     private TiledMapStore mapStore;
@@ -99,6 +108,14 @@ public class GameScreen implements Screen {
     private Skin pauseSkin;
 
     private Hud hud;
+    private Music dungeonAmbience;
+    private Music ambientSound;
+    private Sound footsteps;
+    private Sound fingerSnap;
+    private Sound gnomeDamage;
+    private Music deathJumpscare;
+    private MonsterAudio monsterAudio;
+    private long footstepsId = -1;
 
     public GameScreen(Main main) {
         this.main = main;
@@ -169,8 +186,23 @@ public class GameScreen implements Screen {
             pauseTable.add(quitButton).width(500).height(100);
 
             pauseStage.addActor(pauseTable);
+
+            // Chargée une seule fois pour toute la partie, pas à chaque niveau.
+            dungeonAmbience = Gdx.audio.newMusic(Gdx.files.internal("audio/DOJON_AMBIANT.mp3"));
+            dungeonAmbience.setLooping(true);
+            dungeonAmbience.setVolume(DONJON_VOLUME);
+            ambientSound = Gdx.audio.newMusic(Gdx.files.internal("audio/AMBIANT_SOUND.mp3"));
+            ambientSound.setLooping(true);
+            ambientSound.setVolume(AMBIANT_SOUND_VOLUME);
+            footsteps = Gdx.audio.newSound(Gdx.files.internal("audio/GNOME_MOVE.mp3"));
+            fingerSnap = Gdx.audio.newSound(Gdx.files.internal("audio/FINGER_SNAP.mp3"));
+            gnomeDamage = Gdx.audio.newSound(Gdx.files.internal("audio/GNOME_DAMAGE.mp3"));
+            monsterAudio = new MonsterAudio();
+            monsterAudio.update(monster, level.getGnome(), false);
         }
 
+        dungeonAmbience.play();
+        ambientSound.play();
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
         jumpscare.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         damageOverlay.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -191,13 +223,27 @@ public class GameScreen implements Screen {
             int lifeBefore = level.getGnome().getLife();
             if (!level.getGnome().isDead()) {
                 input.handleInput(delta);
+                // Résout le contact après le déplacement du monstre, dans la même image.
+                Gnome hero = level.getGnome();
+                GridPosition heroCell = new GridPosition(
+                        (int) Math.floor(hero.getX() + hero.getWidth() / 2f),
+                        (int) Math.floor(hero.getY() + hero.getHeight() / 2f));
+                monster.setTarget(monsterGrid.anchorCovering(heroCell));
+                clock.update(delta);
+                monster.update(delta);
                 level.update(delta);
             }
 
             if (level.getGnome().getLife() < lifeBefore) {
                 if (level.getGnome().isDead()) {
+                    stopFootsteps();
+                    monsterAudio.stop();
+                    gnomeDamage.stop();
+                    fingerSnap.stop();
+                    if (deathJumpscare != null) deathJumpscare.play();
                     jumpscare.trigger();
                 } else {
+                    gnomeDamage.play(DAMAGE_VOLUME);
                     damageOverlay.trigger();
                 }
             }
@@ -215,7 +261,7 @@ public class GameScreen implements Screen {
                 return;
             }
 
-            if (level.getGnome().isDead() && !jumpscare.isActive()) {
+            if (level.getGnome().isDead() && !jumpscare.isActive() && !isDeathAudioPlaying()) {
                 session.retry();
                 loadCurrentLevelResources();
                 return;
@@ -231,21 +277,20 @@ public class GameScreen implements Screen {
                     light.getHeroCenterX(),
                     light.getHeroCenterY());
 
-            GridPosition gnomeCell = new GridPosition(
-                    (int) Math.floor(light.getHeroCenterX()),
-                    (int) Math.floor(light.getHeroCenterY()));
-            monster.setTarget(monsterGrid.anchorCovering(gnomeCell));
-            clock.update(delta);
-            monster.update(delta);
-
-            if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+            if (!gnome.isDead() && Gdx.input.isKeyJustPressed(Keys.SPACE)) {
                 if (light.snap()) {
+                    fingerSnap.play(SNAP_VOLUME);
                     level.emitSnap(new SnapEvent(light.getHeroCenterX(), light.getHeroCenterY(), SnapSource.HERO, 0));
                 }
             }
 
             stateTime += delta;
         }
+
+        updateFootsteps(!paused && !level.getGnome().isDead()
+                && !level.getGnome().isStunned() && input.isMoving());
+        // La boucle reste continue ; seule la distance détermine le volume.
+        monsterAudio.update(monster, level.getGnome(), !paused && !level.getGnome().isDead());
 
         if (Gdx.input.isKeyJustPressed(Keys.F3)) {
             debugCollisions = !debugCollisions;
@@ -326,7 +371,7 @@ public class GameScreen implements Screen {
         hud.render(paused ? 0f : delta);
 
         damageOverlay.render(batch);
-        jumpscare.render(batch);
+        jumpscare.render(batch, level.getGnome().isDead() && isDeathAudioPlaying());
 
         if (paused) {
             pauseStage.getViewport().apply();
@@ -336,6 +381,9 @@ public class GameScreen implements Screen {
     }
 
     private void loadCurrentLevelResources() {
+        stopFootsteps();
+        if (deathJumpscare != null) deathJumpscare.stop();
+        if (monsterAudio != null) monsterAudio.stop();
         if (renderer != null) renderer.dispose();
         if (monster != null) clock.removeListener(monster);
 
@@ -367,15 +415,27 @@ public class GameScreen implements Screen {
         monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
         monster = level.getMonster();
         clock.addListener(monster);
+        if (monsterAudio != null) monsterAudio.update(monster, gnome, false);
         
         String monsterName = monster.getClass().getSimpleName().toLowerCase();
         if (!monsterName.equals(currentMonsterName)) {
             if (monsterRenderer != null) monsterRenderer.dispose();
             if (jumpscare != null) jumpscare.dispose();
+            if (deathJumpscare != null) {
+                deathJumpscare.dispose();
+                deathJumpscare = null;
+            }
 
             currentMonsterName = monsterName;
             monsterRenderer = new MonsterRenderer(monsterName);
             jumpscare = new JumpscareRenderer(monsterName);
+            String jumpscarePath = MonsterAudio.jumpscarePath(monster);
+            if (jumpscarePath != null) {
+                // La fin réelle de la musique détermine quand autoriser la réapparition.
+                deathJumpscare = Gdx.audio.newMusic(Gdx.files.internal(jumpscarePath));
+                deathJumpscare.setLooping(false);
+                deathJumpscare.setVolume(JUMPSCARE_VOLUME);
+            }
         }
         if (Gdx.graphics != null && jumpscare != null) {
             jumpscare.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -404,13 +464,23 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+        stopFootsteps();
+        if (monsterAudio != null) monsterAudio.stop();
+    }
 
     @Override
     public void resume() {}
 
     @Override
     public void hide() {
+        stopFootsteps();
+        if (monsterAudio != null) monsterAudio.stop();
+        if (fingerSnap != null) fingerSnap.stop();
+        if (gnomeDamage != null) gnomeDamage.stop();
+        if (deathJumpscare != null) deathJumpscare.stop();
+        if (dungeonAmbience != null) dungeonAmbience.stop();
+        if (ambientSound != null) ambientSound.stop();
         if (Gdx.input.getInputProcessor() == pauseStage) {
             Gdx.input.setInputProcessor(null);
         }
@@ -418,6 +488,14 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        stopFootsteps();
+        if (monsterAudio != null) { monsterAudio.dispose(); monsterAudio = null; }
+        if (footsteps != null) { footsteps.dispose(); footsteps = null; }
+        if (fingerSnap != null) { fingerSnap.dispose(); fingerSnap = null; }
+        if (gnomeDamage != null) { gnomeDamage.dispose(); gnomeDamage = null; }
+        if (deathJumpscare != null) { deathJumpscare.dispose(); deathJumpscare = null; }
+        if (dungeonAmbience != null) { dungeonAmbience.dispose(); dungeonAmbience = null; }
+        if (ambientSound != null) { ambientSound.dispose(); ambientSound = null; }
         if (renderer != null) { renderer.dispose(); renderer = null; }
         if (characterRenderer != null) { characterRenderer.dispose(); characterRenderer = null; }
         if (debugRenderer != null) { debugRenderer.dispose(); debugRenderer = null; }
@@ -436,5 +514,23 @@ public class GameScreen implements Screen {
         if (brambleRenderer != null) { brambleRenderer.dispose(); brambleRenderer = null; }
         if (leverWallRenderer != null) { leverWallRenderer.dispose(); leverWallRenderer = null; }
         if (hud != null) { hud.dispose(); hud = null; }
+    }
+
+    private void updateFootsteps(boolean moving) {
+        if (!moving) {
+            stopFootsteps();
+        } else if (footstepsId == -1 && footsteps != null) {
+            // Une seule boucle pendant tout le déplacement, pas une lecture par image.
+            footstepsId = footsteps.loop(FOOTSTEP_VOLUME);
+        }
+    }
+
+    private boolean isDeathAudioPlaying() {
+        return deathJumpscare != null && deathJumpscare.isPlaying();
+    }
+
+    private void stopFootsteps() {
+        if (footsteps != null && footstepsId != -1) footsteps.stop(footstepsId);
+        footstepsId = -1;
     }
 }
