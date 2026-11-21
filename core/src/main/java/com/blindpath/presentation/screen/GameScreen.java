@@ -312,7 +312,7 @@ public class GameScreen<T extends Character> implements Screen {
             light.getRevealRadius(),
             paused ? 0f : delta);
 
-        // 3. Après le brouillard (gnome, coffres si F3 actif, monstre si F3 actif)
+        // 3. Après le brouillard (hero, coffres si F3 actif, monstre si F3 actif)
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         if (debugCollisions) {

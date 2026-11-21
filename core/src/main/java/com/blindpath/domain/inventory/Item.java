@@ -1,33 +1,29 @@
 package com.blindpath.domain.inventory;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.game.Level;
 
 public abstract class Item implements Usable {
 
     private final String name;
 
-    public Item(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("L'objet doit avoir un nom");
+    protected Item(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Le nom de l'objet doit être renseigné.");
         }
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("L'objet doit avoir un nom non vide visuellement");
-        }
-
         this.name = name;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
-    public boolean canUse(Gnome user, Level level) {
+        @Override
+    public boolean canUse(Character user, Level<?> level) {
         if (user == null || level == null) {
-            throw new IllegalArgumentException("Le User et/ou kle LvL ne peuvent pas etres null");
+            throw new IllegalArgumentException("Le joueur et le niveau doivent être renseignés.");
         }
         return true;
-
     }
 
 }
