@@ -1,6 +1,6 @@
 package com.blindpath.domain.inventory;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.game.Level;
 
 public class Booster extends Item {
@@ -10,7 +10,7 @@ public class Booster extends Item {
     }
 
     @Override
-    public void use(Gnome user, Level level) {
+    public void use(Character user, Level<?> level) {
         // À compléter.
     }
 }

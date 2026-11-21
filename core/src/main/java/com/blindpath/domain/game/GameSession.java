@@ -1,34 +1,35 @@
 package com.blindpath.domain.game;
 
-import com.blindpath.domain.character.Gnome;
-import com.blindpath.domain.chest.Chest;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
-public class GameSession {
+import com.blindpath.domain.character.Character;
+import com.blindpath.domain.chest.Chest;
+
+public class GameSession<T extends Character> {
 
     private final LevelFactory factory;
-    private final Gnome gnome;
+    private final T hero;
     private final Map<Integer, List<Chest>> chestsByLevel = new HashMap<>();
     private int currentLevelNumber = 1;
     private int retryCount;
-    private Level level;
+    private Level<T> level;
     private boolean won;
 
-    public GameSession(LevelFactory factory, Gnome gnome) {
-        if (factory == null || gnome == null) {
-            throw new IllegalArgumentException("La factory et le gnome doivent être renseignés.");
+    public GameSession(LevelFactory factory, T hero) {
+        if (factory == null || hero == null) {
+            throw new IllegalArgumentException("La factory et le joueur doivent être renseignés.");
         }
         this.factory = factory;
-        this.gnome = gnome;
+        this.hero = hero;
     }
 
     public void startLevel(int number) {
         currentLevelNumber = number;
         won = false;
         List<Chest> chests = chestsByLevel.computeIfAbsent(number, factory::createChests);
-        level = factory.create(number, gnome, chests);
+        level = factory.create(number, hero, chests);
     }
 
     public void nextLevel() {
@@ -41,16 +42,15 @@ public class GameSession {
 
         public void retry() {
         retryCount++;
-        gnome.resetForRetry();
+        hero.resetForRetry();
         int checkpointLevel = factory.tierStartFor(currentLevelNumber);
         startLevel(checkpointLevel);
     }
 
 
-    public Level getLevel() { return level; }
+    public T getHero() { return hero; }
+    public Level<T> getLevel() { return level; }
     public int getCurrentLevelNumber() { return currentLevelNumber; }
     public int getRetryCount() { return retryCount; }
     public boolean isWon() { return won; }
-
-    // pause, resume, update, checkpoint... inchangés
 }
