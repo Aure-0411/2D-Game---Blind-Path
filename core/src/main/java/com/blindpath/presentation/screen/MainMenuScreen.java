@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.blindpath.Main;
+import com.blindpath.domain.character.Gnome;
 
 public class MainMenuScreen implements Screen {
 
@@ -44,7 +45,7 @@ public class MainMenuScreen implements Screen {
         startButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                main.setScreen(new GameScreen<>(main));
+                main.setScreen(new GameScreen<>(main, new Gnome()));
                 MainMenuScreen.this.dispose();
             }
         });
