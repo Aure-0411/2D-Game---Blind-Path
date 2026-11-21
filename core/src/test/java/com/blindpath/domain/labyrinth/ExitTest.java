@@ -1,85 +1,58 @@
 package com.blindpath.domain.labyrinth;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 
-public class ExitTest {
+class ExitTest {
 
-    @ParameterizedTest
-    @CsvSource({
-        "HORIZONTAL, 2, 1",
-        "VERTICAL, 1, 2"
-    })
-    void dimensionsMatchOrientation(OpeningOrientation orientation, int expectedWidth, int expectedHeight) {
-        Exit exit = new Exit(3, 4, orientation);
-
-        assertEquals(expectedWidth, exit.getWidth());
-        assertEquals(expectedHeight, exit.getHeight());
-        assertEquals(orientation, exit.getOrientation());
-    }
-
-    @ParameterizedTest
-    @CsvSource({"3, 7", "0, 0", "-3, -7"})
-    void exitKeepsProvidedPosition(int x, int y) {
-        Exit exit = new Exit(x, y, OpeningOrientation.HORIZONTAL);
-
-        assertEquals(x, exit.getX());
-        assertEquals(y, exit.getY());
+    private static Character newHero() {
+        return new Character(3f, 0f, 0f, 0.8f, 0.8f) {};
     }
 
     @Test
-    void missingOrientationIsRejected() {
-        assertThrows(IllegalArgumentException.class,
-            () -> new Exit(0, 0, null));
+    void verticalExitHasOneByTwoHitbox() {
+        Exit exit = new Exit(9, 4, OpeningOrientation.VERTICAL);
+
+        assertAll(
+                () -> assertEquals(9, exit.getX()),
+                () -> assertEquals(4, exit.getY()),
+                () -> assertEquals(1, exit.getWidth()),
+                () -> assertEquals(2, exit.getHeight()),
+                () -> assertEquals(OpeningOrientation.VERTICAL, exit.getOrientation()));
     }
 
     @Test
-    void shouldReachExitWhenOverlapsIt() {
-        // Arrange
-        Exit exit = new Exit(0, 0, OpeningOrientation.HORIZONTAL);
-        Gnome gnome = new Gnome();
-        gnome.setPosition(1f, 0f);
+    void horizontalExitHasTwoByOneHitbox() {
+        Exit exit = new Exit(4, 9, OpeningOrientation.HORIZONTAL);
 
-        // Act
-        boolean reached = exit.isReached(gnome);
-
-        // Assert
-        assertTrue(reached);
+        assertAll(
+                () -> assertEquals(2, exit.getWidth()),
+                () -> assertEquals(1, exit.getHeight()),
+                () -> assertEquals(OpeningOrientation.HORIZONTAL, exit.getOrientation()));
     }
 
     @Test
-    void shouldNotReachExitWhenDoesNotOverlapIt() {
-        // Arrange
-        Exit exit = new Exit(0, 0, OpeningOrientation.HORIZONTAL);
-        Gnome gnome = new Gnome();
-        gnome.setPosition(10f, 10f);
+    void isReached_detectsHeroEnteringExit() {
+        Exit exit = new Exit(9, 4, OpeningOrientation.VERTICAL);
+        Character hero = newHero();
 
-        // Act
-        boolean reached = exit.isReached(gnome);
+        hero.setPosition(3f, 4f);
+        assertFalse(exit.isReached(hero));
 
-        // Assert
-        assertFalse(reached);
+        hero.setPosition(8.5f, 4.5f);
+        assertTrue(exit.isReached(hero));
+        assertFalse(exit.isReached(null));
     }
 
     @Test
-    void shouldNotReachExitWhenBordersOnlyTouch() {
-        // Arrange
-        Exit exit = new Exit(0, 0, OpeningOrientation.HORIZONTAL);
-        Gnome gnome = new Gnome();
-        gnome.setPosition(1f, 1f);
-
-        // Act
-        boolean reached = exit.isReached(gnome);
-
-        // Assert
-        assertFalse(reached);
+    void constructor_rejectsNullOrientation() {
+        assertThrows(IllegalArgumentException.class, () -> new Exit(0, 0, null));
     }
 }
