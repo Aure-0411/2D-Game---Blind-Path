@@ -88,8 +88,11 @@ public class Level<T extends Character> {
         hero.getInventory().useHealthNeeded(hero, this);
         for (int i = placedObjects.size() - 1; i >= 0; i--) {
             PlacedObject object = placedObjects.get(i);
+            object.update(deltaTime);
             if (monster != null && object.collide(monster)) {
                 object.onTouch(monster);
+            }
+            if (object.isDone()) {
                 placedObjects.remove(i);
             }
         }
