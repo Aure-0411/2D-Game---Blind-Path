@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.labyrinth.Bounds;
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+import com.blindpath.domain.labyrinth.RotatingWall;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,5 +74,18 @@ class Box2DCollisionWorldTest {
     @Test
     void unregisteredCharacter_isRejected() {
         assertThrows(IllegalArgumentException.class, () -> world.move(new Gnome(), 1f, 0f, 0.1f));
+    }
+
+    @Test
+    void changingObstacleUpdatesNativeBodyPositionAndCollisionState() {
+        RotatingWall wall = new RotatingWall(3, 0, OpeningOrientation.HORIZONTAL, 3, 1, 90);
+        world.addChangingObstacle(wall);
+        wall.rotate(); // Nouvelle zone : x=3..4, y=1..3.
+        world.syncChangingObstacles();
+        for (int i = 0; i < 120; i++) world.move(gnome, 1, 0, 1f / 60f);
+        assertTrue(gnome.getX() + gnome.getWidth() <= 3f + EPS);
+        wall.setCollide(false);
+        for (int i = 0; i < 120; i++) world.move(gnome, 1, 0, 1f / 60f);
+        assertTrue(gnome.getX() > 4f, "la collision désactivée doit laisser sortir le gnome");
     }
 }

@@ -16,15 +16,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 public class LabyrinthTest {
 
     private Labyrinth createLabyrinth() {
-        Entrance entrance = new Entrance(0, 2, Border.LEFT);
-        Exit exit = new Exit(9, 2, Border.RIGHT);
+        Entrance entrance = new Entrance(0, 2, OpeningOrientation.VERTICAL);
+        Exit exit = new Exit(9, 2, OpeningOrientation.VERTICAL);
         return new Labyrinth(10, 10, entrance, exit, List.of());
     }
 
     @Test
     void constructorKeepsEntranceAndExit() {
-        Entrance entrance = new Entrance(0, 2, Border.LEFT);
-        Exit exit = new Exit(9, 2, Border.RIGHT);
+        Entrance entrance = new Entrance(0, 2, OpeningOrientation.VERTICAL);
+        Exit exit = new Exit(9, 2, OpeningOrientation.VERTICAL);
 
         Labyrinth labyrinth = new Labyrinth(10, 10, entrance, exit, List.of());
 
@@ -62,15 +62,15 @@ public class LabyrinthTest {
     @CsvSource({"0, 10", "-1, 10", "10, 0", "10, -1"})
     void nonPositiveDimensionsAreRejected(int width, int height) {
         assertThrows(IllegalArgumentException.class,
-            () -> new Labyrinth(width, height, new Entrance(0, 2, Border.LEFT),
-                new Exit(9, 2, Border.RIGHT), List.of()));
+            () -> new Labyrinth(width, height, new Entrance(0, 2, OpeningOrientation.VERTICAL),
+                new Exit(9, 2, OpeningOrientation.VERTICAL), List.of()));
     }
 
     @ParameterizedTest
-    @CsvSource({"LEFT, 0, 2", "RIGHT, 9, 2", "TOP, 2, 9", "BOTTOM, 2, 0"})
-    void openingsCanUseEachBorder(Border border, int x, int y) {
-        Entrance entrance = new Entrance(x, y, border);
-        Exit exit = new Exit(x, y, border);
+    @CsvSource({"VERTICAL, 0, 2", "VERTICAL, 9, 2", "HORIZONTAL, 2, 9", "HORIZONTAL, 2, 0", "HORIZONTAL, 4, 4", "VERTICAL, 4, 4"})
+    void openingsCanBeOnEdgesOrInside(OpeningOrientation orientation, int x, int y) {
+        Entrance entrance = new Entrance(x, y, orientation);
+        Exit exit = new Exit(x, y, orientation);
 
         Labyrinth labyrinth = new Labyrinth(10, 10, entrance, exit, List.of());
 
@@ -80,22 +80,22 @@ public class LabyrinthTest {
 
     @ParameterizedTest
     @CsvSource({
-        "LEFT, 1, 2", "RIGHT, 8, 2", "TOP, 2, 8", "BOTTOM, 2, 1",
-        "LEFT, 0, 9", "TOP, 9, 9", "LEFT, -1, 2", "BOTTOM, 2, -1"
+        "VERTICAL, 0, 9", "HORIZONTAL, 9, 9", "VERTICAL, -1, 2", "HORIZONTAL, 2, -1",
+        "VERTICAL, 10, 2", "HORIZONTAL, 2, 10"
     })
-    void misplacedOrOverflowingOpeningsAreRejected(Border border, int x, int y) {
+    void outOfBoundsOpeningsAreRejected(OpeningOrientation orientation, int x, int y) {
         assertThrows(IllegalArgumentException.class,
-            () -> new Labyrinth(10, 10, new Entrance(x, y, border),
-                new Exit(9, 2, Border.RIGHT), List.of()));
+            () -> new Labyrinth(10, 10, new Entrance(x, y, orientation),
+                new Exit(9, 2, OpeningOrientation.VERTICAL), List.of()));
         assertThrows(IllegalArgumentException.class,
-            () -> new Labyrinth(10, 10, new Entrance(0, 2, Border.LEFT),
-                new Exit(x, y, border), List.of()));
+            () -> new Labyrinth(10, 10, new Entrance(0, 2, OpeningOrientation.VERTICAL),
+                new Exit(x, y, orientation), List.of()));
     }
 
     @Test
     void missingConstructorDataIsRejected() {
-        Entrance entrance = new Entrance(0, 2, Border.LEFT);
-        Exit exit = new Exit(9, 2, Border.RIGHT);
+        Entrance entrance = new Entrance(0, 2, OpeningOrientation.VERTICAL);
+        Exit exit = new Exit(9, 2, OpeningOrientation.VERTICAL);
 
         assertThrows(IllegalArgumentException.class,
             () -> new Labyrinth(10, 10, null, exit, List.of()));
@@ -113,7 +113,7 @@ public class LabyrinthTest {
         List<Obstacle> original = new ArrayList<>();
         original.add(wall);
         Labyrinth labyrinth = new Labyrinth(10, 10,
-            new Entrance(0, 2, Border.LEFT), new Exit(9, 2, Border.RIGHT), original);
+            new Entrance(0, 2, OpeningOrientation.VERTICAL), new Exit(9, 2, OpeningOrientation.VERTICAL), original);
 
         original.clear();
 

@@ -7,14 +7,14 @@ public class Entrance {
     private int height;
     private int width;
 
-    private Border border;
+    private OpeningOrientation orientation;
 
-    public Entrance(int x, int y, Border border) {
-        if (border == null ) {
-            throw new IllegalArgumentException("Le bord de l’entrée doit être renseigné");
+    public Entrance(int x, int y, OpeningOrientation orientation) {
+        if (orientation == null ) {
+            throw new IllegalArgumentException("L’orientation de l’entrée doit être renseignée");
         }
 
-        if (border== Border.TOP || border==Border.BOTTOM){
+        if (orientation == OpeningOrientation.HORIZONTAL){
             this.height = 1;
             this.width =2;
         }
@@ -22,7 +22,7 @@ public class Entrance {
             this.height = 2;
             this.width = 1;
         }
-        this.border = border;
+        this.orientation = orientation;
         this.x = x;
         this.y = y;
     }
@@ -40,7 +40,7 @@ public class Entrance {
         return this.width;
     }
 
-    public Border getBorder(){
-        return this.border;
+    public OpeningOrientation getOrientation(){
+        return this.orientation;
     }
 }

@@ -37,6 +37,8 @@ public class Hud {
     private final Image[] itemImages;
     private final Label[] itemQuantities;
     private final BitmapFont itemFont;
+    private final Label levelLabel;
+    private int displayedLevel = 1;
     private final Texture dynamiteTexture;
     private final Texture bearTrapTexture;
     private final Texture boosterTexture;
@@ -137,9 +139,20 @@ public class Hud {
         }
         stage.addActor(inventoryTable);
 
+        levelLabel = new Label("Niveau 1", quantityStyle);
+        Table levelTable = new Table();
+        levelTable.setFillParent(true);
+        levelTable.top().right().pad(30);
+        levelTable.add(levelLabel);
+        stage.addActor(levelTable);
+
     }
 
-    public void update(float cooldownProgress, int life, List<ItemStack> stacks) {
+    public void update(float cooldownProgress, int life, List<ItemStack> stacks, int levelNumber) {
+        if (displayedLevel != levelNumber) {
+            levelLabel.setText("Niveau " + levelNumber);
+            displayedLevel = levelNumber;
+        }
         cooldownBar.setValue(cooldownProgress);
         for (int i = 0; i < hearts.length; i++) {
 
