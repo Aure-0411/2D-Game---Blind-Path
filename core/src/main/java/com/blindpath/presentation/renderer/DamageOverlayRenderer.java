@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
- * Contour rouge affiché en plein écran quand le gnome prend un coup non fatal.
+ * Contour rouge affiché en plein écran quand le personnage prend un coup non fatal.
  * L'image (monsters/damage_overlay.png) est transparente au centre et s'efface
  * progressivement pendant DURATION secondes.
  */

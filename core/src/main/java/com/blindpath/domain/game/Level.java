@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.blindpath.domain.character.Character;
-import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.chest.Chest;
 import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.labyrinth.Bramble;
@@ -20,9 +19,9 @@ import com.blindpath.domain.physics.CollisionWorld;
 import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.monster.Inverter;
 
-public class Level {
+public class Level<T extends Character> {
 
-    private final Gnome gnome;
+    private final T hero;
     private final Labyrinth labyrinth;
     private final CollisionWorld collisions;
     private Monster monster;
@@ -30,12 +29,12 @@ public class Level {
     private final List<Chest> chests;
     private final List<PlacedObject> placedObjects;
 
-    public Level(Gnome gnome, Labyrinth labyrinth, CollisionWorld collisions, Monster monster, Pathfinder pathfinder, List<Chest> chests) {
-        if (gnome == null || labyrinth == null || collisions == null || monster == null || pathfinder == null) {
-            throw new IllegalArgumentException("Le gnome, le labyrinthe, les collisions, le monstre et le pathfinder doivent être renseignés.");
+    public Level(T hero, Labyrinth labyrinth, CollisionWorld collisions, Monster monster, Pathfinder pathfinder, List<Chest> chests) {
+        if (hero == null || labyrinth == null || collisions == null || monster == null || pathfinder == null) {
+            throw new IllegalArgumentException("Le personnnage, le labyrinthe, les collisions, le monstre et le pathfinder doivent être renseignés.");
         }
 
-        this.gnome = gnome;
+        this.hero = hero;
         this.labyrinth = labyrinth;
         this.collisions = collisions;
         this.monster = monster;
@@ -54,16 +53,16 @@ public class Level {
             collisions.addStatic(wall.getBounds());
         }
         for (Chest chest : this.chests) {
-            chest.setOpener(gnome);
+            chest.setOpener(hero);
             if (chest.canCollide()) {
                 collisions.addStatic(chest.getBounds());
             }
         }
 
-        collisions.addDynamic(gnome);
+        collisions.addDynamic(hero);
     }
 
-    public Gnome getGnome() { return gnome; }
+    public T getHero() { return hero; }
     public Labyrinth getLabyrinth() { return labyrinth; }
     public Monster getMonster() { return monster; }
     public void setMonster(Monster monster) { this.monster = monster; }
@@ -73,23 +72,27 @@ public class Level {
 
     public void update(float deltaTime) {
         updateRotatingWalls();
-        gnome.updateImmunity(deltaTime);
-        gnome.updateStun(deltaTime);
-        if (monster != null && gnome.collide(monster)) {
-            gnome.takeMonsterHit();
+        hero.updateCompass(deltaTime);
+        hero.updateImmunity(deltaTime);
+        hero.updateStun(deltaTime);
+        if (monster != null && hero.collide(monster)) {
+            hero.takeMonsterHit();
         }
         for (Bramble bramble : labyrinth.getBrambles()) {
             bramble.update(deltaTime);
-            if (bramble.damages(gnome.getBounds())) {
-                gnome.takeDamage(Bramble.DAMAGE);
+            if (bramble.damages(hero.getBounds())) {
+                hero.takeDamage(Bramble.DAMAGE);
             }
         }
-        // Déclenche le soin automatique après les dégâts ; ne ressuscite pas le gnome.
-        gnome.getInventory().useHealthNeeded(gnome, this);
+        // Déclenche le soin automatique après les dégâts ; ne ressuscite pas le joueur.
+        hero.getInventory().useHealthNeeded(hero, this);
         for (int i = placedObjects.size() - 1; i >= 0; i--) {
             PlacedObject object = placedObjects.get(i);
+            object.update(deltaTime);
             if (monster != null && object.collide(monster)) {
                 object.onTouch(monster);
+            }
+            if (object.isDone()) {
                 placedObjects.remove(i);
             }
         }
@@ -119,7 +122,7 @@ public class Level {
             bramble.onSnap(event);
         }
         for (Lever lever : labyrinth.getLevers()) {
-            lever.onSnap(event, gnome.getBounds(), monster == null ? null : monster.getBounds());
+            lever.onSnap(event, hero.getBounds(), monster == null ? null : monster.getBounds());
         }
         updateRotatingWalls();
         
@@ -128,7 +131,7 @@ public class Level {
         }
 
         if (monster instanceof Screamer screamer && screamer.consumeScream()) {
-            gnome.stun(Screamer.STUN_DURATION);
+            hero.stun(Screamer.STUN_DURATION);
         }
 
         for (Chest chest : chests) {
@@ -145,7 +148,7 @@ public class Level {
 
     private void updateRotatingWalls() {
         for (RotatingWall wall : labyrinth.getRotatingWalls()) {
-            wall.updateClearance(gnome.getBounds(), monster == null ? null : monster.getBounds());
+            wall.updateClearance(hero.getBounds(), monster == null ? null : monster.getBounds());
         }
         collisions.syncChangingObstacles();
     }
@@ -155,6 +158,6 @@ public class Level {
     }
 
     public boolean isCompleted() {
-        return labyrinth.getExit().isReached(gnome);
+        return labyrinth.getExit().isReached(hero);
     }
 }

@@ -29,4 +29,10 @@ public abstract class PlacedObject implements Collidable {
     }
 
     public abstract void onTouch(Monster monster);
+
+    public abstract boolean isDone();
+
+    public void update(float deltaTime) {
+        // Par défaut, un objet posé ne fait rien au fil du temps. Les objets qui ont besoin du temps redéfinissent cette méthode.
+    }
 }

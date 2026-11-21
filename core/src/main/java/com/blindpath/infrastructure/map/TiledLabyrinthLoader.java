@@ -111,9 +111,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
             if (!(rotation instanceof Number number) || (number.floatValue() != 90f && number.floatValue() != -90f)) {
                 throw new IllegalArgumentException("La propriété rotation du mur doit être 90 ou -90.");
             }
-            RotatingWall wall = new RotatingWall(rectangle.x * UNIT_SCALE, rectangle.y * UNIT_SCALE,
-                    orientation, point.getPoint().x * UNIT_SCALE, point.getPoint().y * UNIT_SCALE,
-                    number.intValue());
+            RotatingWall wall = new RotatingWall(
+                rectangle.x * UNIT_SCALE, rectangle.y * UNIT_SCALE,
+                orientation, 
+                point.getPoint().x * UNIT_SCALE, point.getPoint().y * UNIT_SCALE,
+                number.intValue()
+            );
+
             Rectangle leverBounds = leverObject.getRectangle();
             levers.add(new Lever(leverBounds.x * UNIT_SCALE, leverBounds.y * UNIT_SCALE,
                     leverBounds.width * UNIT_SCALE, leverBounds.height * UNIT_SCALE, wall));
