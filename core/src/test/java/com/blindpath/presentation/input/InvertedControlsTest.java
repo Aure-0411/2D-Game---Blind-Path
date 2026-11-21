@@ -15,6 +15,7 @@ import static com.blindpath.domain.labyrinth.OpeningOrientation.VERTICAL;
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Direction;
 import com.blindpath.domain.game.Level;
+import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;

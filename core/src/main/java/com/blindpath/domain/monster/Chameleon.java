@@ -7,7 +7,7 @@ import com.blindpath.domain.pathfinding.Pathfinder;
 public class Chameleon extends Monster {
 
     public static final int CASE_PER_MOVE = 1;
-    public static final int REVEAL_RANGE = 2;
+    public static final int REVEAL_RANGE = 3;
 
     public Chameleon(LabyrinthGrid grid, GridPosition start, Pathfinder pathfinder) {
         this(grid, new ChaseStrategy(pathfinder), start);

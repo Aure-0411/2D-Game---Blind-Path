@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
-import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
