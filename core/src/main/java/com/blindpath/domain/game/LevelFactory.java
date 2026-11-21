@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.chest.Chest;
 import com.blindpath.domain.chest.LootResult;
 import com.blindpath.domain.chest.LootTable;
@@ -73,7 +73,7 @@ public class LevelFactory {
         return chests;
     }
 
-    public Level create(int number, Gnome gnome, List<Chest> chests) {
+    public <T extends Character> Level<T> create(int number, T hero, List<Chest> chests) {
         LevelConfig cfg = configFor(number);
 
         LabyrinthData data = loader.loadAll(cfg.mapPath());
@@ -84,12 +84,12 @@ public class LevelFactory {
         MonsterType effectiveType = (data.monsterType() != null) ? data.monsterType() : cfg.monsterType();
         Monster monster = effectiveType.create(monsterGrid, data.monsterSpawn(), pathfinder);
 
-        gnome.setPosition(
+        hero.setPosition(
                 labyrinth.getEntrance().getX(),
                 labyrinth.getEntrance().getY()
         );
 
-        return new Level(gnome, labyrinth, collisionWorldFactory.get(), monster, pathfinder, chests);
+        return new Level<>(hero, labyrinth, collisionWorldFactory.get(), monster, pathfinder, chests);
     }
 
     public int tierStartFor(int number) {

@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -27,9 +26,9 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests of the Screamer (POC_HARD-2, #73).
  *
- * <p>Rules (GDD 4.2): it chases the gnome like the other monsters. It counts the snaps
+ * <p>Rules (GDD 4.2): it chases the hero like the other monsters. It counts the snaps
  * (hero and dynamite). When the count reaches a threshold drawn between 5 and 8, it screams:
- * the scream stuns the gnome (infinite range), the counter goes back to 0 and a new
+ * the scream stuns the hero (infinite range), the counter goes back to 0 and a new
  * threshold is drawn.</p>
  *
  * <p>A fake Random returns chosen values, so the thresholds are known in advance.</p>

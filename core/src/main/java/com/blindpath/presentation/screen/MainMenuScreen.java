@@ -16,12 +16,14 @@ import com.blindpath.Main;
 
 public class MainMenuScreen implements Screen {
 
-    private final Main main;
     private Stage stage;
     private Skin skin;
 
     public MainMenuScreen(Main main) {
-        this.main = main;
+        if (main == null) {
+            throw new IllegalArgumentException("L'application principale doit être renseignée.");
+        }
+        
         this.stage = new Stage(new ScreenViewport());
 
         this.skin = new Skin();
@@ -42,7 +44,7 @@ public class MainMenuScreen implements Screen {
         startButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                main.setScreen(new GameScreen(main));
+                main.setScreen(new GameScreen<>(main));
                 MainMenuScreen.this.dispose();
             }
         });

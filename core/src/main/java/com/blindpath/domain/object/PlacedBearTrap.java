@@ -6,6 +6,8 @@ public class PlacedBearTrap extends PlacedObject {
     public static final float TRAP_SIZE = 1f;
     public static final float IMMOBILITY_DURATION = 3f;
 
+    private boolean hasTrapped = false;
+
     public PlacedBearTrap(float x, float y) {
         super(x, y, TRAP_SIZE, TRAP_SIZE);
     }
@@ -13,5 +15,11 @@ public class PlacedBearTrap extends PlacedObject {
     @Override
     public void onTouch(Monster monster) {
         monster.immobilize(IMMOBILITY_DURATION);
+        hasTrapped = true;
+    }
+
+    @Override
+    public boolean isDone() {
+        return hasTrapped;
     }
 }

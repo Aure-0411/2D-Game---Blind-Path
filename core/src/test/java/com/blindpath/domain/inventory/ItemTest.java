@@ -1,8 +1,9 @@
 package com.blindpath.domain.inventory;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import com.blindpath.domain.character.Gnome;
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.game.Level;
 
 class ItemTest {
@@ -17,10 +18,11 @@ class ItemTest {
     }
     @Test void defaultCanUseRequiresUserAndLevel() {
         Item item = new Item("Base") {
-            @Override public void use(Gnome user, Level level) {}
+            @Override public void use(Character user, Level<?> level) {}
         };
-        Gnome hero = new Gnome();
-        Level level = InventoryTestSupport.level(hero);
+            Character hero = new Character(3f, 0f, 0f, 0.8f, 0.8f) {};
+            
+        Level<?> level = InventoryTestSupport.level(hero);
         assertTrue(item.canUse(hero, level));
         assertThrows(IllegalArgumentException.class, () -> item.canUse(null, level));
         assertThrows(IllegalArgumentException.class, () -> item.canUse(hero, null));

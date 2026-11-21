@@ -13,10 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Random;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.chest.Chest;
 import com.blindpath.domain.chest.LootTable;
-import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -26,14 +25,19 @@ import com.blindpath.domain.physics.AabbCollisionWorld;
 
 public class GameSessionTest {
 
-    private Gnome gnome;
-    private GameSession session;
+    private static class TestHero extends Character {
+        TestHero() {
+            super(3f, 0f, 0f, 0.8f, 0.8f);
+        }
+    }
+
+    private GameSession<Character> session;
+    private Character hero;
 
     @BeforeEach
     void setUp() {
-        gnome = new Gnome();
+        hero = new TestHero();
 
-        // Simule 2 paliers : Palier 1 = niveaux 1..3, Palier 2 = niveaux 4..5
         LevelCatalog testCatalog = new LevelCatalog() {
             @Override
             public LevelConfig getLevel(int levelNumber) {
@@ -58,7 +62,7 @@ public class GameSessionTest {
                 new Random(3),
                 AabbCollisionWorld::new);
 
-        session = new GameSession(factory, gnome);
+        session = new GameSession<>(factory, hero);
     }
 
     private static Labyrinth simpleLabyrinth() {
@@ -73,7 +77,7 @@ public class GameSessionTest {
     void retryKeepsTheSameChestsAndTheirState() {
         session.startLevel(1);
         Chest chest = session.getLevel().getChests().get(0);
-        chest.open(gnome);
+        chest.open(hero);
 
         session.retry();
 
@@ -85,49 +89,49 @@ public class GameSessionTest {
     @Test
     void retryGivesNoSecondLoot() {
         session.startLevel(1);
-        session.getLevel().getChests().get(0).open(gnome);
+        session.getLevel().getChests().get(0).open(hero);
 
         session.retry();
-        session.getLevel().getChests().get(0).open(gnome);
+        session.getLevel().getChests().get(0).open(hero);
 
-        assertEquals(1, gnome.getInventory().getStacks().get(0).getQuantity());
+        assertEquals(1, hero.getInventory().getStacks().get(0).getQuantity());
     }
 
     @Test
     void retryKeepsTheInventory() {
         session.startLevel(1);
-        session.getLevel().getChests().get(0).open(gnome);
-        int stacksBefore = gnome.getInventory().getStacks().size();
+        session.getLevel().getChests().get(0).open(hero);
+        int stacksBefore = hero.getInventory().getStacks().size();
 
         session.retry();
 
-        assertEquals(stacksBefore, gnome.getInventory().getStacks().size());
+        assertEquals(stacksBefore, hero.getInventory().getStacks().size());
     }
 
     @Test
     void retryRestoresLifeAndRecreatesTheMonster() {
         session.startLevel(1);
         Monster first = session.getLevel().getMonster();
-        gnome.takeMonsterHit();
+        hero.takeMonsterHit();
 
         session.retry();
 
         assertAll(
-                () -> assertEquals(gnome.getMaxLife(), gnome.getLife()),
+                () -> assertEquals(hero.getMaxLife(), hero.getLife()),
                 () -> assertNotSame(first, session.getLevel().getMonster()));
     }
 
     @Test
     void retryReturnsToFirstLevelOfCurrentTier() {
-        session.startLevel(5); // Niveau 5 appartient au palier 2 (niveaux 4..5)
-        gnome.takeMonsterHit();
+        session.startLevel(5);
+        hero.takeMonsterHit();
 
         session.retry();
 
         assertAll(
                 () -> assertEquals(4, session.getCurrentLevelNumber()),
                 () -> assertEquals(1, session.getRetryCount()),
-                () -> assertEquals(gnome.getMaxLife(), gnome.getLife()));
+                () -> assertEquals(hero.getMaxLife(), hero.getLife()));
     }
 
     @Test
