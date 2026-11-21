@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import com.badlogic.gdx.audio.Sound;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.labyrinth.*;
 import com.blindpath.domain.monster.*;
@@ -20,6 +21,16 @@ import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 
 class MonsterAudioTest {
+    @Test
+    void audioAcceptsGenericCharacterWithoutCastingToGnome() {
+        RecordingSound recording = new RecordingSound();
+        MonsterAudio audio = new MonsterAudio(recording.sound);
+        Character hero = new Character(3f, 10f, 10f, 0.8f, 0.8f) {};
+        audio.update(monster(MonsterType.JUMPER), hero, true);
+        assertEquals(1, recording.loops);
+        audio.dispose();
+    }
+
     @ParameterizedTest
     @CsvSource({
         "JUMPER, audio/JUMPER_JUMPSCARE.mp3",

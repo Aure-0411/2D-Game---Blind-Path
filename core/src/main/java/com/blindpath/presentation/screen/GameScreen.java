@@ -27,7 +27,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.blindpath.Main;
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.character.Direction;
-import com.blindpath.domain.character.Gnome;
 import com.blindpath.domain.chest.LootTable;
 import com.blindpath.domain.game.GameSession;
 import com.blindpath.domain.game.Level;
@@ -39,8 +38,8 @@ import com.blindpath.domain.labyrinth.Labyrinth;
 import com.blindpath.domain.light.Light;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
-import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.monster.Chameleon;
+import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
@@ -48,8 +47,8 @@ import com.blindpath.domain.time.GameClock;
 import com.blindpath.infrastructure.map.LevelRegistry;
 import com.blindpath.infrastructure.map.TiledLabyrinthLoader;
 import com.blindpath.infrastructure.map.TiledMapStore;
-import com.blindpath.presentation.hud.Hud;
 import com.blindpath.presentation.audio.MonsterAudio;
+import com.blindpath.presentation.hud.Hud;
 import com.blindpath.presentation.input.InputController;
 import com.blindpath.presentation.renderer.BrambleRenderer;
 import com.blindpath.presentation.renderer.CharacterRenderer;
@@ -73,7 +72,7 @@ public class GameScreen<T extends Character> implements Screen {
     private static final float DAMAGE_VOLUME = 0.7f;
     private static final float JUMPSCARE_VOLUME = 1f;
     private static final float DONJON_VOLUME = 0.4f;
-    private static final float AMBIANT_SOUND_VOLUME = 0.15f;
+    private static final float AMBIANT_SOUND_VOLUME = 0.05f;
 
     private final T hero;
 
@@ -122,11 +121,6 @@ public class GameScreen<T extends Character> implements Screen {
     private Music deathJumpscare;
     private MonsterAudio monsterAudio;
     private long footstepsId = -1;
-
-    @SuppressWarnings("unchecked")
-    public GameScreen(Main main) {
-        this(main, (T) new Gnome());
-    }
 
     public GameScreen(Main main, T hero) {
         if (main == null || hero == null) {
@@ -213,7 +207,7 @@ public class GameScreen<T extends Character> implements Screen {
             fingerSnap = Gdx.audio.newSound(Gdx.files.internal("audio/FINGER_SNAP.mp3"));
             gnomeDamage = Gdx.audio.newSound(Gdx.files.internal("audio/GNOME_DAMAGE.mp3"));
             monsterAudio = new MonsterAudio();
-            monsterAudio.update(monster, level.getGnome(), false);
+            monsterAudio.update(monster, level.getHero(), false);
         }
 
         dungeonAmbience.play();
@@ -239,7 +233,7 @@ public class GameScreen<T extends Character> implements Screen {
             if (!level.getHero().isDead()) {
                 input.handleInput(delta);
                 // Résout le contact après le déplacement du monstre, dans la même image.
-                Gnome hero = level.getGnome();
+                T hero = level.getHero();
                 GridPosition heroCell = new GridPosition(
                         (int) Math.floor(hero.getX() + hero.getWidth() / 2f),
                         (int) Math.floor(hero.getY() + hero.getHeight() / 2f));
@@ -249,8 +243,8 @@ public class GameScreen<T extends Character> implements Screen {
                 level.update(delta);
             }
 
-            if (level.getGnome().getLife() < lifeBefore) {
-                if (level.getGnome().isDead()) {
+            if (level.getHero().getLife() < lifeBefore) {
+                if (level.getHero().isDead()) {
                     stopFootsteps();
                     monsterAudio.stop();
                     gnomeDamage.stop();
@@ -276,7 +270,7 @@ public class GameScreen<T extends Character> implements Screen {
                 return;
             }
 
-            if (level.getGnome().isDead() && !jumpscare.isActive() && !isDeathAudioPlaying()) {
+            if (level.getHero().isDead() && !jumpscare.isActive() && !isDeathAudioPlaying()) {
                 session.retry();
                 loadCurrentLevelResources();
                 return;
@@ -292,13 +286,6 @@ public class GameScreen<T extends Character> implements Screen {
                     light.getHeroCenterX(),
                     light.getHeroCenterY());
 
-            GridPosition heroCell = new GridPosition(
-                    (int) Math.floor(light.getHeroCenterX()),
-                    (int) Math.floor(light.getHeroCenterY()));
-            monster.setTarget(monsterGrid.anchorCovering(heroCell));
-            clock.update(delta);
-            monster.update(delta);
-
             if (!hero.isDead() && Gdx.input.isKeyJustPressed(Keys.SPACE)) {
                 if (light.snap()) {
                     fingerSnap.play(SNAP_VOLUME);
@@ -309,10 +296,10 @@ public class GameScreen<T extends Character> implements Screen {
             stateTime += delta;
         }
 
-        updateFootsteps(!paused && !level.getGnome().isDead()
-                && !level.getGnome().isStunned() && input.isMoving());
+        updateFootsteps(!paused && !level.getHero().isDead()
+                && !level.getHero().isStunned() && input.isMoving());
         // La boucle reste continue ; seule la distance détermine le volume.
-        monsterAudio.update(monster, level.getGnome(), !paused && !level.getGnome().isDead());
+        monsterAudio.update(monster, level.getHero(), !paused && !level.getHero().isDead());
 
         if (Gdx.input.isKeyJustPressed(Keys.F3)) {
             debugCollisions = !debugCollisions;
@@ -396,7 +383,7 @@ public class GameScreen<T extends Character> implements Screen {
         hud.render(paused ? 0f : delta);
 
         damageOverlay.render(batch);
-        jumpscare.render(batch, level.getGnome().isDead() && isDeathAudioPlaying());
+        jumpscare.render(batch, level.getHero().isDead() && isDeathAudioPlaying());
 
         if (paused) {
             pauseStage.getViewport().apply();
@@ -440,7 +427,7 @@ public class GameScreen<T extends Character> implements Screen {
         monsterGrid = new LabyrinthGrid(labyrinth, Monster.SIZE);
         monster = level.getMonster();
         clock.addListener(monster);
-        if (monsterAudio != null) monsterAudio.update(monster, gnome, false);
+        if (monsterAudio != null) monsterAudio.update(monster, hero, false);
         
         String monsterName = monster.getClass().getSimpleName().toLowerCase();
         if (!monsterName.equals(currentMonsterName)) {

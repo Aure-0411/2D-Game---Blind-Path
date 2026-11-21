@@ -9,7 +9,7 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.monster.Chameleon;
 import com.blindpath.domain.monster.Inverter;
@@ -98,7 +98,7 @@ public final class MonsterAudio implements Disposable {
         return 0.8f;
     }
 
-    public void update(Monster monster, Gnome hero, boolean enabled) {
+    public void update(Monster monster, Character hero, boolean enabled) {
         if (trackedMonster != monster) {
             stop();
             trackedMonster = monster;
