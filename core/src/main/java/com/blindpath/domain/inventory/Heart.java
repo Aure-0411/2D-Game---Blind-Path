@@ -24,7 +24,7 @@ public class Heart extends Item {
         if (!canUse(user, level)) {
             return;
         }
-        user.setLife(user.getLife() + 1);
+        user.setLife(user.getLife() + 2);
         // Inventory.use se charge de consommer une unité de la pile.
     }
 }

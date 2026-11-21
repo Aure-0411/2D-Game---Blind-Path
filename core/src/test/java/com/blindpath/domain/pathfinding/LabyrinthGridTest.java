@@ -1,5 +1,7 @@
 package com.blindpath.domain.pathfinding;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,7 +23,7 @@ class LabyrinthGridTest {
 
     private static LabyrinthGrid grid(List<Obstacle> walls) {
         return new LabyrinthGrid(
-                new Labyrinth(10, 10, new Entrance(0, 2, Border.LEFT), new Exit(9, 2, Border.RIGHT), walls));
+                new Labyrinth(10, 10, new Entrance(0, 2, OpeningOrientation.VERTICAL), new Exit(9, 2, OpeningOrientation.VERTICAL), walls));
     }
 
     private static GridPosition cell(int column, int row) {

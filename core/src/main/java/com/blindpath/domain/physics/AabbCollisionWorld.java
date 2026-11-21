@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.labyrinth.Bounds;
+import com.blindpath.domain.labyrinth.Obstacle;
 
 /**
  * Implémentation Java pure (rectangles alignés sur les axes) : testable sans natives,
@@ -16,6 +17,18 @@ public class AabbCollisionWorld implements CollisionWorld {
     private static final int BISECTION_STEPS = 12;
 
     private final List<Bounds> statics = new ArrayList<>();
+    private final List<Obstacle> changingObstacles = new ArrayList<>();
+
+    @Override
+    public void addChangingObstacle(Obstacle obstacle) {
+        if (obstacle == null) throw new IllegalArgumentException("L'obstacle doit être renseigné.");
+        changingObstacles.add(obstacle);
+    }
+
+    @Override
+    public void syncChangingObstacles() {
+        // Cette implémentation lit directement les zones métier lors du déplacement.
+    }
 
     @Override
     public void addStatic(Bounds bounds) {
@@ -70,11 +83,15 @@ public class AabbCollisionWorld implements CollisionWorld {
                 return false;
             }
         }
+        for (Obstacle wall : changingObstacles) {
+            if (wall.canCollide() && candidate.intersects(wall.getBounds())) return false;
+        }
         return true;
     }
 
     @Override
     public void dispose() {
         statics.clear();
+        changingObstacles.clear();
     }
 }

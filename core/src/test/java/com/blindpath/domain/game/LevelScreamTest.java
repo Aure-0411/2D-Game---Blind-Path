@@ -1,5 +1,7 @@
 package com.blindpath.domain.game;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,7 +44,7 @@ class LevelScreamTest {
     @BeforeEach
     void setUp() {
         Labyrinth labyrinth = new Labyrinth(10, 10,
-                new Entrance(0, 4, Border.LEFT), new Exit(9, 4, Border.RIGHT), List.of());
+                new Entrance(0, 4, OpeningOrientation.VERTICAL), new Exit(9, 4, OpeningOrientation.VERTICAL), List.of());
         gnome = new Gnome();
         gnome.setPosition(1f, 4f);
         // The screamer never moves (strategy returns the current cell) and stands far from the gnome.
