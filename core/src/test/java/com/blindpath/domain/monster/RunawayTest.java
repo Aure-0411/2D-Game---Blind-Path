@@ -5,7 +5,6 @@ import com.blindpath.domain.labyrinth.OpeningOrientation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -24,7 +23,7 @@ import org.junit.jupiter.api.Test;
  * <p>The exit is read from the labyrinth (LabyrinthGrid.getExitCell), so the Runaway keeps the
  * same constructor as the other monsters and works with MonsterType.</p>
  *
- * <p>Rules (Aurélien, 19/11): it chases the gnome by default, 2 cells every 2 moves
+ * <p>Rules (Aurélien, 19/11): it chases the hero by default, 2 cells every 2 moves
  * (60 ticks); on each snap (hero or dynamite) it moves 2 cells toward the EXIT,
  * not toward the snap. At the exit it simply stops, then resumes the chase on ticks.</p>
  *
@@ -123,7 +122,7 @@ class RunawayTest {
     void chasesTheGnomeTwoCellsAtTickSixty() {
         runaway.setTarget(cell(2, 10));
         tick(runaway, 1, 60);
-        assertEquals(cell(8, 10), runaway.getPosition(), "2 cells toward the gnome");
+        assertEquals(cell(8, 10), runaway.getPosition(), "2 cells toward the hero");
     }
 
     // ---------- Snap -> exit ----------
@@ -146,7 +145,7 @@ class RunawayTest {
         runaway.setTarget(cell(2, 10));
         runaway.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO)); // -> (12, 10)
         tick(runaway, 1, 60);
-        assertEquals(cell(10, 10), runaway.getPosition(), "back toward the gnome after the snap");
+        assertEquals(cell(10, 10), runaway.getPosition(), "back toward the hero after the snap");
     }
 
     @Test
@@ -164,7 +163,7 @@ class RunawayTest {
         r.setTarget(cell(10, 2));
         r.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO)); // -> exit (18, 2)
         tick(r, 1, 60);
-        assertEquals(cell(16, 2), r.getPosition(), "leaves the exit to chase the gnome");
+        assertEquals(cell(16, 2), r.getPosition(), "leaves the exit to chase the hero");
     }
 
     // ---------- Bear trap ----------
