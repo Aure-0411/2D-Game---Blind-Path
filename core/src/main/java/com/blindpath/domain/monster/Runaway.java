@@ -1,15 +1,15 @@
 package com.blindpath.domain.monster;
 
+import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
-import com.blindpath.domain.light.SnapEvent;
 
 public class Runaway extends Monster {
 
     public static final int TICKS_PER_MOVE = 2 * DEFAULT_TICKS_PER_MOVE;
     public static final int CASE_PER_MOVE = 2;
-    public static final int EXIT_SNAP_DISTANCE = 2;
+    public static final int EXIT_SNAP_DISTANCE = 3;
 
     private final GridPosition exit;
 

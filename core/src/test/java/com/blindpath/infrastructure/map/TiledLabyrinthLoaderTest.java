@@ -3,6 +3,7 @@ package com.blindpath.infrastructure.map;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 
 import com.blindpath.domain.inventory.ItemType;
 import com.blindpath.domain.labyrinth.Border;
+import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.LabyrinthLoader.ChestSpawn;
 import com.blindpath.domain.labyrinth.LabyrinthLoader.LabyrinthData;
 import com.blindpath.domain.monster.MonsterType;
@@ -24,6 +26,100 @@ import com.blindpath.domain.pathfinding.GridPosition;
 class TiledLabyrinthLoaderTest {
 
     private final TiledLabyrinthLoader loader = new TiledLabyrinthLoader();
+
+    @Test
+    void loadLeversResolvesPivotAndLeverByObjectIdOrResolvedObject() {
+        TiledMap map = new TiledMap();
+        try {
+            assertTrue(loader.loadLevers(map).isEmpty());
+            MapLayer layer = new MapLayer();
+            layer.setName("movableWall");
+            RectangleMapObject wall = new RectangleMapObject(1500, 5250, 250, 500);
+            wall.setName("movableWall");
+            wall.getProperties().put("orientation", "VERTICAL");
+            wall.getProperties().put("rotation", 90);
+            wall.getProperties().put("pivot", 313);
+            wall.getProperties().put("levier", 312);
+            PointMapObject pivot = new PointMapObject(1750, 5750);
+            pivot.getProperties().put("id", 313);
+            RectangleMapObject lever = new RectangleMapObject(3000, 5500, 250, 250);
+            lever.getProperties().put("id", 312);
+            layer.getObjects().add(wall);
+            layer.getObjects().add(pivot);
+            layer.getObjects().add(lever);
+            map.getLayers().add(layer);
+            var loaded = loader.loadLevers(map);
+            assertEquals(1, loaded.size());
+            assertEquals(12f, loaded.get(0).getBounds().getX(), 1e-4f);
+            var rotatingWall = loaded.get(0).getWall();
+            assertEquals(7f, rotatingWall.getPivotX(), 1e-4f);
+            assertEquals(23f, rotatingWall.getPivotY(), 1e-4f);
+            rotatingWall.rotate();
+            assertEquals(7f, rotatingWall.getBounds().getX(), 1e-4f);
+            assertEquals(22f, rotatingWall.getBounds().getY(), 1e-4f);
+            wall.getProperties().put("pivot", pivot);
+            wall.getProperties().put("levier", lever);
+            assertEquals(1, loader.loadLevers(map).size());
+            wall.getProperties().put("rotation", 45);
+            assertThrows(IllegalArgumentException.class, () -> loader.loadLevers(map));
+            wall.getProperties().put("rotation", -90);
+            wall.getProperties().put("pivot", 999);
+            assertThrows(IllegalArgumentException.class, () -> loader.loadLevers(map));
+        } finally {
+            map.dispose();
+        }
+    }
+
+    @Test
+    void loadBramblesReadsOptionalLayerAndBothOrientationsWithoutMakingWalls() {
+        TiledMap map = new TiledMap();
+        try {
+            assertTrue(loader.loadBrambles(map).isEmpty());
+            MapLayer layer = new MapLayer();
+            layer.setName("ronces");
+            RectangleMapObject horizontal = new RectangleMapObject(1000, 1000, 500, 250);
+            horizontal.getProperties().put("orientation", "HORIZONTAL");
+            RectangleMapObject vertical = new RectangleMapObject(2000, 1500, 250, 500);
+            vertical.getProperties().put("orientation", "Vertical");
+            layer.getObjects().add(horizontal);
+            layer.getObjects().add(vertical);
+            map.getLayers().add(layer);
+            var brambles = loader.loadBrambles(map);
+            assertEquals(2, brambles.size());
+            assertEquals(4f, brambles.get(0).getBounds().getX());
+            assertEquals(2f, brambles.get(0).getBounds().getWidth());
+            assertEquals(OpeningOrientation.VERTICAL, brambles.get(1).getOrientation());
+            assertEquals(6f, brambles.get(1).getBounds().getY(), 1e-4f);
+            assertFalse(brambles.get(0).isActive());
+            vertical.getProperties().put("orientation", "VERCTICAL");
+            assertThrows(IllegalArgumentException.class, () -> loader.loadBrambles(map));
+        } finally {
+            map.dispose();
+        }
+    }
+
+    @Test
+    void loadExitReadsOrientationForAnInteriorOpening() {
+        TiledMap map = new TiledMap();
+        MapLayer layer = new MapLayer();
+        layer.setName("Exit");
+        RectangleMapObject exit = new RectangleMapObject(1000f, 1000f, 500f, 250f);
+        exit.setName("Exit");
+        exit.getProperties().put("orientation", "HORIZONTAL");
+        layer.getObjects().add(exit);
+        map.getLayers().add(layer);
+        try {
+            assertEquals(OpeningOrientation.HORIZONTAL, loader.loadExit(map).getOrientation());
+            assertEquals(4, loader.loadExit(map).getX());
+            assertEquals(4, loader.loadExit(map).getY());
+            exit.getProperties().put("orientation", "TOP");
+            assertThrows(IllegalArgumentException.class, () -> loader.loadExit(map));
+            exit.getProperties().put("orientation", "VERTICAL");
+            assertThrows(IllegalArgumentException.class, () -> loader.loadExit(map));
+        } finally {
+            map.dispose();
+        }
+    }
 
     @Test
     void loadChestSpawns_readsGridCoordinatesAndOrientation() {
@@ -152,7 +248,7 @@ class TiledLabyrinthLoaderTest {
         entranceLayer.setName("Entrance");
         RectangleMapObject entrance = new RectangleMapObject(0f, 1000f, 250f, 500f);
         entrance.setName("Entrance");
-        entrance.getProperties().put("border", "LEFT");
+        entrance.getProperties().put("orientation", "VERTICAL");
         entranceLayer.getObjects().add(entrance);
         map.getLayers().add(entranceLayer);
 
@@ -160,7 +256,7 @@ class TiledLabyrinthLoaderTest {
         exitLayer.setName("Exit");
         RectangleMapObject exit = new RectangleMapObject(2250f, 1000f, 250f, 500f);
         exit.setName("Exit");
-        exit.getProperties().put("border", "RIGHT");
+        exit.getProperties().put("orientation", "VERTICAL");
         exitLayer.getObjects().add(exit);
         map.getLayers().add(exitLayer);
 

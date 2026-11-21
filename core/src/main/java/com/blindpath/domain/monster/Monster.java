@@ -23,7 +23,7 @@ public abstract class Monster implements SnapListener, TickListener, Collidable 
     private final LabyrinthGrid grid;
     private final MovementStrategy strategy;
     private GridPosition position;
-    private GridPosition target; // le gnome, peut être null
+    private GridPosition target; // le héros, peut être null
     private int ticksPerMove = DEFAULT_TICKS_PER_MOVE;
     private int casePerMove = DEFAULT_CASE_PER_MOVE;
     private int snapDistance = DEFAULT_SNAP_DISTANCE;

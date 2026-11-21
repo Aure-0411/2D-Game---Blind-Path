@@ -1,9 +1,10 @@
 package com.blindpath.domain.monster;
 
+import com.blindpath.domain.labyrinth.OpeningOrientation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.blindpath.domain.labyrinth.Border;
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -43,7 +44,7 @@ class JumperStrategyTest {
 
     private static LabyrinthGrid gridWith(List<Obstacle> walls) {
         return new LabyrinthGrid(new Labyrinth(10, 10,
-                new Entrance(0, 2, Border.LEFT), new Exit(9, 2, Border.RIGHT), walls));
+                new Entrance(0, 2, OpeningOrientation.VERTICAL), new Exit(9, 2, OpeningOrientation.VERTICAL), walls));
     }
 
     @BeforeEach

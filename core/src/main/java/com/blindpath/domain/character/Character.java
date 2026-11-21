@@ -2,12 +2,14 @@ package com.blindpath.domain.character;
 
 import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Collidable;
+import com.blindpath.domain.inventory.CompassEffect;
 import com.blindpath.domain.inventory.Inventory;
 
 public abstract class Character implements Movable, Collidable{
     public static final int MONSTER_DAMAGE = 2;
     public static final float IMMUNITY_DURATION = 2f;
     private final Inventory<Character> inventory;
+    private final CompassEffect compassEffect = new CompassEffect();
     
     private int life;
     private int maxLife;
@@ -17,6 +19,7 @@ public abstract class Character implements Movable, Collidable{
     private Direction facing = Direction.DOWN;
     private boolean invincible;
     private float immunityTimer = 0f;
+    private float stunTimer = 0f;
 
     public Character (float speed, float x, float y, float width, float height){
         this.maxLife = 6;
@@ -43,9 +46,7 @@ public abstract class Character implements Movable, Collidable{
         this.x = x;
         this.y = y;
     }
-
     public Direction getFacing() { return facing; }
-
     public void setFacing(Direction facing) {
         if (facing != Direction.NONE) {
             this.facing = facing;
@@ -75,10 +76,17 @@ public abstract class Character implements Movable, Collidable{
 
     // ---- Gestion de vie ----
     public void takeMonsterHit() {
+        takeDamage(MONSTER_DAMAGE);
+    }
+
+    /** Dégâts partagés par les monstres et les dangers du niveau. */
+    public void takeDamage(int amount) {
+        if (amount < 0) throw new IllegalArgumentException("Les dégâts doivent être positifs ou nuls.");
+        if (amount == 0 || isDead()) return;
         if (invincible || isImmune()) {
             return;
         }
-        setLife(Math.max(0, getLife() - MONSTER_DAMAGE));
+        setLife(Math.max(0, getLife() - amount));
         immunityTimer = IMMUNITY_DURATION;
     }
 
@@ -88,6 +96,26 @@ public abstract class Character implements Movable, Collidable{
 
     public void updateImmunity(float deltaTime) {
         immunityTimer = Math.max(0f, immunityTimer - deltaTime);
+    }
+
+    public void stun(float duration) {
+
+        if (duration < 0) {
+            throw new IllegalArgumentException("duration must not be negative");
+        }
+
+        if (this.isInvincible()) {
+            return;
+        }
+        stunTimer = Math.max(stunTimer, duration);
+    }
+
+    public boolean isStunned() {
+        return stunTimer > 0;
+    }
+
+    public void updateStun(float deltaTime) {
+        stunTimer = Math.max(0f, stunTimer - deltaTime);
     }
 
     public void toggleInvincible() {
@@ -102,10 +130,29 @@ public abstract class Character implements Movable, Collidable{
         return getLife() == 0;
     }
 
+    // Effet du compas
+    public CompassEffect getCompassEffect() {
+        return compassEffect;
+    }
+
+    public void activateCompass(float durationSeconds) {
+        compassEffect.activate(durationSeconds);
+    }
+
+    public boolean isCompassActive() {
+        return compassEffect.isActive();
+    }
+
+    public void updateCompass(float deltaTime) {
+        compassEffect.update(deltaTime);
+    }
+
+    // Retire effet temporaire après mort
     public void resetForRetry() {
         life = maxLife;
         immunityTimer = 0f;
-        // TODO: réinitialiser ici les effets temporaires actifs (ex: compas) lors de leur implémentation
+        stunTimer = 0f;
+        compassEffect.reset();
         // inventory est conservé
     }
 }

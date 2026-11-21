@@ -2,6 +2,7 @@ package com.blindpath.domain.physics;
 
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.labyrinth.Bounds;
+import com.blindpath.domain.labyrinth.Obstacle;
 
 /**
  * Contrat de collision du domaine. Aucune dépendance à LibGDX : l'implémentation
@@ -14,6 +15,12 @@ public interface CollisionWorld {
 
     /** Déclare un obstacle fixe (mur). */
     void addStatic(Bounds bounds);
+
+    /** Obstacle dont la position et l'activation peuvent changer pendant le niveau. */
+    void addChangingObstacle(Obstacle obstacle);
+
+    /** Répercute les changements métier dans le moteur physique. */
+    void syncChangingObstacles();
 
     /** Déclare un personnage mobile soumis aux collisions. */
     void addDynamic(Character character);
