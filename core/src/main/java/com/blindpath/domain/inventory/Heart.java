@@ -1,6 +1,6 @@
 package com.blindpath.domain.inventory;
 
-import com.blindpath.domain.character.Gnome;
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.game.Level;
 
 public class Heart extends Item {
@@ -11,7 +11,7 @@ public class Heart extends Item {
     }
 
     @Override
-    public boolean canUse(Gnome user, Level level) {
+    public boolean canUse(Character user, Level<?> level) {
         // Réutilise le contrôle des paramètres défini dans Item.
         return super.canUse(user, level)
                 && user.getLife() > 0
@@ -19,12 +19,12 @@ public class Heart extends Item {
     }
 
     @Override
-    public void use(Gnome user, Level level) {
+    public void use(Character user, Level<?> level) {
         // Protège aussi un appel direct : pas de résurrection ni de dépassement.
         if (!canUse(user, level)) {
             return;
         }
-        user.setLife(user.getLife() + 1);
+        user.setLife(Math.min(user.getMaxLife(), user.getLife() + 2));
         // Inventory.use se charge de consommer une unité de la pile.
     }
 }
