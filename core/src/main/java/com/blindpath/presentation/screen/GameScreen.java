@@ -38,6 +38,7 @@ import com.blindpath.domain.light.Light;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 import com.blindpath.domain.monster.Monster;
+import com.blindpath.domain.monster.Chameleon;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.time.GameClock;
@@ -260,13 +261,16 @@ public class GameScreen implements Screen {
         renderer.render(camera);
 
         // 1. Avant le brouillard (mode normal)
-        if (!monsterVisible || !debugCollisions) {
+        boolean chameleonRevealed = monster instanceof Chameleon chameleon && chameleon.isRevealed();
+        boolean monsterHidden = !monsterVisible && monster instanceof Chameleon && !chameleonRevealed;
+        boolean monsterOnTop = monsterVisible;
+        if (!monsterOnTop || !debugCollisions) {
             batch.setProjectionMatrix(camera.combined);
             batch.begin();
             if (!debugCollisions) {
                 chestRenderer.render(batch, level.getChests());
             }
-            if (!monsterVisible) {
+            if (!monsterOnTop && !monsterHidden) {
                 monsterRenderer.render(batch, monster, stateTime);
             }
             batch.end();
@@ -292,7 +296,7 @@ public class GameScreen implements Screen {
             chestRenderer.render(batch, level.getChests());
         }
         characterRenderer.render(batch, level.getGnome(), stateTime, input.isMoving());
-        if (monsterVisible) {
+        if (monsterOnTop) {
         monsterRenderer.render(batch, monster, stateTime);
         }
         batch.end();
