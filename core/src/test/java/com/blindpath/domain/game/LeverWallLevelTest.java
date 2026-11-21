@@ -1,9 +1,13 @@
 package com.blindpath.domain.game;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.List;
 import org.junit.jupiter.api.Test;
-import com.blindpath.domain.character.Gnome;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import com.blindpath.domain.character.Character;
 import com.blindpath.domain.labyrinth.*;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
@@ -19,11 +23,10 @@ class LeverWallLevelTest {
         Labyrinth labyrinth = new Labyrinth(10, 10,
                 new Entrance(0, 0, OpeningOrientation.VERTICAL),
                 new Exit(9, 0, OpeningOrientation.VERTICAL), List.of(wall), List.of(), List.of(lever));
-        Gnome hero = new Gnome();
-        hero.setPosition(3, 4);
+        Character hero = new Character(3f, 3f, 4f, 0.8f, 0.8f) {};
         Monster monster = new Monster(new LabyrinthGrid(labyrinth),
                 (grid, current, goal) -> current, new GridPosition(8, 8)) {};
-        Level level = new Level(hero, labyrinth, new AabbCollisionWorld(), monster,
+        Level<Character> level = new Level<>(hero, labyrinth, new AabbCollisionWorld(), monster,
                 (grid, start, target) -> List.of(), List.of());
         level.emitSnap(new SnapEvent(3.5f, 4.5f, SnapSource.HERO, 0));
         assertTrue(wall.isRotated());

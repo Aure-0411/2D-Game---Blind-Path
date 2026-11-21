@@ -17,8 +17,8 @@ public class Screamer extends Monster {
 
     public static final int MIN_SNAPS = 5;
     public static final int MAX_SNAPS = 8;
-    public static final float STUN_DURATION = 2f;
-    public static final float SCREAM_ANIMATION_DURATION = 0.6f;
+    public static final float STUN_DURATION = 3f;
+    public static final float SCREAM_ANIMATION_DURATION = 1f;
 
     public Screamer(LabyrinthGrid grid, GridPosition start, Pathfinder pathfinder) {
         this(grid, new ChaseStrategy(pathfinder), start, new Random());

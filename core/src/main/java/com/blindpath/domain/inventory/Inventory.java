@@ -3,9 +3,8 @@ package com.blindpath.domain.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.blindpath.domain.character.Gnome;
-import com.blindpath.domain.game.Level;
 import com.blindpath.domain.character.Character ;
+import com.blindpath.domain.game.Level;
 
 public class Inventory<T extends Character> {
 
@@ -17,6 +16,10 @@ public class Inventory<T extends Character> {
     public Inventory(T owner) {
         this.stacks = new ArrayList<ItemStack>();
         this.owner = owner; 
+    }
+
+    public T getOwner() {
+        return owner;
     }
 
     public void add(Item items, int quantity) {
@@ -32,9 +35,9 @@ public class Inventory<T extends Character> {
 
         // Cherche d'abord une pile du même type, même si l'inventaire est plein.
         for (int i = 0; i < this.stacks.size(); i++) {
-            ItemStack actuaList = this.stacks.get(i);
-            if (actuaList.getItem().getClass() == items.getClass()) {
-                actuaList.add(quantity);
+            ItemStack actualStack = this.stacks.get(i);
+            if (actualStack.getItem().getClass() == items.getClass()) {
+                actualStack.add(quantity);
                 return;
             }
         }
@@ -45,11 +48,10 @@ public class Inventory<T extends Character> {
         }
     }
 
-    public boolean use(int slot, Gnome user, Level level) {
+    public boolean use(int slot, T user, Level<?> level) {
         if (user == null || level == null) {
-            throw new IllegalArgumentException("le niveau ou le Gnome ne peuvent pas etres null");
+            throw new IllegalArgumentException("le niveau ou le personnage ne peuvent pas etres null");
         }
-
         if (slot < 0 || slot >= this.stacks.size()) {
             throw new IllegalArgumentException("Ce slot n'exite pas");
         }
@@ -70,9 +72,9 @@ public class Inventory<T extends Character> {
         return List.copyOf(this.stacks);
     }
 
-    public void useHealthNeeded(Gnome user, Level level) {
+    public void useHealthNeeded(T user, Level<?> level) {
         if (user == null || level == null) {
-            throw new IllegalArgumentException("le niveau ou le Gnome ne peuvent pas etres null");
+            throw new IllegalArgumentException("le niveau ou le personnage ne peuvent pas etres null");
         }
         if (user.getLife() < 0 || user.getLife() > user.getMaxLife()) {
             throw new IllegalArgumentException("Le nombre de point de vie est pas normal");
@@ -87,7 +89,6 @@ public class Inventory<T extends Character> {
                     return;
                 }
             }
-
         }
     }
 }

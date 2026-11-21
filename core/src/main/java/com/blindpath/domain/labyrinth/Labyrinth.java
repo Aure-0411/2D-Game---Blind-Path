@@ -70,7 +70,7 @@ public class Labyrinth {
     }
 
     /**
-     * Limites de la carte : le gnome ne peut pas en sortir, même par l'entrée ou la sortie
+     * Limites de la carte : le personnage ne peut pas en sortir, même par l'entrée ou la sortie
      * (leurs ouvertures sont dans la grille, ces murs sont juste derrière).
      */
     public List<Obstacle> getBoundaryWalls() {

@@ -2,10 +2,13 @@ package com.blindpath.domain.monster;
 
 import com.blindpath.domain.labyrinth.OpeningOrientation;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.blindpath.domain.labyrinth.Border;
+import java.util.List;
+
 import com.blindpath.domain.labyrinth.Entrance;
 import com.blindpath.domain.labyrinth.Exit;
 import com.blindpath.domain.labyrinth.Labyrinth;
@@ -14,23 +17,7 @@ import com.blindpath.domain.light.SnapSource;
 import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
-/**
- * Tests of the Runaway (POC_MEDIUM-2, #64).
- *
- * <p>The exit is read from the labyrinth (LabyrinthGrid.getExitCell), so the Runaway keeps the
- * same constructor as the other monsters and works with MonsterType.</p>
- *
- * <p>Rules (Aurélien, 19/11): it chases the gnome by default, 2 cells every 2 moves
- * (60 ticks); on each snap (hero or dynamite) it moves 2 cells toward the EXIT,
- * not toward the snap. At the exit it simply stops, then resumes the chase on ticks.</p>
- *
- * <p>A fake pathfinder walks straight to the goal (columns first, then rows),
- * so the tests do not depend on the real pathfinding.</p>
- */
 class RunawayTest {
 
     /** Fake pathfinder: one cell toward the goal, columns first, then rows. */
@@ -41,6 +28,11 @@ class RunawayTest {
         if (dr != 0) return List.of(new GridPosition(start.getColumn(), start.getRow() + dr));
         return List.of();
     };
+
+    private static final int START_COL = 10;
+    private static final int START_ROW = 10;
+    private static final int SNAP_STEPS = Runaway.EXIT_SNAP_DISTANCE;
+    private static final int CHASE_STEPS = 2;
 
     /** Exit block of the default map: the exit (19, 2) is on the right edge, so the 2x2 block starts at (18, 2). */
     private static final GridPosition EXIT = cell(18, 2);
@@ -56,14 +48,12 @@ class RunawayTest {
         return new SnapEvent(x, y, source, 1L);
     }
 
-    /** Sends ticks {@code from..to} to the runaway. */
     private static void tick(Monster m, int from, int to) {
         for (int t = from; t <= to; t++) {
             m.onTick(t);
         }
     }
 
-    /** Open 20x20 map whose exit is at (exitColumn, exitRow) on the right edge; 2x2 monster like in the game. */
     private static LabyrinthGrid gridWithExit(int exitColumn, int exitRow) {
         return new LabyrinthGrid(new Labyrinth(20, 20,
                 new Entrance(0, 10, OpeningOrientation.VERTICAL), new Exit(exitColumn, exitRow, OpeningOrientation.VERTICAL), List.of()),
@@ -73,7 +63,7 @@ class RunawayTest {
     @BeforeEach
     void setUp() {
         grid = gridWithExit(19, 2);
-        runaway = new Runaway(grid, cell(10, 10), STRAIGHT);
+        runaway = new Runaway(grid, cell(START_COL, START_ROW), STRAIGHT);
     }
 
     // ---------- Configuration ----------
@@ -81,25 +71,24 @@ class RunawayTest {
     @Test
     void runawayMovesTwoCellsEveryTwoMoves() {
         assertEquals(2 * Monster.DEFAULT_TICKS_PER_MOVE, runaway.getTicksPerMove(), "2 moves = 60 ticks");
-        assertEquals(2, runaway.getCasePerMove(), "2 cells per move");
-        assertEquals(2, runaway.getSnapDistance(), "2 cells toward the exit per snap");
+        assertEquals(CHASE_STEPS, runaway.getCasePerMove(), "cells per move");
+        assertEquals(SNAP_STEPS, runaway.getSnapDistance(), "cells toward the exit per snap");
     }
 
     @Test
     void exitIsReadFromTheLabyrinthAndAnchoredSoTheWholeBlockFitsInTheMap() {
-        // The exit (19, 2) is on the right edge: a 2x2 block starting there would leave the map.
         assertEquals(EXIT, runaway.getExit(), "the exit block must start one cell to the left");
     }
 
     @Test
     void exitFollowsTheLabyrinth() {
-        Runaway r = new Runaway(gridWithExit(19, 5), cell(10, 10), STRAIGHT);
+        Runaway r = new Runaway(gridWithExit(19, 5), cell(START_COL, START_ROW), STRAIGHT);
         assertEquals(cell(18, 5), r.getExit());
     }
 
     @Test
     void monsterTypeCreatesARunawayThatKnowsTheExit() {
-        Monster m = MonsterType.RUNAWAY.create(grid, cell(10, 10), STRAIGHT);
+        Monster m = MonsterType.RUNAWAY.create(grid, cell(START_COL, START_ROW), STRAIGHT);
         assertEquals(Runaway.class, m.getClass());
         assertEquals(EXIT, ((Runaway) m).getExit());
     }
@@ -107,46 +96,46 @@ class RunawayTest {
     @Test
     void nullPathfinderIsRejected() {
         assertThrows(IllegalArgumentException.class,
-                () -> new Runaway(grid, cell(10, 10), null));
+                () -> new Runaway(grid, cell(START_COL, START_ROW), null));
     }
 
     // ---------- Chase (ticks) ----------
 
     @Test
     void doesNotMoveBeforeSixtyTicks() {
-        runaway.setTarget(cell(2, 10));
+        runaway.setTarget(cell(2, START_ROW));
         tick(runaway, 1, 59);
-        assertEquals(cell(10, 10), runaway.getPosition());
+        assertEquals(cell(START_COL, START_ROW), runaway.getPosition());
     }
 
     @Test
-    void chasesTheGnomeTwoCellsAtTickSixty() {
-        runaway.setTarget(cell(2, 10));
+    void chasesTheHeroTwoCellsAtTickSixty() {
+        runaway.setTarget(cell(2, START_ROW));
         tick(runaway, 1, 60);
-        assertEquals(cell(8, 10), runaway.getPosition(), "2 cells toward the gnome");
+        assertEquals(cell(START_COL - CHASE_STEPS, START_ROW), runaway.getPosition(), "chases toward the hero");
     }
 
     // ---------- Snap -> exit ----------
 
     @Test
-    void heroSnapMovesTwoCellsTowardTheExitNotTowardTheSnap() {
-        // The snap comes from the LEFT, the exit is on the RIGHT.
+    void heroSnapMovesTowardTheExitNotTowardTheSnap() {
         runaway.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO));
-        assertEquals(cell(12, 10), runaway.getPosition(), "2 cells toward the exit");
+        assertEquals(cell(START_COL + SNAP_STEPS, START_ROW), runaway.getPosition(), "moves toward the exit");
     }
 
     @Test
     void dynamiteSnapAlsoMovesTowardTheExit() {
         runaway.onSnap(snapAt(3.5f, 10.5f, SnapSource.DYNAMITE));
-        assertEquals(cell(12, 10), runaway.getPosition());
+        assertEquals(cell(START_COL + SNAP_STEPS, START_ROW), runaway.getPosition());
     }
 
     @Test
     void snapDoesNotChangeTheChaseTarget() {
-        runaway.setTarget(cell(2, 10));
-        runaway.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO)); // -> (12, 10)
+        runaway.setTarget(cell(2, START_ROW));
+        runaway.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO));
         tick(runaway, 1, 60);
-        assertEquals(cell(10, 10), runaway.getPosition(), "back toward the gnome after the snap");
+        assertEquals(cell(START_COL + SNAP_STEPS - CHASE_STEPS, START_ROW), runaway.getPosition(),
+                "back toward the hero after the snap");
     }
 
     @Test
@@ -162,9 +151,9 @@ class RunawayTest {
     void resumesTheChaseAfterReachingTheExit() {
         Runaway r = new Runaway(grid, cell(17, 2), STRAIGHT);
         r.setTarget(cell(10, 2));
-        r.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO)); // -> exit (18, 2)
+        r.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO));
         tick(r, 1, 60);
-        assertEquals(cell(16, 2), r.getPosition(), "leaves the exit to chase the gnome");
+        assertEquals(cell(EXIT.getColumn() - CHASE_STEPS, 2), r.getPosition(), "leaves the exit to chase the hero");
     }
 
     // ---------- Bear trap ----------
@@ -173,14 +162,14 @@ class RunawayTest {
     void immobilizedRunawayIgnoresSnap() {
         runaway.immobilize(3f);
         runaway.onSnap(snapAt(3.5f, 10.5f, SnapSource.HERO));
-        assertEquals(cell(10, 10), runaway.getPosition());
+        assertEquals(cell(START_COL, START_ROW), runaway.getPosition());
     }
 
     @Test
     void immobilizedRunawayDoesNotChase() {
-        runaway.setTarget(cell(2, 10));
+        runaway.setTarget(cell(2, START_ROW));
         runaway.immobilize(3f);
         tick(runaway, 1, 60);
-        assertEquals(cell(10, 10), runaway.getPosition());
+        assertEquals(cell(START_COL, START_ROW), runaway.getPosition());
     }
 }
