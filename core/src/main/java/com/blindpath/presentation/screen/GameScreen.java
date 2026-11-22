@@ -303,7 +303,7 @@ public class GameScreen<T extends Character> implements Screen {
             if (level.isCompleted()) {
                 session.nextLevel();
                 if (session.isWon()) {
-                    main.setScreen(new EndScreen(main));
+                    main.setScreen(new EndScreen(main, session.getRetryCount()));
                     dispose();
                     return;
                 }
