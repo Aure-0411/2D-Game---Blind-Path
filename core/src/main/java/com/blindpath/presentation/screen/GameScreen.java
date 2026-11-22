@@ -62,6 +62,7 @@ import com.blindpath.presentation.renderer.JumpscareRenderer;
 import com.blindpath.presentation.renderer.LabyrinthRenderer;
 import com.blindpath.presentation.renderer.LeverWallRenderer;
 import com.blindpath.presentation.renderer.MonsterRenderer;
+import com.blindpath.presentation.renderer.PlacedObjectRenderer;
 
 public class GameScreen<T extends Character> implements Screen {
 
@@ -95,6 +96,7 @@ public class GameScreen<T extends Character> implements Screen {
     private float stateTime;
     private GameSession<T> session;
     private ChestRenderer chestRenderer;
+    private PlacedObjectRenderer placedObjectRenderer;
     private BrambleRenderer brambleRenderer;
     private LeverWallRenderer leverWallRenderer;
     private Monster monster;
@@ -144,6 +146,7 @@ public class GameScreen<T extends Character> implements Screen {
 
             fogRenderer = new FogRenderer();
             chestRenderer = new ChestRenderer();
+            placedObjectRenderer = new PlacedObjectRenderer();
             compassArrowRenderer = new CompassArrowRenderer();
             brambleRenderer = new BrambleRenderer();
             leverWallRenderer = new LeverWallRenderer();
@@ -348,6 +351,7 @@ public class GameScreen<T extends Character> implements Screen {
             batch.begin();
             if (!debugCollisions) {
                 chestRenderer.render(batch, level.getChests());
+                placedObjectRenderer.render(batch, level.getPlacedObjects());
             }
             if (!monsterOnTop && !monsterHidden) {
                 monsterRenderer.render(batch, monster, stateTime);
@@ -373,6 +377,7 @@ public class GameScreen<T extends Character> implements Screen {
         batch.begin();
         if (debugCollisions) {
             chestRenderer.render(batch, level.getChests());
+            placedObjectRenderer.render(batch, level.getPlacedObjects());
         }
         characterRenderer.render(batch, level.getHero(), stateTime, input.isMoving());
         if (monsterOnTop) {
@@ -537,6 +542,7 @@ public class GameScreen<T extends Character> implements Screen {
         if (pauseStage != null) { pauseStage.dispose(); pauseStage = null; }
         if (pauseSkin != null) { pauseSkin.dispose(); pauseSkin = null; }
         if (chestRenderer != null) { chestRenderer.dispose(); chestRenderer = null; }
+        if (placedObjectRenderer != null) { placedObjectRenderer.dispose(); placedObjectRenderer = null; }
         if (brambleRenderer != null) { brambleRenderer.dispose(); brambleRenderer = null; }
         if (leverWallRenderer != null) { leverWallRenderer.dispose(); leverWallRenderer = null; }
         if (hud != null) { hud.dispose(); hud = null; }
