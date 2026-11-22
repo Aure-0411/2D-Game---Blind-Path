@@ -1,0 +1,55 @@
+name: Tests
+
+# Lance les tests unitaires JUnit et génère le rapport de couverture JaCoCo
+# à chaque push et à chaque PR vers dev ou main (ou à la main depuis l'onglet Actions).
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Si on repousse sur la même branche, l'ancien run est annulé.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Run tests and coverage
+        run: ./gradlew :core:test :core:jacocoTestReport
+
+      # if: always() = on garde les rapports même quand un test échoue.
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: core/build/reports/tests/test
+
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: core/build/reports/jacoco/test

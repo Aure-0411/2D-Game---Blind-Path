@@ -1,0 +1,891 @@
+{
+  "source": "Bonnet orange valide, planche cff8b702",
+  "frame_size": [
+    96,
+    96
+  ],
+  "pivot_pixels_from_bottom_left": [
+    48,
+    12
+  ],
+  "directions": [
+    "down",
+    "right",
+    "up",
+    "left",
+    "down_right",
+    "up_right",
+    "up_left",
+    "down_left"
+  ],
+  "walk": {
+    "frames": 4,
+    "fps": 8,
+    "loop": true
+  },
+  "run": {
+    "frames": 4,
+    "fps": 12,
+    "loop": true,
+    "reuses_walk_art": true
+  },
+  "idle": {
+    "frames": 1,
+    "loop": true
+  },
+  "bonus_poses": [
+    "idle",
+    "walk",
+    "run",
+    "attack",
+    "hurt",
+    "die"
+  ],
+  "bonus_poses_are_single_stills": true,
+  "anchor_note": "position du personnage = centre des pieds; largeur et hauteur du cadre identiques",
+  "source_regions": [
+    {
+      "source_box": [
+        465,
+        62,
+        645,
+        232
+      ],
+      "anchor_source": [
+        87.0,
+        148
+      ],
+      "placement": [
+        4,
+        10
+      ],
+      "name": "walk_down",
+      "index": 0
+    },
+    {
+      "source_box": [
+        655,
+        62,
+        835,
+        232
+      ],
+      "anchor_source": [
+        87.0,
+        148
+      ],
+      "placement": [
+        4,
+        10
+      ],
+      "name": "walk_down",
+      "index": 1
+    },
+    {
+      "source_box": [
+        845,
+        62,
+        1025,
+        232
+      ],
+      "anchor_source": [
+        85.0,
+        147
+      ],
+      "placement": [
+        6,
+        10
+      ],
+      "name": "walk_down",
+      "index": 2
+    },
+    {
+      "source_box": [
+        1035,
+        62,
+        1215,
+        232
+      ],
+      "anchor_source": [
+        85.0,
+        147
+      ],
+      "placement": [
+        6,
+        10
+      ],
+      "name": "walk_down",
+      "index": 3
+    },
+    {
+      "source_box": [
+        465,
+        275,
+        645,
+        445
+      ],
+      "anchor_source": [
+        94.0,
+        150
+      ],
+      "placement": [
+        1,
+        9
+      ],
+      "name": "walk_right",
+      "index": 0
+    },
+    {
+      "source_box": [
+        655,
+        275,
+        835,
+        445
+      ],
+      "anchor_source": [
+        100.0,
+        150
+      ],
+      "placement": [
+        -2,
+        9
+      ],
+      "name": "walk_right",
+      "index": 1
+    },
+    {
+      "source_box": [
+        845,
+        275,
+        1025,
+        445
+      ],
+      "anchor_source": [
+        99.0,
+        150
+      ],
+      "placement": [
+        -2,
+        9
+      ],
+      "name": "walk_right",
+      "index": 2
+    },
+    {
+      "source_box": [
+        1035,
+        275,
+        1215,
+        445
+      ],
+      "anchor_source": [
+        100.0,
+        150
+      ],
+      "placement": [
+        -2,
+        9
+      ],
+      "name": "walk_right",
+      "index": 3
+    },
+    {
+      "source_box": [
+        465,
+        488,
+        645,
+        658
+      ],
+      "anchor_source": [
+        80.0,
+        149
+      ],
+      "placement": [
+        8,
+        10
+      ],
+      "name": "walk_up",
+      "index": 0
+    },
+    {
+      "source_box": [
+        655,
+        488,
+        835,
+        658
+      ],
+      "anchor_source": [
+        92.0,
+        149
+      ],
+      "placement": [
+        2,
+        10
+      ],
+      "name": "walk_up",
+      "index": 1
+    },
+    {
+      "source_box": [
+        845,
+        488,
+        1025,
+        658
+      ],
+      "anchor_source": [
+        89.0,
+        149
+      ],
+      "placement": [
+        4,
+        10
+      ],
+      "name": "walk_up",
+      "index": 2
+    },
+    {
+      "source_box": [
+        1035,
+        488,
+        1215,
+        658
+      ],
+      "anchor_source": [
+        89.0,
+        149
+      ],
+      "placement": [
+        4,
+        10
+      ],
+      "name": "walk_up",
+      "index": 3
+    },
+    {
+      "source_box": [
+        465,
+        700,
+        645,
+        870
+      ],
+      "anchor_source": [
+        64.0,
+        147
+      ],
+      "placement": [
+        16,
+        10
+      ],
+      "name": "walk_left",
+      "index": 0
+    },
+    {
+      "source_box": [
+        655,
+        700,
+        835,
+        870
+      ],
+      "anchor_source": [
+        73.0,
+        147
+      ],
+      "placement": [
+        12,
+        10
+      ],
+      "name": "walk_left",
+      "index": 1
+    },
+    {
+      "source_box": [
+        845,
+        700,
+        1025,
+        870
+      ],
+      "anchor_source": [
+        70.5,
+        147
+      ],
+      "placement": [
+        13,
+        10
+      ],
+      "name": "walk_left",
+      "index": 2
+    },
+    {
+      "source_box": [
+        1035,
+        700,
+        1215,
+        870
+      ],
+      "anchor_source": [
+        78.0,
+        147
+      ],
+      "placement": [
+        9,
+        10
+      ],
+      "name": "walk_left",
+      "index": 3
+    },
+    {
+      "source_box": [
+        25,
+        972,
+        180,
+        1174
+      ],
+      "name": "pose_idle",
+      "index": -1
+    },
+    {
+      "source_box": [
+        225,
+        972,
+        390,
+        1174
+      ],
+      "anchor_source": [
+        95.0,
+        175
+      ],
+      "placement": [
+        0,
+        -4
+      ],
+      "name": "pose_walk",
+      "index": -1
+    },
+    {
+      "source_box": [
+        425,
+        972,
+        595,
+        1174
+      ],
+      "anchor_source": [
+        113.0,
+        169
+      ],
+      "placement": [
+        -8,
+        0
+      ],
+      "name": "pose_run",
+      "index": -1
+    },
+    {
+      "source_box": [
+        625,
+        972,
+        805,
+        1174
+      ],
+      "anchor_source": [
+        105.0,
+        167
+      ],
+      "placement": [
+        -4,
+        0
+      ],
+      "name": "pose_attack",
+      "index": -1
+    },
+    {
+      "source_box": [
+        850,
+        972,
+        1035,
+        1174
+      ],
+      "name": "pose_hurt",
+      "index": -1
+    },
+    {
+      "source_box": [
+        1040,
+        1020,
+        1240,
+        1178
+      ],
+      "anchor_source": [
+        89.0,
+        127
+      ],
+      "placement": [
+        4,
+        20
+      ],
+      "name": "pose_die",
+      "index": -1
+    },
+    {
+      "name": "walk_down_right",
+      "index": 0,
+      "source_box": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "anchor_source": [
+        168.0,
+        271
+      ],
+      "placement": [
+        -4,
+        -1
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_down_right",
+      "index": 1,
+      "source_box": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "anchor_source": [
+        169.0,
+        267
+      ],
+      "placement": [
+        -5,
+        1
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_down_right",
+      "index": 2,
+      "source_box": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "anchor_source": [
+        171.0,
+        277
+      ],
+      "placement": [
+        -5,
+        -3
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_down_right",
+      "index": 3,
+      "source_box": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "anchor_source": [
+        170.0,
+        263
+      ],
+      "placement": [
+        -5,
+        2
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_right",
+      "index": 0,
+      "source_box": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "anchor_source": [
+        182.0,
+        258
+      ],
+      "placement": [
+        -9,
+        3
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_right",
+      "index": 1,
+      "source_box": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "anchor_source": [
+        173.0,
+        250
+      ],
+      "placement": [
+        -6,
+        6
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_right",
+      "index": 2,
+      "source_box": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "anchor_source": [
+        181.0,
+        255
+      ],
+      "placement": [
+        -9,
+        4
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_right",
+      "index": 3,
+      "source_box": [
+        940,
+        314,
+        1254,
+        627
+      ],
+      "anchor_source": [
+        178.0,
+        248
+      ],
+      "placement": [
+        -8,
+        6
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_left",
+      "index": 0,
+      "source_box": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "anchor_source": [
+        143.0,
+        251
+      ],
+      "placement": [
+        3,
+        6
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_left",
+      "index": 1,
+      "source_box": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "anchor_source": [
+        139.0,
+        247
+      ],
+      "placement": [
+        5,
+        7
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_left",
+      "index": 2,
+      "source_box": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "anchor_source": [
+        142.0,
+        251
+      ],
+      "placement": [
+        4,
+        6
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_up_left",
+      "index": 3,
+      "source_box": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "anchor_source": [
+        142.0,
+        248
+      ],
+      "placement": [
+        4,
+        6
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_down_left",
+      "index": 0,
+      "source_box": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "anchor_source": [
+        146.0,
+        256
+      ],
+      "placement": [
+        2,
+        4
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_down_left",
+      "index": 1,
+      "source_box": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "anchor_source": [
+        144.0,
+        248
+      ],
+      "placement": [
+        3,
+        6
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_down_left",
+      "index": 2,
+      "source_box": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "anchor_source": [
+        144.0,
+        255
+      ],
+      "placement": [
+        3,
+        4
+      ],
+      "uniform_scale": 0.3125
+    },
+    {
+      "name": "walk_down_left",
+      "index": 3,
+      "source_box": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "anchor_source": [
+        145.0,
+        248
+      ],
+      "placement": [
+        3,
+        6
+      ],
+      "uniform_scale": 0.3125
+    }
+  ],
+  "lantern_pixels_from_bottom_left": {
+    "down": [
+      [
+        66.0,
+        20.0
+      ],
+      [
+        63.5,
+        20.0
+      ],
+      [
+        66.0,
+        21.0
+      ],
+      [
+        67.0,
+        20.0
+      ]
+    ],
+    "right": [
+      [
+        65.0,
+        24.0
+      ],
+      [
+        62.5,
+        24.5
+      ],
+      [
+        62.0,
+        25.0
+      ],
+      [
+        62.0,
+        24.0
+      ]
+    ],
+    "up": [
+      [
+        26.0,
+        27.0
+      ],
+      [
+        25.0,
+        24.0
+      ],
+      [
+        28.0,
+        23.0
+      ],
+      [
+        28.0,
+        21.5
+      ]
+    ],
+    "left": [
+      [
+        30.0,
+        26.5
+      ],
+      [
+        32.0,
+        25.0
+      ],
+      [
+        30.0,
+        27.0
+      ],
+      [
+        31.0,
+        26.0
+      ]
+    ],
+    "down_right": [
+      [
+        65.0,
+        21.0
+      ],
+      [
+        63.0,
+        20.0
+      ],
+      [
+        63.0,
+        24.0
+      ],
+      [
+        63.5,
+        18.0
+      ]
+    ],
+    "up_right": [
+      [
+        61.0,
+        26.0
+      ],
+      [
+        61.0,
+        24.0
+      ],
+      [
+        59.0,
+        25.0
+      ],
+      [
+        60.0,
+        24.0
+      ]
+    ],
+    "up_left": [
+      [
+        33.5,
+        24.0
+      ],
+      [
+        34.0,
+        24.0
+      ],
+      [
+        34.0,
+        23.0
+      ],
+      [
+        35.5,
+        23.0
+      ]
+    ],
+    "down_left": [
+      [
+        32.0,
+        22.0
+      ],
+      [
+        32.0,
+        21.0
+      ],
+      [
+        34.0,
+        22.0
+      ],
+      [
+        34.0,
+        20.0
+      ]
+    ]
+  },
+  "diagonal_source": "279eb83f - diagonales dessinees pour le gnome orange",
+  "direction_count": 8,
+  "walk_frame_count": 32,
+  "scarf": {
+    "color": "marron chaud",
+    "palette_hex": [
+      "#563824",
+      "#805537",
+      "#a77950"
+    ],
+    "alpha": 255,
+    "only_scarf_pixels_edited": true
+  }
+}

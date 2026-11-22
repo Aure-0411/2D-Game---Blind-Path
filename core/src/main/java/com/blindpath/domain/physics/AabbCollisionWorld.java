@@ -1,0 +1,125 @@
+package com.blindpath.domain.physics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.blindpath.domain.character.Character;
+import com.blindpath.domain.labyrinth.Bounds;
+import com.blindpath.domain.labyrinth.Obstacle;
+
+/**
+ * Implémentation Java pure (rectangles alignés sur les axes) : testable sans natives,
+ * utilisable en CI. Résolution axe par axe : le personnage glisse le long des murs.
+ */
+public class AabbCollisionWorld implements CollisionWorld {
+
+    private static final float EPSILON = 1e-6f;
+    private static final int BISECTION_STEPS = 12;
+
+    private final List<Bounds> statics = new ArrayList<>();
+    private final List<Obstacle> changingObstacles = new ArrayList<>();
+
+    /**
+     * Enregistre un mur tournant, dont la position est relue à chaque déplacement.
+     *
+     * @param obstacle l'obstacle
+     * @throws IllegalArgumentException si l'obstacle est {@code null}
+     */
+    @Override
+    public void addChangingObstacle(Obstacle obstacle) {
+        if (obstacle == null) throw new IllegalArgumentException("L'obstacle doit être renseigné.");
+        changingObstacles.add(obstacle);
+    }
+
+    /** Rien à faire : les obstacles changeants sont relus à chaque déplacement. */
+    @Override
+    public void syncChangingObstacles() {
+        // Cette implémentation lit directement les zones métier lors du déplacement.
+    }
+
+    /**
+     * @param bounds la zone du mur
+     * @throws IllegalArgumentException si la zone est {@code null}
+     */
+    @Override
+    public void addStatic(Bounds bounds) {
+        if (bounds == null) {
+            throw new IllegalArgumentException("Les bounds doivent être renseignés.");
+        }
+        statics.add(bounds);
+    }
+
+    /**
+     * Rien à enregistrer : la position du personnage suffit.
+     *
+     * @param character le personnage
+     */
+    @Override
+    public void addDynamic(Character character) {
+        // Rien à enregistrer : la position du personnage suffit.
+    }
+
+    /**
+     * Déplace le personnage axe par axe (horizontal puis vertical). Si un axe est bloqué,
+     * l'autre continue : le personnage glisse le long des murs. La distance possible avant
+     * le mur est trouvée par dichotomie.
+     *
+     * @param c le personnage
+     * @param dirX composante horizontale de la direction
+     * @param dirY composante verticale de la direction
+     * @param deltaTime temps écoulé, en secondes
+     * @return {@code true} si la position a changé
+     */
+    @Override
+    public boolean move(Character c, float dirX, float dirY, float deltaTime) {
+        float startX = c.getX();
+        float startY = c.getY();
+        float dx = dirX * c.getSpeed() * deltaTime;
+        float dy = dirY * c.getSpeed() * deltaTime;
+
+        // Axe X puis axe Y : si l'un est bloqué, l'autre continue (glissement).
+        float x = startX + dx * reach(c, startX, startY, dx, 0f);
+        float y = startY + dy * reach(c, x, startY, 0f, dy);
+        c.setPosition(x, y);
+
+        return Math.abs(x - startX) > EPSILON || Math.abs(y - startY) > EPSILON;
+    }
+
+    /** Fraction (0..1) du déplacement (dx, dy) réalisable avant de toucher un mur. */
+    private float reach(Character c, float x, float y, float dx, float dy) {
+        if (dx == 0f && dy == 0f || isFree(c, x + dx, y + dy)) {
+            return 1f;
+        }
+        float lo = 0f;
+        float hi = 1f;
+        for (int i = 0; i < BISECTION_STEPS; i++) {
+            float mid = (lo + hi) / 2f;
+            if (isFree(c, x + dx * mid, y + dy * mid)) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        return lo;
+    }
+
+    private boolean isFree(Character c, float x, float y) {
+        Bounds candidate = new Bounds(x, y, c.getWidth(), c.getHeight());
+        for (Bounds wall : statics) {
+            if (candidate.intersects(wall)) {
+                return false;
+            }
+        }
+        for (Obstacle wall : changingObstacles) {
+            if (wall.canCollide() && candidate.intersects(wall.getBounds())) return false;
+        }
+        return true;
+    }
+
+    /** Oublie tous les obstacles enregistrés. */
+    @Override
+    public void dispose() {
+        statics.clear();
+        changingObstacles.clear();
+    }
+}
