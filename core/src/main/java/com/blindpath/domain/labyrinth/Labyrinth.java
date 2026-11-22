@@ -15,15 +15,49 @@ public class Labyrinth {
     private final List<Lever> levers;
     private final List<RotatingWall> rotatingWalls;
 
+    /**
+     * Crée un labyrinthe sans ronces ni leviers.
+     *
+     * @param width largeur, en cases
+     * @param height hauteur, en cases
+     * @param entrance l'entrée
+     * @param exit la sortie
+     * @param obstacles les murs et obstacles
+     */
     public Labyrinth(int width, int height, Entrance entrance, Exit exit, List<Obstacle> obstacles) {
         this(width, height, entrance, exit, obstacles, List.of());
     }
 
+    /**
+     * Crée un labyrinthe sans leviers.
+     *
+     * @param width largeur, en cases
+     * @param height hauteur, en cases
+     * @param entrance l'entrée
+     * @param exit la sortie
+     * @param obstacles les murs et obstacles
+     * @param brambles les ronces
+     */
     public Labyrinth(int width, int height, Entrance entrance, Exit exit,
                      List<Obstacle> obstacles, List<Bramble> brambles) {
         this(width, height, entrance, exit, obstacles, brambles, List.of());
     }
 
+    /**
+     * Crée un labyrinthe complet. Les murs tournants sont repérés parmi les obstacles,
+     * et des murs invisibles sont ajoutés tout autour de la carte.
+     *
+     * @param width largeur, en cases
+     * @param height hauteur, en cases
+     * @param entrance l'entrée, qui doit tenir dans la carte
+     * @param exit la sortie, qui doit tenir dans la carte
+     * @param obstacles les murs et obstacles
+     * @param brambles les ronces
+     * @param levers les leviers, dont chaque mur doit faire partie des obstacles
+     * @throws IllegalArgumentException si une dimension n'est pas positive, si un élément
+     *         manque, si l'entrée ou la sortie dépasse de la carte, ou si le mur d'un levier
+     *         n'est pas dans le labyrinthe
+     */
     public Labyrinth(int width, int height, Entrance entrance, Exit exit,
                      List<Obstacle> obstacles, List<Bramble> brambles, List<Lever> levers) {
         if (width <= 0 || height <= 0) {
@@ -85,29 +119,37 @@ public class Labyrinth {
         }
     }
 
+    /** @return la largeur, en cases */
     public int getWidth() {
         return width;
     }
 
+    /** @return la hauteur, en cases */
     public int getHeight() {
         return height;
     }
 
+    /** @return les obstacles (copie non modifiable) */
     public List<Obstacle> getObstacles() {
         return obstacles;
     }
 
+    /** @return les ronces (copie non modifiable) */
     public List<Bramble> getBrambles() {
         return brambles;
     }
 
+    /** @return les leviers (copie non modifiable) */
     public List<Lever> getLevers() { return levers; }
+    /** @return les murs tournants, repérés parmi les obstacles */
     public List<RotatingWall> getRotatingWalls() { return rotatingWalls; }
 
+    /** @return l'entrée */
     public Entrance getEntrance() {
         return entrance;
     }
 
+    /** @return la sortie */
     public Exit getExit() {
         return exit;
     }

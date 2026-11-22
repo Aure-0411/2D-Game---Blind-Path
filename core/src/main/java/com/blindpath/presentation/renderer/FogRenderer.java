@@ -7,6 +7,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+/**
+ * Dessine le brouillard noir animé qui cache le labyrinthe. Un shader y découpe un petit cercle
+ * toujours visible autour du héros, et, pendant un claquement, le cercle animé de la lanterne.
+ */
 public class FogRenderer {
 
     private final SpriteBatch batch;
@@ -17,6 +21,11 @@ public class FogRenderer {
     private final Texture[] fogFrames;
     private float fogTime = 0f;
 
+    /**
+     * Charge les images du brouillard et du cercle de claquement, et compile le shader.
+     *
+     * @throws IllegalStateException si le shader ne compile pas
+     */
     public FogRenderer() {
         this.batch = new SpriteBatch();
 
@@ -49,6 +58,20 @@ public class FogRenderer {
         }
     }
 
+    /**
+     * Dessine le brouillard par-dessus le labyrinthe.
+     *
+     * @param camera la caméra du jeu
+     * @param centerX position horizontale du centre de la zone toujours visible
+     * @param centerY position verticale du centre de la zone toujours visible
+     * @param radius rayon de la zone toujours visible
+     * @param revealing {@code true} pendant un claquement
+     * @param snapX position horizontale du claquement
+     * @param snapY position verticale du claquement
+     * @param snapProgress avancement du claquement, de 0 à 1
+     * @param snapRadius rayon révélé par le claquement
+     * @param delta temps écoulé depuis la dernière image, en secondes
+     */
     public void render(
             OrthographicCamera camera,
             float centerX, float centerY, float radius,
@@ -87,6 +110,7 @@ public class FogRenderer {
 
     }
 
+    /** Libère les images et le shader. */
     public void dispose() {
         // Chaque texture chargée doit être libérée à la fermeture de l'écran.
         for (Texture frame : snapFrames) {

@@ -9,6 +9,7 @@ public final class MenuAudio implements Disposable {
     private static final float VOLUME = 0.4f;
     private final Music music;
 
+    /** Charge la musique du menu ({@code audio/MUSIQUE_START.mp3}), jouée en boucle. */
     public MenuAudio() {
         this(Gdx.audio.newMusic(Gdx.files.internal("audio/MUSIQUE_START.mp3")));
     }
@@ -19,6 +20,11 @@ public final class MenuAudio implements Disposable {
         music.setVolume(VOLUME);
     }
 
+    /**
+     * Lance la musique (si elle ne joue pas déjà) ou l'arrête.
+     *
+     * @param active {@code true} pour jouer, {@code false} pour arrêter
+     */
     public void setActive(boolean active) {
         if (active) {
             if (!music.isPlaying()) music.play();
@@ -27,6 +33,7 @@ public final class MenuAudio implements Disposable {
         }
     }
 
+    /** Arrête la musique et libère le fichier audio. */
     @Override
     public void dispose() {
         music.stop();

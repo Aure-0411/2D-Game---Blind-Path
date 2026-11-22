@@ -21,6 +21,11 @@ public class EndScreen implements Screen {
     private final BitmapFont font;
     private float elapsed;
 
+    /**
+     * Prépare le message de fin.
+     *
+     * @param main l'application, pour revenir au menu
+     */
     public EndScreen(Main main) {
         this.main = main;
         // Une taille virtuelle fixe garde le message lisible au redimensionnement.
@@ -39,6 +44,7 @@ public class EndScreen implements Screen {
         stage.addActor(table);
     }
 
+    /** Remet le compte à rebours à zéro et donne le clavier à l'écran. */
     @Override
     public void show() {
         elapsed = 0f;
@@ -46,6 +52,11 @@ public class EndScreen implements Screen {
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
+    /**
+     * Affiche le message, puis revient au menu principal au bout de 6 secondes.
+     *
+     * @param delta temps écoulé depuis la dernière image, en secondes
+     */
     @Override
     public void render(float delta) {
         // Accumuler delta laisse la fenêtre réactive, contrairement à un sleep.
@@ -62,6 +73,10 @@ public class EndScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * @param width largeur de la fenêtre, en pixels
+     * @param height hauteur de la fenêtre, en pixels
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
@@ -73,6 +88,7 @@ public class EndScreen implements Screen {
     @Override
     public void resume() {}
 
+    /** Rend le clavier quand l'écran est quitté. */
     @Override
     public void hide() {
         if (Gdx.input.getInputProcessor() == stage) {
@@ -80,6 +96,7 @@ public class EndScreen implements Screen {
         }
     }
 
+    /** Libère la scène et la police. */
     @Override
     public void dispose() {
         stage.dispose();

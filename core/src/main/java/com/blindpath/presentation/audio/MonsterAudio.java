@@ -29,6 +29,7 @@ public final class MonsterAudio implements Disposable {
     private long screamId = -1;
     private long previousScreamSequence;
 
+    /** Charge le son de déplacement de chaque monstre et le cri du Screamer. */
     public MonsterAudio() {
         movementSounds = loadMovementSounds();
         try {
@@ -62,7 +63,12 @@ public final class MonsterAudio implements Disposable {
                 Inverter.class, "audio/INVERTER_MOVE.mp3");
     }
 
-    /** Chaque monstre utilise son propre jumpscare. */
+    /**
+     * Chaque monstre utilise son propre jumpscare.
+     *
+     * @param monster le monstre
+     * @return le chemin du son de jumpscare, ou {@code null} pour un monstre inconnu
+     */
     public static String jumpscarePath(Monster monster) {
         if (monster instanceof Jumper) return "audio/JUMPER_JUMPSCARE.mp3";
         if (monster instanceof Runaway) return "audio/RUNAWAY_SCREAMER.mp3";
@@ -98,6 +104,14 @@ public final class MonsterAudio implements Disposable {
         return 0.8f;
     }
 
+    /**
+     * Met à jour les sons du monstre à chaque image. Le son de déplacement tourne en boucle,
+     * plus fort quand le monstre est proche du héros. Le cri du Screamer est joué à chaque nouveau cri.
+     *
+     * @param monster le monstre du niveau
+     * @param hero le héros
+     * @param enabled {@code false} pour couper les sons (pause, fin de niveau)
+     */
     public void update(Monster monster, Character hero, boolean enabled) {
         if (trackedMonster != monster) {
             stop();
@@ -136,6 +150,7 @@ public final class MonsterAudio implements Disposable {
         movementId = -1;
     }
 
+    /** Arrête tous les sons en cours et oublie le monstre suivi. */
     public void stop() {
         stopCurrentSound();
         stopScream();
@@ -149,6 +164,7 @@ public final class MonsterAudio implements Disposable {
         screamId = -1;
     }
 
+    /** Arrête les sons et libère tous les fichiers audio. */
     @Override
     public void dispose() {
         stop();

@@ -12,6 +12,12 @@ public class Exit {
     private Bounds bounds;
     private OpeningOrientation orientation;
 
+    /**
+     * @param x colonne de la première case
+     * @param y ligne de la première case
+     * @param orientation sens de la sortie (horizontale = 2 x 1, verticale = 1 x 2)
+     * @throws IllegalArgumentException si l'orientation est {@code null}
+     */
     public Exit(int x, int y, OpeningOrientation orientation) {
         if (orientation == null ) {
             throw new IllegalArgumentException("L’orientation de la sortie doit être renseignée");
@@ -53,17 +59,17 @@ public class Exit {
         return this.orientation;
     }
 
-    /**
-    * Checks whether a collision is detected between the exit's and the character's hitboxes.
-    * In case of border to border, there is no contact.
-    *
-    * @param character can collide with other hitboxes, including the exit's.
-    * @return answers "Is there a collision?" with true or false.
-    */
+    /** @return the hitbox of the exit. */
         public Bounds getBounds() {
         return this.bounds;
     }
 
+    /**
+     * Teste si le personnage touche la sortie. Un contact bord à bord ne compte pas.
+     *
+     * @param character le personnage
+     * @return {@code true} si sa hitbox chevauche la sortie, {@code false} s'il est {@code null}
+     */
     public boolean isReached(Character character) {
         if (character == null) {
             return false;
