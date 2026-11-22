@@ -1,0 +1,57 @@
+name: Javadoc dans main
+
+# Génère la Javadoc et la commite dans docs/javadoc/ sur main uniquement,
+# à chaque merge de dev dans main. dev ne contient jamais docs/javadoc/.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Écrire dans le repo (commit + push de la Javadoc).
+permissions:
+  contents: write
+
+# Deux merges rapprochés : on ne garde que le dernier.
+concurrency:
+  group: javadoc-main
+  cancel-in-progress: true
+
+jobs:
+  javadoc:
+    # Ne pas relancer sur le commit de Javadoc lui-même
+    # (ni quand ce commit arrive par le mirror vers le repo EPITECH).
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.author.name != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Generate Javadoc
+        run: ./gradlew :core:javadoc
+
+      - name: Copier la Javadoc dans docs/javadoc
+        run: |
+          rm -rf docs/javadoc
+          mkdir -p docs
+          cp -r core/build/docs/javadoc docs/javadoc
+
+      - name: Commit et push sur main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/javadoc
+          if git diff --cached --quiet; then
+            echo "Javadoc inchangée, rien à commiter."
+          else
+            git commit -m "Mise à jour automatique de la Javadoc (#22)"
+            git push
+          fi
