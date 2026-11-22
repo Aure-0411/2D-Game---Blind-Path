@@ -211,9 +211,9 @@
   </object>
  </objectgroup>
  <objectgroup id="14" name="Coffre">
-  <object id="335" name="Coffre_01" x="250" y="250" width="500" height="250">
+  <object id="335" name="Coffre_01" x="5250" y="4500" width="250" height="500">
    <properties>
-    <property name="Orientation" value="BOTTOM"/>
+    <property name="Orientation" value="RIGHT"/>
    </properties>
   </object>
  </objectgroup>
