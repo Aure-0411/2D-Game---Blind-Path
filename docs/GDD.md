@@ -2,7 +2,7 @@
 
 > Version 2.0 · Projet 2D Game (Java, LibGDX) · Statut : version du rendu (22/11/2026).
 > Cette version décrit le jeu **tel qu'il est livré** : les valeurs chiffrées viennent du code de la branche `dev` (commit `9de942a`, 22/11). Elle remplace la v1.5 du 06/11, qui décrivait le jeu complet à 20 niveaux.
-> Les rares points encore ouverts apparaissent **en rouge**, sous la forme $\color{red}\text{À préciser : ...}$ (rendu en rouge sur GitHub et dans l'aperçu Markdown de VS Code). Les écarts avec la v1.5 sont listés en 12.4.
+> Tous les points ouverts des versions précédentes sont tranchés. Les écarts avec la v1.5 sont listés en 12.4.
 
 ## Sommaire
 
@@ -66,7 +66,10 @@ Le jeu comporte **5 niveaux**, répartis en quatre paliers de difficulté. Chaqu
 ### 1.6 Public visé et inspirations
 
 - **Public visé :** PEGI 12.
-- **Jeux de référence :** $\color{red}\text{À préciser.}$
+- **Jeux de référence :**
+  - **Little Nightmares** (série) : c'est l'inspiration principale. Des personnages enfantins y sont confrontés à des monstres aussi difformes que meurtriers. Le contraste entre l'apparence du gnome et celle des monstres y puise son inspiration, de même que l'incapacité du joueur à vaincre les ennemis et la fuite comme seule échappatoire.
+  - **The Binding of Isaac** : là aussi pour le contraste entre l'aspect du protagoniste et celui des ennemis, mais aussi pour le système d'objets. Dans ce jeu comme dans Blind Path, le joueur ramasse des objets aux effets variés qui l'aident à progresser.
+  - **Le genre du roguelite**, dans lequel on conserve tout ou partie de son inventaire après une défaite.
 
 ### 1.7 Périmètre du POC
 
@@ -681,7 +684,7 @@ GitHub Projects (suivi), Mermaid (UML), GitHub Actions (Javadoc), Gradle et LibG
 
 - **Sons et musiques :** Pixabay (pixabay.com), sous *Pixabay Content License*.
 - **Visuels :** générés avec ChatGPT (OpenAI).
-- $\color{red}\text{À préciser : jeux de référence et tutoriels.}$
+- **Jeux de référence :** Little Nightmares, The Binding of Isaac, et le genre du roguelite (voir 1.6).
 
 ### 12.3 Historique des versions
 
