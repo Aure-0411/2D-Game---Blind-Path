@@ -24,13 +24,18 @@ public class TiledMapStore implements Disposable {
     private final AssetManager assets;
     private final Set<String> requested = new HashSet<>();
 
+    /** Crée un cache vide, qui charge les cartes depuis les assets internes. */
     public TiledMapStore() {
         FileHandleResolver resolver = new InternalFileHandleResolver();
         assets = new AssetManager(resolver);
         assets.setLoader(TiledMap.class, new TmxMapLoader(resolver));
     }
 
-    /** Demande le chargement en arrière-plan (sans bloquer). */
+    /**
+     * Demande le chargement en arrière-plan (sans bloquer).
+     *
+     * @param path chemin de la carte
+     */
     public void preload(String path) {
         if (requested.add(path)) {
             assets.load(path, TiledMap.class);
@@ -42,7 +47,12 @@ public class TiledMapStore implements Disposable {
         assets.update(4);
     }
 
-    /** Renvoie la carte, en terminant son chargement si nécessaire (instantané si préchargée). */
+    /**
+     * Renvoie la carte, en terminant son chargement si nécessaire (instantané si préchargée).
+     *
+     * @param path chemin de la carte
+     * @return la carte chargée
+     */
     public TiledMap get(String path) {
         preload(path);
         if (!assets.isLoaded(path, TiledMap.class)) {
@@ -51,7 +61,11 @@ public class TiledMapStore implements Disposable {
         return assets.get(path, TiledMap.class);
     }
 
-    /** Libère toutes les cartes sauf celles données (les textures partagées restent chargées). */
+    /**
+     * Libère toutes les cartes sauf celles données (les textures partagées restent chargées).
+     *
+     * @param keep chemins des cartes à garder
+     */
     public void retainOnly(Set<String> keep) {
         Iterator<String> it = requested.iterator();
         while (it.hasNext()) {
@@ -63,6 +77,7 @@ public class TiledMapStore implements Disposable {
         }
     }
 
+    /** Libère toutes les cartes et leurs textures. */
     @Override
     public void dispose() {
         requested.clear();

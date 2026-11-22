@@ -9,6 +9,7 @@ import com.blindpath.domain.labyrinth.Lever;
 import com.blindpath.domain.labyrinth.OpeningOrientation;
 import com.blindpath.domain.labyrinth.RotatingWall;
 
+/** Dessine les murs tournants (dans leur position actuelle) et leurs leviers, activés ou non. */
 public final class LeverWallRenderer implements Disposable {
     private static final String DIRECTORY = "maps/tilesets/assets/murs_speciaux/";
     private final Texture wallTexture = new Texture(DIRECTORY + "mur_engrenages.png");
@@ -24,6 +25,11 @@ public final class LeverWallRenderer implements Disposable {
         return new DrawSpec(bounds.getCenterX() - 1f, bounds.getCenterY() - 0.5f, angle);
     }
 
+    /**
+     * @param batch le batch de dessin, déjà ouvert
+     * @param walls les murs tournants du niveau
+     * @param levers les leviers du niveau
+     */
     public void render(SpriteBatch batch, List<RotatingWall> walls, List<Lever> levers) {
         for (RotatingWall wall : walls) {
             DrawSpec spec = computeDrawSpec(wall);
@@ -37,6 +43,7 @@ public final class LeverWallRenderer implements Disposable {
         }
     }
 
+    /** Libère les images. */
     @Override
     public void dispose() {
         wallTexture.dispose();

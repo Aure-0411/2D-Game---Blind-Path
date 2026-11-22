@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.blindpath.domain.chest.Chest;
 import com.blindpath.domain.labyrinth.Border;
 
+/** Dessine les coffres, fermés ou ouverts, tournés selon le mur contre lequel ils sont posés. */
 public class ChestRenderer implements Disposable {
 
     record DrawSpec(float x, float y, float width, float height, float rotation) {}
@@ -16,6 +17,7 @@ public class ChestRenderer implements Disposable {
     private final Texture closedTexture;
     private final Texture openTexture;
 
+    /** Charge les images du coffre fermé et du coffre ouvert. */
     public ChestRenderer() {
         this.closedTexture = new Texture(Gdx.files.internal("chest/chest_closed.png"));
         this.openTexture = new Texture(Gdx.files.internal("chest/chest_open.png"));
@@ -38,6 +40,10 @@ public class ChestRenderer implements Disposable {
         return new DrawSpec(drawX, drawY, drawW, drawH, rotation);
     }
 
+    /**
+     * @param batch le batch de dessin, déjà ouvert
+     * @param chests les coffres du niveau
+     */
     public void render(SpriteBatch batch, List<Chest> chests) {
         for (Chest chest : chests) {
             Texture texture = chest.isOpened() ? openTexture : closedTexture;
@@ -57,6 +63,7 @@ public class ChestRenderer implements Disposable {
         }
     }
 
+    /** Libère les images des coffres. */
     @Override
     public void dispose() {
         closedTexture.dispose();

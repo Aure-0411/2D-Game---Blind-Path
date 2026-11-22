@@ -13,12 +13,19 @@ import com.blindpath.presentation.audio.MenuAudio;
 public class Main extends Game {
     private MenuAudio menuAudio;
 
+    /** Crée la musique du menu et affiche l'écran d'introduction au lancement du jeu. */
     @Override
     public void create() {
         menuAudio = new MenuAudio();
         setScreen(new IntroScreen(this));
     }
 
+    /**
+     * Change d'écran et coupe ou relance la musique du menu selon l'écran affiché.
+     * La musique ne joue que sur l'écran d'introduction et le menu principal.
+     *
+     * @param next le nouvel écran à afficher
+     */
     @Override
     public void setScreen(Screen next) {
         boolean menuActive = next instanceof IntroScreen || next instanceof MainMenuScreen;
@@ -34,6 +41,7 @@ public class Main extends Game {
     //     batch.draw(image, 140, 210);
     //     batch.end();
     // }
+    /** Libère l'écran courant puis la musique du menu à la fermeture du jeu. */
     @Override
     public void dispose() {
         if (getScreen() != null) {

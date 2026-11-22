@@ -8,11 +8,19 @@ import com.blindpath.domain.pathfinding.Pathfinder;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Calcul de chemin avec l'algorithme A* de la bibliothèque gdx-ai. */
 public class GdxAiPathfinder implements Pathfinder {
 
 
     private final GridDistanceHeuristic heuristic = new GridDistanceHeuristic();
 
+    /**
+     * @param grid la grille du labyrinthe
+     * @param start la case de départ
+     * @param target la case d'arrivée
+     * @return les cases à parcourir, sans la case de départ ; vide si le départ est l'arrivée,
+     *         si l'arrivée n'est pas praticable ou si aucun chemin n'existe
+     */
     @Override
     public List<GridPosition> findPath(LabyrinthGrid grid, GridPosition start, GridPosition target) {
 

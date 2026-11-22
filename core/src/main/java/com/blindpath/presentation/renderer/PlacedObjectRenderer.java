@@ -11,15 +11,21 @@ import com.blindpath.domain.object.PlacedBearTrap;
 import com.blindpath.domain.object.PlacedDynamite;
 import com.blindpath.domain.object.PlacedObject;
 
+/** Dessine les objets posés au sol par le joueur (dynamite, piège à ours). */
 public class PlacedObjectRenderer implements Disposable {
     private final Texture dynamiteTexture;
     private final Texture bearTrapTexture;
 
+    /** Charge les images des objets posés. */
     public PlacedObjectRenderer() {
         this.dynamiteTexture = new Texture(Gdx.files.internal("items/carte/dynamite.png"));
         this.bearTrapTexture = new Texture(Gdx.files.internal("items/carte/piege_a_ours.png"));
     }
 
+    /**
+     * @param batch le batch de dessin, déjà ouvert
+     * @param placedObjects les objets posés dans le niveau
+     */
     public void render(SpriteBatch batch, List<PlacedObject> placedObjects) {
         for (PlacedObject placedObject : placedObjects) {
             Texture placedObjectTexture = this.textureForPlacedObject(placedObject);
@@ -47,6 +53,7 @@ public class PlacedObjectRenderer implements Disposable {
         return null;
     }
 
+    /** Libère les images. */
     @Override
     public void dispose() {
         dynamiteTexture.dispose();

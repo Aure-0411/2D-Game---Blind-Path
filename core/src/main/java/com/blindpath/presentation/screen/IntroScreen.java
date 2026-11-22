@@ -24,6 +24,11 @@ public class IntroScreen implements Screen {
     private float frameTime;
     private boolean disposed;
 
+    /**
+     * Charge les images de l'animatique et leurs durées ({@code animations/intro/animation.json}).
+     *
+     * @param main l'application, pour ouvrir le menu à la fin
+     */
     public IntroScreen(Main main) {
         this.main = main;
         // Le GIF est conservé dans assets. Les PNG et leurs durées en sont extraits
@@ -50,6 +55,7 @@ public class IntroScreen implements Screen {
         viewport = new FitViewport(frames[0].getWidth(), frames[0].getHeight());
     }
 
+    /** Repart de la première image de l'animatique. */
     @Override
     public void show() {
         frameIndex = 0;
@@ -58,6 +64,12 @@ public class IntroScreen implements Screen {
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
+    /**
+     * Affiche l'animatique en respectant la durée de chaque image. À la fin, ou sur Échap,
+     * ouvre le menu principal.
+     *
+     * @param delta temps écoulé depuis la dernière image, en secondes
+     */
     @Override
     public void render(float delta) {
         frameTime += delta;
@@ -81,6 +93,10 @@ public class IntroScreen implements Screen {
         batch.end();
     }
 
+    /**
+     * @param width largeur de la fenêtre, en pixels
+     * @param height hauteur de la fenêtre, en pixels
+     */
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
@@ -95,6 +111,7 @@ public class IntroScreen implements Screen {
     @Override
     public void hide() {}
 
+    /** Libère les images (une seule fois, même si la méthode est rappelée). */
     @Override
     public void dispose() {
         if (disposed) return;

@@ -27,6 +27,14 @@ import com.blindpath.domain.labyrinth.Wall;
 import com.blindpath.domain.monster.MonsterType;
 import com.blindpath.domain.pathfinding.GridPosition;
 
+/**
+ * Chargeur de cartes Tiled (.tmx) : convertit les calques de la carte en objets du domaine.
+ * <p>
+ * Calques lus : {@code Collisions} (murs), {@code Entrance}, {@code Exit}, {@code Coffre},
+ * {@code monstre_start}, {@code ronces} et {@code movableWall}. 250 pixels de la carte font une case.
+ * Les erreurs de carte (forme, orientation, taille) sont signalées par une exception plutôt
+ * que de laisser un mur sans collision.
+ */
 public class TiledLabyrinthLoader implements LabyrinthLoader {
 
     // Même conversion que dans LabyrinthRenderer : 250 pixels = une case.
@@ -35,10 +43,16 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
     // Optionnel : quand il est fourni, la carte est chargée une seule fois et partagée avec le rendu.
     private final TiledMapStore store;
 
+    /** Crée un chargeur qui ouvre et libère la carte à chaque lecture. */
     public TiledLabyrinthLoader() {
         this(null);
     }
 
+    /**
+     * Crée un chargeur qui lit les cartes depuis un cache partagé avec l'affichage.
+     *
+     * @param store le cache de cartes, ou {@code null} pour charger la carte à chaque lecture
+     */
     public TiledLabyrinthLoader(TiledMapStore store) {
         this.store = store;
     }
@@ -71,6 +85,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return read(mapPath, map -> load(map));
     }
 
+    /**
+     * Construit le labyrinthe à partir d'une carte déjà chargée.
+     *
+     * @param map la carte
+     * @return le labyrinthe
+     * @throws IllegalArgumentException si la carte est {@code null} ou mal formée
+     */
     public Labyrinth load(TiledMap map) {
         if (map == null) {
             throw new IllegalArgumentException("La carte doit être renseignée.");
@@ -85,7 +106,14 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return new Labyrinth(width, height, entrance, exit, obstacles, loadBrambles(map), levers);
     }
 
-    /** Lit les références d'objets pivot et levier du calque movableWall. */
+    /**
+     * Lit les murs tournants et leurs leviers dans le calque {@code movableWall}.
+     * Chaque mur référence son pivot et son levier, et porte une rotation de 90 ou -90 degrés.
+     *
+     * @param map la carte
+     * @return les leviers, chacun avec son mur (vide si le calque n'existe pas)
+     * @throws IllegalArgumentException si la carte est {@code null} ou si un mur est mal décrit
+     */
     public List<Lever> loadLevers(TiledMap map) {
         if (map == null) throw new IllegalArgumentException("La carte doit être renseignée.");
         MapLayer layer = map.getLayers().get("movableWall");
@@ -140,7 +168,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         throw new IllegalArgumentException("Référence objet manquante ou invalide : " + property);
     }
 
-    /** Les ronces ne sont pas ajoutées aux murs de collision. */
+    /**
+     * Lit les ronces du calque {@code ronces}. Elles ne sont pas ajoutées aux murs de collision.
+     *
+     * @param map la carte
+     * @return les ronces (vide si le calque n'existe pas)
+     * @throws IllegalArgumentException si la carte est {@code null} ou si des ronces sont mal décrites
+     */
     public List<Bramble> loadBrambles(TiledMap map) {
         if (map == null) throw new IllegalArgumentException("La carte doit être renseignée.");
         MapLayer layer = map.getLayers().get("ronces");
@@ -167,6 +201,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return read(mapPath, map -> loadAll(map));
     }
 
+    /**
+     * Lit le labyrinthe, les coffres et le monstre d'une carte déjà chargée.
+     *
+     * @param map la carte
+     * @return toutes les données du niveau
+     * @throws IllegalArgumentException si la carte est {@code null} ou mal formée
+     */
     public LabyrinthData loadAll(TiledMap map) {
         if (map == null) {
             throw new IllegalArgumentException("La carte doit être renseignée.");
@@ -224,7 +265,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return obstacles;
     }
 
-    /** Lit l'ouverture d'entrée dans le calque Entrance. */
+    /**
+     * Lit l'ouverture d'entrée dans le calque Entrance.
+     *
+     * @param map la carte
+     * @return l'entrée
+     * @throws IllegalArgumentException si l'entrée manque ou est mal décrite
+     */
     public Entrance loadEntrance(TiledMap map) {
         RectangleMapObject object = loadOpening(map, "Entrance");
         Rectangle rectangle = object.getRectangle();
@@ -233,7 +280,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return new Entrance(toGridCoordinate(rectangle.x), toGridCoordinate(rectangle.y), orientation);
     }
 
-    /** Lit l'ouverture de sortie dans le calque Exit. */
+    /**
+     * Lit l'ouverture de sortie dans le calque Exit.
+     *
+     * @param map la carte
+     * @return la sortie
+     * @throws IllegalArgumentException si la sortie manque ou est mal décrite
+     */
     public Exit loadExit(TiledMap map) {
         RectangleMapObject object = loadOpening(map, "Exit");
         Rectangle rectangle = object.getRectangle();
@@ -247,6 +300,14 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return read(mapPath, map -> loadChestSpawns(map));
     }
 
+    /**
+     * Lit les coffres du calque {@code Coffre} : position, mur d'appui (propriété Orientation)
+     * et contenu imposé éventuel (propriété loot).
+     *
+     * @param map la carte
+     * @return les emplacements des coffres (vide si le calque n'existe pas)
+     * @throws IllegalArgumentException si la carte est {@code null} ou si un coffre est mal décrit
+     */
     public List<ChestSpawn> loadChestSpawns(TiledMap map) {
         if (map == null) {
             throw new IllegalArgumentException("La carte doit être renseignée.");
@@ -286,6 +347,13 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return read(mapPath, map -> loadMonsterType(map));
     }
 
+    /**
+     * Lit le monstre imposé par la carte (propriété monsterType de l'objet de {@code monstre_start}).
+     *
+     * @param map la carte
+     * @return le type de monstre, ou {@code null} pour utiliser celui du palier
+     * @throws IllegalArgumentException si la carte est {@code null}
+     */
     public MonsterType loadMonsterType(TiledMap map) {
         if (map == null) {
             throw new IllegalArgumentException("La carte doit être renseignée.");
@@ -308,6 +376,14 @@ public class TiledLabyrinthLoader implements LabyrinthLoader {
         return read(mapPath, map -> loadMonsterSpawn(map));
     }
 
+    /**
+     * Lit la case de départ du monstre dans le calque {@code monstre_start}. Le point Tiled marque
+     * le centre du bloc 2 x 2 du monstre, la case renvoyée est son coin bas gauche.
+     *
+     * @param map la carte
+     * @return la case de départ du monstre
+     * @throws IllegalArgumentException si le calque ne contient pas exactement un point ou un rectangle
+     */
     public GridPosition loadMonsterSpawn(TiledMap map) {
         if (map == null) {
             throw new IllegalArgumentException("La carte doit être renseignée.");

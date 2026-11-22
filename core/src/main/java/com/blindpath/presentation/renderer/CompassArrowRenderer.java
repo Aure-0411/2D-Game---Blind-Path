@@ -7,6 +7,10 @@ import com.badlogic.gdx.utils.Disposable;
 import com.blindpath.domain.character.Character;
 import com.blindpath.domain.labyrinth.Exit;
 
+/**
+ * Dessine la flèche de la boussole : un triangle doré qui tourne autour du héros
+ * et pointe vers la sortie, tant que la boussole est active.
+ */
 public class CompassArrowRenderer implements Disposable {
 
     private static final float ORBIT_RADIUS = 1.1f;
@@ -15,6 +19,13 @@ public class CompassArrowRenderer implements Disposable {
 
     private final ShapeRenderer shapes = new ShapeRenderer();
 
+    /**
+     * Dessine la flèche si la boussole du héros est active.
+     *
+     * @param camera la caméra du jeu
+     * @param hero le héros
+     * @param exit la sortie du niveau
+     */
     public void render(OrthographicCamera camera, Character hero, Exit exit) {
         if (hero == null || exit == null || !hero.isCompassActive()) {
             return;
@@ -46,6 +57,7 @@ public class CompassArrowRenderer implements Disposable {
         shapes.end();
     }
 
+    /** Libère l'outil de dessin des formes. */
     @Override
     public void dispose() {
         shapes.dispose();

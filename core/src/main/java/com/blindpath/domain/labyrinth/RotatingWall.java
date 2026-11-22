@@ -10,6 +10,15 @@ public final class RotatingWall extends Wall {
     private boolean rotated;
     private boolean waitingForClearance;
 
+    /**
+     * @param x position horizontale du coin bas gauche
+     * @param y position verticale du coin bas gauche
+     * @param orientation sens du mur avant rotation
+     * @param pivotX position horizontale du point de rotation
+     * @param pivotY position verticale du point de rotation
+     * @param turn angle de rotation : 90 (sens inverse des aiguilles d'une montre) ou -90
+     * @throws IllegalArgumentException si un paramètre n'est pas valide
+     */
     public RotatingWall(float x, float y, OpeningOrientation orientation,
                         float pivotX, float pivotY, int turn) {
         super(x, y, orientation == OpeningOrientation.HORIZONTAL ? 2f : 1f,
@@ -28,17 +37,24 @@ public final class RotatingWall extends Wall {
         this.turn = turn;
     }
 
+    /** @return une copie de la position du mur avant rotation */
     public Bounds getInitialBounds() {
         return new Bounds(initialBounds.getX(), initialBounds.getY(),
                 initialBounds.getWidth(), initialBounds.getHeight());
     }
 
+    /** @return la position horizontale du pivot */
     public float getPivotX() { return pivotX; }
+    /** @return la position verticale du pivot */
     public float getPivotY() { return pivotY; }
+    /** @return l'angle de rotation (90 ou -90) */
     public int getTurn() { return turn; }
+    /** @return {@code true} si le mur a déjà pivoté */
     public boolean isRotated() { return rotated; }
+    /** @return le sens du mur avant rotation */
     public OpeningOrientation getInitialOrientation() { return initialOrientation; }
 
+    /** @return la position actuelle du mur : initiale, ou tournée autour du pivot */
     @Override
     public Bounds getBounds() {
         if (!rotated) return getInitialBounds();
@@ -53,6 +69,13 @@ public final class RotatingWall extends Wall {
         return new Bounds(pivotX + (y - pivotY), pivotY - (x + width - pivotX), height, width);
     }
 
+    /**
+     * Fait pivoter le mur, une seule fois. Si quelqu'un se trouve sur sa nouvelle position,
+     * le mur reste traversable jusqu'à ce qu'il en sorte.
+     *
+     * @param occupants les hitbox présentes (héros, monstre)
+     * @return {@code true} si le mur vient de pivoter, {@code false} s'il l'avait déjà fait
+     */
     public boolean rotate(Bounds... occupants) {
         if (rotated) return false;
         rotated = true;
@@ -61,7 +84,11 @@ public final class RotatingWall extends Wall {
         return true;
     }
 
-    /** Le mur redevient solide seulement quand tous les occupants ont quitté sa nouvelle zone. */
+    /**
+     * Le mur redevient solide seulement quand tous les occupants ont quitté sa nouvelle zone.
+     *
+     * @param occupants les hitbox présentes (héros, monstre)
+     */
     public void updateClearance(Bounds... occupants) {
         if (waitingForClearance && !overlapsAny(occupants)) {
             waitingForClearance = false;

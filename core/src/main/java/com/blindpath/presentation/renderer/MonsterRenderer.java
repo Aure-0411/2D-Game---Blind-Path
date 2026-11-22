@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Dessine un monstre à partir de son atlas (monsters/<name>/<name>.atlas).
+ * Dessine un monstre à partir de son atlas ({@code monsters/<name>/<name>.atlas}).
  * Générique : le même renderer sert pour tous les monstres qui suivent la
- * convention de nommage <name>_<état>_<orientation>.
+ * convention de nommage {@code <name>_<état>_<orientation>}.
  */
 public class MonsterRenderer implements Disposable {
     // Même taille que la hitbox du monstre (Monster.SIZE = 2 cases) : ce qu'on voit = ce qui touche.
@@ -31,6 +31,12 @@ public class MonsterRenderer implements Disposable {
     private GridPosition lastPosition;
     private String lastHorizontal = "left";
     private String direction = "left";
+    /**
+     * Charge l'atlas du monstre et prépare ses animations (déplacement, attente, étourdi, cri).
+     *
+     * @param name le nom du monstre, qui est aussi le nom de son dossier et de son atlas
+     * @throws IllegalStateException si une animation obligatoire manque dans l'atlas
+     */
     public MonsterRenderer(String name) {
         atlas = new TextureAtlas("monsters/" + name + "/" + name + ".atlas");
         for (int i = 0; i < STATES.length; i++) {
@@ -54,6 +60,15 @@ public class MonsterRenderer implements Disposable {
         }
         lastPosition = currentPosition;
     }
+    /**
+     * Dessine le monstre sur son bloc de 2 x 2 cases. L'animation dépend de son état :
+     * étourdi s'il est immobilisé, cri pour le Screamer, attente pour le Jumper en alerte,
+     * déplacement sinon. L'orientation suit son dernier mouvement.
+     *
+     * @param batch le batch de dessin, déjà ouvert
+     * @param monster le monstre
+     * @param stateTime temps écoulé depuis le début de l'animation, en secondes
+     */
     public void render(SpriteBatch batch, Monster monster, float stateTime) {
         GridPosition currentPosition = monster.getPosition();
         updateOrientation(currentPosition);
@@ -75,5 +90,6 @@ public class MonsterRenderer implements Disposable {
         float y = currentPosition.getRow();
         batch.draw(frame, x, y, SIZE, SIZE);
     }
+    /** Libère l'atlas. */
     @Override public void dispose() { atlas.dispose(); }
 }
