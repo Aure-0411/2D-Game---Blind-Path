@@ -19,6 +19,15 @@ import com.blindpath.domain.physics.CollisionWorld;
 import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.monster.Inverter;
 
+/**
+ * Un niveau en cours : le héros, le labyrinthe, son monstre, les coffres et les objets posés.
+ * <p>
+ * À la construction, le niveau enregistre tous les obstacles, les murs du bord et les coffres
+ * dans le monde de collisions. À chaque image, {@link #update(float)} fait avancer les effets
+ * temporaires et applique les dégâts.
+ *
+ * @param <T> le type du héros
+ */
 public class Level<T extends Character> {
 
     private final T hero;
@@ -29,6 +38,18 @@ public class Level<T extends Character> {
     private final List<Chest> chests;
     private final List<PlacedObject> placedObjects;
 
+    /**
+     * Construit le niveau et prépare les collisions.
+     *
+     * @param hero le héros
+     * @param labyrinth le labyrinthe chargé depuis la carte
+     * @param collisions le monde de collisions
+     * @param monster le monstre du niveau
+     * @param pathfinder le calcul de chemin utilisé par le monstre
+     * @param chests les coffres du niveau ({@code null} pour aucun)
+     * @throws IllegalArgumentException si le héros, le labyrinthe, les collisions,
+     *         le monstre ou le pathfinder est {@code null}
+     */
     public Level(T hero, Labyrinth labyrinth, CollisionWorld collisions, Monster monster, Pathfinder pathfinder, List<Chest> chests) {
         if (hero == null || labyrinth == null || collisions == null || monster == null || pathfinder == null) {
             throw new IllegalArgumentException("Le personnnage, le labyrinthe, les collisions, le monstre et le pathfinder doivent être renseignés.");
@@ -62,14 +83,31 @@ public class Level<T extends Character> {
         collisions.addDynamic(hero);
     }
 
+    /** @return le héros */
     public T getHero() { return hero; }
+    /** @return le labyrinthe du niveau */
     public Labyrinth getLabyrinth() { return labyrinth; }
+    /** @return le monstre du niveau */
     public Monster getMonster() { return monster; }
+    /**
+     * Remplace le monstre du niveau.
+     *
+     * @param monster le nouveau monstre
+     */
     public void setMonster(Monster monster) { this.monster = monster; }
+    /** @return les coffres du niveau */
     public List<Chest> getChests() { return chests; }
+    /** @return le calcul de chemin du niveau */
     public Pathfinder getPathfinder() { return pathfinder; }
+    /** @return les objets posés par le joueur (piège à ours, dynamite) */
     public List<PlacedObject> getPlacedObjects() { return placedObjects; }
 
+    /**
+     * Fait avancer le niveau d'une image : murs tournants, effets du héros, contact avec
+     * le monstre, ronces, soin automatique et objets posés. Les objets terminés sont retirés.
+     *
+     * @param deltaTime temps écoulé depuis la dernière image, en secondes
+     */
     public void update(float deltaTime) {
         updateRotatingWalls();
         hero.updateCompass(deltaTime);
@@ -98,7 +136,16 @@ public class Level<T extends Character> {
         }
     }
 
-    /** Déplace le personnage en respectant les murs. Renvoie true s'il a bougé. */
+    /**
+     * Déplace un personnage en respectant les murs. Un personnage étourdi ne bouge pas.
+     *
+     * @param character le personnage à déplacer
+     * @param dx composante horizontale de la direction
+     * @param dy composante verticale de la direction
+     * @param deltaTime temps écoulé, en secondes
+     * @return {@code true} si le personnage a bougé
+     * @throws IllegalArgumentException si le personnage est {@code null}
+     */
     public boolean tryMove(Character character, float dx, float dy, float deltaTime) {
         if (character == null) {
             throw new IllegalArgumentException("Le personnage doit être renseigné.");
@@ -114,6 +161,12 @@ public class Level<T extends Character> {
         return moved;
     }
 
+    /**
+     * Diffuse un claquement de doigts à tout ce qui y réagit : ronces, leviers, monstre et coffres.
+     * Si le monstre est un Screamer qui crie, le héros est étourdi.
+     *
+     * @param event le claquement ({@code null} est ignoré)
+     */
     public void emitSnap(SnapEvent event) {
         if (event == null) {
             return;
@@ -139,6 +192,12 @@ public class Level<T extends Character> {
         }
     }
 
+    /**
+     * Ajoute un objet posé par le joueur dans le niveau.
+     *
+     * @param object l'objet posé
+     * @throws IllegalArgumentException si l'objet est {@code null}
+     */
     public void addPlacedObject(PlacedObject object) {
         if (object == null) {
             throw new IllegalArgumentException("L'objet doit être renseigné.");
@@ -153,10 +212,12 @@ public class Level<T extends Character> {
         collisions.syncChangingObstacles();
     }
 
+    /** @return {@code true} si le monstre est un Inverter qui inverse actuellement les commandes */
     public boolean areControlsInverted() {
         return monster instanceof Inverter inverter && inverter.invertsControls();
     }
 
+    /** @return {@code true} si le héros a atteint la sortie */
     public boolean isCompleted() {
         return labyrinth.getExit().isReached(hero);
     }

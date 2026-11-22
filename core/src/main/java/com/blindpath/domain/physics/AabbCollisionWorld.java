@@ -19,17 +19,28 @@ public class AabbCollisionWorld implements CollisionWorld {
     private final List<Bounds> statics = new ArrayList<>();
     private final List<Obstacle> changingObstacles = new ArrayList<>();
 
+    /**
+     * Enregistre un mur tournant, dont la position est relue à chaque déplacement.
+     *
+     * @param obstacle l'obstacle
+     * @throws IllegalArgumentException si l'obstacle est {@code null}
+     */
     @Override
     public void addChangingObstacle(Obstacle obstacle) {
         if (obstacle == null) throw new IllegalArgumentException("L'obstacle doit être renseigné.");
         changingObstacles.add(obstacle);
     }
 
+    /** Rien à faire : les obstacles changeants sont relus à chaque déplacement. */
     @Override
     public void syncChangingObstacles() {
         // Cette implémentation lit directement les zones métier lors du déplacement.
     }
 
+    /**
+     * @param bounds la zone du mur
+     * @throws IllegalArgumentException si la zone est {@code null}
+     */
     @Override
     public void addStatic(Bounds bounds) {
         if (bounds == null) {
@@ -38,11 +49,27 @@ public class AabbCollisionWorld implements CollisionWorld {
         statics.add(bounds);
     }
 
+    /**
+     * Rien à enregistrer : la position du personnage suffit.
+     *
+     * @param character le personnage
+     */
     @Override
     public void addDynamic(Character character) {
         // Rien à enregistrer : la position du personnage suffit.
     }
 
+    /**
+     * Déplace le personnage axe par axe (horizontal puis vertical). Si un axe est bloqué,
+     * l'autre continue : le personnage glisse le long des murs. La distance possible avant
+     * le mur est trouvée par dichotomie.
+     *
+     * @param c le personnage
+     * @param dirX composante horizontale de la direction
+     * @param dirY composante verticale de la direction
+     * @param deltaTime temps écoulé, en secondes
+     * @return {@code true} si la position a changé
+     */
     @Override
     public boolean move(Character c, float dirX, float dirY, float deltaTime) {
         float startX = c.getX();
@@ -89,6 +116,7 @@ public class AabbCollisionWorld implements CollisionWorld {
         return true;
     }
 
+    /** Oublie tous les obstacles enregistrés. */
     @Override
     public void dispose() {
         statics.clear();

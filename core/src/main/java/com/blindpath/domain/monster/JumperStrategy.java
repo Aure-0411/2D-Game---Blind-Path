@@ -5,14 +5,25 @@ import com.blindpath.domain.pathfinding.GridPosition;
 import com.blindpath.domain.pathfinding.LabyrinthGrid;
 import com.blindpath.domain.pathfinding.Pathfinder;
 
+/**
+ * Stratégie du Jumper (patron Strategy). Quand le héros est à portée de saut, le Jumper
+ * s'arrête un pas (alerte), puis bondit directement sur la case du héros si elle est libre.
+ * Sinon, il le poursuit comme {@link ChaseStrategy}.
+ */
 public class JumperStrategy implements MovementStrategy {
 
+    /** Portée de saut par défaut, en cases (distance horizontale + verticale). */
     public static final int DEFAULT_JUMP_RANGE = 2;
 
     private final Pathfinder pathfinder;
     private final int jumpRange;
     private JumperState state = JumperState.CHASING;
 
+    /**
+     * @param pathfinder le calcul de chemin
+     * @param jumpRange la portée du saut, en cases
+     * @throws IllegalArgumentException si le pathfinder est {@code null} ou la portée inférieure à 1
+     */
     public JumperStrategy(Pathfinder pathfinder, int jumpRange) {
 
         if (pathfinder == null) {
@@ -27,14 +38,21 @@ public class JumperStrategy implements MovementStrategy {
         this.jumpRange = jumpRange;
     }
 
+    /**
+     * Crée une stratégie avec la portée {@link #DEFAULT_JUMP_RANGE}.
+     *
+     * @param pathfinder le calcul de chemin
+     */
     public JumperStrategy(Pathfinder pathfinder) {
         this(pathfinder, DEFAULT_JUMP_RANGE);
     }
 
+    /** @return l'état actuel (poursuite ou alerte) */
     public JumperState getState() {
         return state;
     }
 
+    /** @return la portée du saut, en cases */
     public int getJumpRange() {
         return jumpRange;
     }
@@ -64,6 +82,15 @@ public class JumperStrategy implements MovementStrategy {
         return path.get(0);
     }
 
+    /**
+     * Calcule la prochaine case : en alerte, le Jumper bondit sur la cible si elle est à portée
+     * et libre ; à portée, il passe en alerte et reste sur place ; sinon il poursuit.
+     *
+     * @param grid la grille du labyrinthe
+     * @param from la case actuelle du monstre
+     * @param target la case du héros
+     * @return la prochaine case du monstre
+     */
     @Override
     public GridPosition nextStep(LabyrinthGrid grid, GridPosition from, GridPosition target) {
 

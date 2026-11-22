@@ -1,10 +1,16 @@
 package com.blindpath.domain.inventory;
 
+/** Pile d'objets d'un même type dans un emplacement d'inventaire (1 à 5 exemplaires). */
 public class ItemStack {
 
     private final Item item;
     private int quantity;
 
+    /**
+     * @param item l'objet de la pile
+     * @param quantity le nombre d'exemplaires, de 1 à 5
+     * @throws IllegalArgumentException si l'objet est {@code null} ou la quantité hors limites
+     */
     public ItemStack(Item item, int quantity) {
         if (item == null) {
             throw new IllegalArgumentException("l'item chosi n'existe pas");
@@ -17,10 +23,12 @@ public class ItemStack {
         this.quantity = quantity;
     }
 
+    /** @return l'objet de la pile */
     public Item getItem() {
         return this.item;
     }
 
+    /** @return le nombre d'exemplaires */
     public int getQuantity() {
         return this.quantity;
     }

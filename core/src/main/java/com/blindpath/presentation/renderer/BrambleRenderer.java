@@ -9,6 +9,7 @@ import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Bramble;
 import com.blindpath.domain.labyrinth.OpeningOrientation;
 
+/** Dessine les ronces : l'image au repos ou l'image étendue, sans transition progressive. */
 /** Affiche directement l'image au repos ou étendue, sans transition progressive. */
 public final class BrambleRenderer implements Disposable {
 
@@ -26,7 +27,13 @@ public final class BrambleRenderer implements Disposable {
                 bramble.getOrientation() == OpeningOrientation.VERTICAL ? 90f : 0f);
     }
 
-    /** Le batch reçu doit être ouvert avec la projection de la caméra du jeu. */
+    /**
+     * Dessine toutes les ronces du niveau. Le batch reçu doit être ouvert avec la projection
+     * de la caméra du jeu.
+     *
+     * @param batch le batch de dessin, déjà ouvert
+     * @param brambles les ronces du niveau
+     */
     public void render(SpriteBatch batch, List<Bramble> brambles) {
         for (Bramble bramble : brambles) {
             Texture texture = bramble.isActive() ? extended : resting;
@@ -37,6 +44,7 @@ public final class BrambleRenderer implements Disposable {
         }
     }
 
+    /** Libère les images des ronces. */
     @Override
     public void dispose() {
         resting.dispose();

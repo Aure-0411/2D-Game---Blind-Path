@@ -1,5 +1,6 @@
 package com.blindpath.domain.time;
 
+/** Conversions entre secondes et microsecondes, utilisées par l'horloge et les minuteurs. */
 final class TimeUnits {
 
     static final long MICROS_PER_SECOND = 1000000L;

@@ -15,11 +15,21 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.blindpath.Main;
 import com.blindpath.domain.character.Gnome;
 
+/**
+ * Menu principal : un bouton « Start » qui lance une partie avec le gnome,
+ * et un bouton « Quit » qui ferme le jeu.
+ */
 public class MainMenuScreen implements Screen {
 
     private Stage stage;
     private Skin skin;
 
+    /**
+     * Construit le menu et ses boutons.
+     *
+     * @param main l'application, pour changer d'écran
+     * @throws IllegalArgumentException si l'application est {@code null}
+     */
     public MainMenuScreen(Main main) {
         if (main == null) {
             throw new IllegalArgumentException("L'application principale doit être renseignée.");
@@ -66,12 +76,14 @@ public class MainMenuScreen implements Screen {
 
     }
 
+    /** Donne le clavier et la souris au menu. */
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
 
     }
 
+    /** @param delta temps écoulé depuis la dernière image, en secondes */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0f, 0f, 0f, 1f);
@@ -79,6 +91,10 @@ public class MainMenuScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * @param width largeur de la fenêtre, en pixels
+     * @param height hauteur de la fenêtre, en pixels
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
@@ -94,6 +110,7 @@ public class MainMenuScreen implements Screen {
         // Aucune logique à reprendre pour le moment.
     }
 
+    /** Rend le clavier quand le menu est quitté. */
     @Override
     public void hide() {
         if (Gdx.input.getInputProcessor() == stage) {
@@ -101,6 +118,7 @@ public class MainMenuScreen implements Screen {
         }
     }
 
+    /** Libère la scène et le skin. */
     @Override
     public void dispose() {
         if (stage != null) {

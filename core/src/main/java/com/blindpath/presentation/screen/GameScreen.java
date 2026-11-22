@@ -65,6 +65,16 @@ import com.blindpath.presentation.renderer.LeverWallRenderer;
 import com.blindpath.presentation.renderer.MonsterRenderer;
 import com.blindpath.presentation.renderer.PlacedObjectRenderer;
 
+/**
+ * Écran de jeu : il fait tourner la partie, dessine le niveau et joue les sons.
+ * <p>
+ * À chaque image : lecture du clavier, déplacement du monstre au rythme de l'horloge,
+ * mise à jour du niveau, claquement de doigts (Espace), passage au niveau suivant quand
+ * la sortie est atteinte, et retry après une mort (après le jumpscare). Échap ouvre la pause.
+ * Touches de debug : F3 affiche les hitbox et le monstre, I rend le héros invincible.
+ *
+ * @param <T> le type du héros
+ */
 public class GameScreen<T extends Character> implements Screen {
 
     private static final float WORLD_WIDTH = 30f;
@@ -125,6 +135,11 @@ public class GameScreen<T extends Character> implements Screen {
     private MonsterAudio monsterAudio;
     private long footstepsId = -1;
 
+    /**
+     * @param main l'application, pour changer d'écran
+     * @param hero le héros de la partie
+     * @throws IllegalArgumentException si l'application ou le héros est {@code null}
+     */
     public GameScreen(Main main, T hero) {
         if (main == null || hero == null) {
             throw new IllegalArgumentException("L'application principale et le héros doivent être renseignés.");
@@ -133,6 +148,10 @@ public class GameScreen<T extends Character> implements Screen {
         this.hero = hero;
     }
 
+    /**
+     * Au premier affichage, crée la partie, charge le premier niveau, les images,
+     * le menu pause et les sons. Relance ensuite les ambiances sonores.
+     */
     @Override
     public void show() {
         if (map == null) {
@@ -234,6 +253,11 @@ public class GameScreen<T extends Character> implements Screen {
         damageOverlay.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
+    /**
+     * Fait avancer et dessine une image du jeu (voir la description de la classe).
+     *
+     * @param delta temps écoulé depuis la dernière image, en secondes
+     */
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
@@ -478,6 +502,10 @@ public class GameScreen<T extends Character> implements Screen {
         input = new InputController(level);
     }
 
+    /**
+     * @param width largeur de la fenêtre, en pixels
+     * @param height hauteur de la fenêtre, en pixels
+     */
     @Override
     public void resize(int width, int height) {
         if (viewport != null) {
@@ -497,6 +525,7 @@ public class GameScreen<T extends Character> implements Screen {
         }
     }
 
+    /** Coupe les bruits de pas et les sons du monstre quand l'application passe en arrière-plan. */
     @Override
     public void pause() {
         stopFootsteps();
@@ -506,6 +535,7 @@ public class GameScreen<T extends Character> implements Screen {
     @Override
     public void resume() {}
 
+    /** Coupe tous les sons quand l'écran est quitté. */
     @Override
     public void hide() {
         stopFootsteps();
@@ -520,6 +550,7 @@ public class GameScreen<T extends Character> implements Screen {
         }
     }
 
+    /** Libère toutes les ressources de l'écran : images, sons et cartes. */
     @Override
     public void dispose() {
         stopFootsteps();
