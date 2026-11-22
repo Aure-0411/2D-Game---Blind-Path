@@ -12,36 +12,68 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.blindpath.Main;
 
-/** Message de fin de démo, suivi d'un retour automatique à l'accueil. */
+/** Message de fin de démo et compteur de morts, suivi d'un retour automatique à l'accueil. */
 public class EndScreen implements Screen {
     private static final float DISPLAY_DURATION = 6f;
 
     private final Main main;
     private final Stage stage;
     private final BitmapFont font;
+    private final BitmapFont subFont;
+    private final int deathCount;
     private float elapsed;
 
     /**
-     * Prépare le message de fin.
+     * Prépare le message de fin sans mort enregistrée.
      *
      * @param main l'application, pour revenir au menu
      */
     public EndScreen(Main main) {
+        this(main, 0);
+    }
+
+    /**
+     * Prépare le message de fin avec le nombre de morts de la partie.
+     *
+     * @param main l'application, pour revenir au menu
+     * @param deathCount le nombre de morts survenues pendant la partie
+     * @throws IllegalArgumentException si {@code deathCount} est négatif
+     */
+    public EndScreen(Main main, int deathCount) {
+        if (deathCount < 0) {
+            throw new IllegalArgumentException("Le nombre de morts ne peut pas être négatif.");
+        }
         this.main = main;
+        this.deathCount = deathCount;
         // Une taille virtuelle fixe garde le message lisible au redimensionnement.
         stage = new Stage(new FitViewport(960, 540));
         font = new BitmapFont();
         font.getData().setScale(3f);
+
+        subFont = new BitmapFont();
+        subFont.getData().setScale(2f);
 
         Label message = new Label("À bientôt pour la version complète ;)",
                 new Label.LabelStyle(font, Color.WHITE));
         message.setAlignment(Align.center);
         message.setWrap(true);
 
+        String deathText = deathCount <= 1
+                ? "Nombre de morts : " + deathCount
+                : "Nombre de morts : " + deathCount;
+        Label deathLabel = new Label(deathText, new Label.LabelStyle(subFont, Color.LIGHT_GRAY));
+        deathLabel.setAlignment(Align.center);
+
         Table table = new Table();
         table.setFillParent(true);
-        table.add(message).growX().pad(40);
+        table.add(message).growX().pad(40).row();
+        table.add(deathLabel).padTop(10);
         stage.addActor(table);
+    }
+
+    /** @return le nombre de morts affiché sur cet écran */
+    public int getDeathCount() {
+        return deathCount;
     }
 
     /** Remet le compte à rebours à zéro et donne le clavier à l'écran. */
@@ -96,10 +128,11 @@ public class EndScreen implements Screen {
         }
     }
 
-    /** Libère la scène et la police. */
+    /** Libère la scène et les polices. */
     @Override
     public void dispose() {
         stage.dispose();
         font.dispose();
+        subFont.dispose();
     }
 }
