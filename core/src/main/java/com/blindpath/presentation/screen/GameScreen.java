@@ -39,6 +39,7 @@ import com.blindpath.domain.light.Light;
 import com.blindpath.domain.light.SnapEvent;
 import com.blindpath.domain.light.SnapSource;
 import com.blindpath.domain.monster.Chameleon;
+import com.blindpath.domain.monster.Inverter;
 import com.blindpath.domain.monster.Monster;
 import com.blindpath.domain.monster.Screamer;
 import com.blindpath.domain.pathfinding.GridPosition;
@@ -398,7 +399,9 @@ public class GameScreen<T extends Character> implements Screen {
         }
 
         hud.update(light.getCooldownProgress(), level.getHero().getLife(),
-                level.getHero().getInventory().getStacks(), session.getCurrentLevelNumber());
+            level.getHero().getInventory().getStacks(), session.getCurrentLevelNumber());
+        boolean invertEnding = monster instanceof Inverter inverter && inverter.isAfterExitActive();
+        hud.setControlsInverted(level.areControlsInverted(), invertEnding);
         hud.render(paused ? 0f : delta);
 
         damageOverlay.render(batch);

@@ -49,6 +49,12 @@ public class Hud {
     private final TextureRegionDrawable compassDrawable;
 
     private final Image[] hearts;
+    private static final float BLINK_PER_SECOND = 4f;
+    private final Texture invertedControlsTexture;
+    private final Image invertedControlsIcon;
+    private boolean controlsInverted;
+    private boolean invertEnding;
+    private float blinkTime;
 
     public Hud() {
         this.stage = new Stage(new ScreenViewport());
@@ -105,6 +111,12 @@ public class Hud {
                     .padTop(i == 0 ? 16 : 8);
             root.row();
         }
+
+        invertedControlsTexture = new Texture("ui/inverter/inverted_controls.png");
+        invertedControlsIcon = new Image(invertedControlsTexture);
+        invertedControlsIcon.setVisible(false);
+        root.add(invertedControlsIcon).size(48).padTop(16);
+        root.row();
 
         // Items//
         // Les images sont chargées une seule fois, puis réutilisées à chaque mise à jour.
@@ -201,7 +213,15 @@ public class Hud {
         return null;
     }
 
+    public void setControlsInverted (boolean inverted, boolean ending) {
+        controlsInverted = inverted;
+        invertEnding = ending;
+    }
+
     public void render(float delta) {
+        blinkTime += delta;
+        boolean blinkOn = (int) (blinkTime * BLINK_PER_SECOND) % 2 == 0;
+        invertedControlsIcon.setVisible(controlsInverted && (!invertEnding || blinkOn));
         stage.getViewport().apply();
         stage.act(delta);
         stage.draw();
@@ -222,6 +242,7 @@ public class Hud {
         bearTrapTexture.dispose();
         boosterTexture.dispose();
         compassTexture.dispose();
+        invertedControlsTexture.dispose();
     }
 
 }
