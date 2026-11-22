@@ -23,6 +23,11 @@ import com.blindpath.domain.inventory.Heart;
 import com.blindpath.domain.inventory.Item;
 import com.blindpath.domain.inventory.ItemStack;
 
+/**
+ * Interface affichée par-dessus le jeu : les cœurs, la barre de recharge de la lanterne,
+ * les objets de l'inventaire avec leur quantité, le numéro du niveau, et l'icône
+ * « commandes inversées » (qui clignote quand l'effet de l'Inverter se termine).
+ */
 public class Hud {
 
     private final Stage stage;
@@ -56,6 +61,7 @@ public class Hud {
     private boolean invertEnding;
     private float blinkTime;
 
+    /** Crée l'interface et charge ses images. */
     public Hud() {
         this.stage = new Stage(new ScreenViewport());
 
@@ -160,6 +166,14 @@ public class Hud {
 
     }
 
+    /**
+     * Met à jour l'affichage avec l'état du jeu.
+     *
+     * @param cooldownProgress l'avancement de la recharge de la lanterne, de 0 à 1
+     * @param life la vie du héros, en PV (2 PV par cœur)
+     * @param stacks les piles de l'inventaire
+     * @param levelNumber le numéro du niveau en cours
+     */
     public void update(float cooldownProgress, int life, List<ItemStack> stacks, int levelNumber) {
         if (displayedLevel != levelNumber) {
             levelLabel.setText("Niveau " + levelNumber);
@@ -213,11 +227,20 @@ public class Hud {
         return null;
     }
 
+    /**
+     * @param inverted {@code true} pour afficher l'icône des commandes inversées
+     * @param ending {@code true} pour faire clignoter l'icône (l'effet se termine)
+     */
     public void setControlsInverted (boolean inverted, boolean ending) {
         controlsInverted = inverted;
         invertEnding = ending;
     }
 
+    /**
+     * Dessine l'interface.
+     *
+     * @param delta temps écoulé depuis la dernière image, en secondes
+     */
     public void render(float delta) {
         blinkTime += delta;
         boolean blinkOn = (int) (blinkTime * BLINK_PER_SECOND) % 2 == 0;
@@ -227,10 +250,17 @@ public class Hud {
         stage.draw();
     }
 
+    /**
+     * Adapte l'interface à la nouvelle taille de la fenêtre.
+     *
+     * @param width largeur, en pixels
+     * @param height hauteur, en pixels
+     */
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
+    /** Libère les images et la police de l'interface. */
     public void dispose() {
         stage.dispose();
         whiteTexture.dispose();

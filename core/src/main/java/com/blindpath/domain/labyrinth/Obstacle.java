@@ -1,5 +1,6 @@
 package com.blindpath.domain.labyrinth;
 
+/** Obstacle rectangulaire du labyrinthe. Il bloque les collisions, sauf s'il est désactivé. */
 public abstract class Obstacle implements Collidable {
 
     private float x;
@@ -8,6 +9,13 @@ public abstract class Obstacle implements Collidable {
     private float width;
     private boolean collide;
 
+    /**
+     * @param x position horizontale du coin bas gauche
+     * @param y position verticale du coin bas gauche
+     * @param width largeur, strictement positive
+     * @param height hauteur, strictement positive
+     * @throws IllegalArgumentException si la largeur ou la hauteur n'est pas positive
+     */
     protected Obstacle(float x, float y, float width, float height) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("La taille de l'obstacle est negative error ou la size est null");
@@ -21,6 +29,11 @@ public abstract class Obstacle implements Collidable {
 
     }
 
+    /**
+     * Active ou désactive le blocage des collisions.
+     *
+     * @param state {@code true} pour bloquer
+     */
     public void setCollide(boolean state) {
         this.collide = state;
     }

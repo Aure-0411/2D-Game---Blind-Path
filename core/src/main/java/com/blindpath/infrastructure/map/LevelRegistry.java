@@ -9,6 +9,14 @@ import com.blindpath.domain.game.LevelCatalog;
 import com.blindpath.domain.game.LevelConfig;
 import com.blindpath.domain.monster.MonsterType;
 
+/**
+ * Liste des niveaux, lue dans le fichier {@code maps/index.txt}.
+ * <p>
+ * Le palier de chaque carte est donné par son dossier ({@code maps/1_easy/}, {@code maps/2_medium/},
+ * {@code maps/3_hard/}, {@code maps/4_extreme/}). Chaque palier a son monstre par défaut :
+ * Jumper puis Runaway en facile, Screamer en moyen, Chameleon en difficile, Inverter en extrême.
+ * Une carte peut imposer un autre monstre.
+ */
 public class LevelRegistry implements LevelCatalog {
 
     private final List<LevelConfig> levels = new ArrayList<>();
@@ -16,10 +24,21 @@ public class LevelRegistry implements LevelCatalog {
     private final int hardStart;
     private final int extremeStart;
 
+    /**
+     * Lit la liste des niveaux dans le fichier {@code maps/index.txt} des assets.
+     *
+     * @throws IllegalStateException si le fichier est introuvable
+     */
     public LevelRegistry() {
         this(readIndexFile());
     }
 
+    /**
+     * Construit la liste des niveaux à partir du contenu d'un index (une carte par ligne).
+     *
+     * @param indexContent le contenu du fichier d'index
+     * @throws IllegalArgumentException si le contenu est {@code null}
+     */
     public LevelRegistry(String indexContent) {
         if (indexContent == null) {
             throw new IllegalArgumentException("Le contenu de l'index doit être renseigné.");

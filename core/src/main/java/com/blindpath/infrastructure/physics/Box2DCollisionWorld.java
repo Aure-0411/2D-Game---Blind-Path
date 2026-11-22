@@ -104,6 +104,17 @@ public class Box2DCollisionWorld implements CollisionWorld {
         bodies.put(character, body);
     }
 
+    /**
+     * Recale le corps Box2D sur la position du personnage, applique la vitesse demandée,
+     * fait avancer la simulation d'un pas, puis recopie la nouvelle position dans le personnage.
+     *
+     * @param character le personnage, enregistré avec {@link #addDynamic(Character)}
+     * @param dirX composante horizontale de la direction
+     * @param dirY composante verticale de la direction
+     * @param deltaTime temps écoulé, en secondes
+     * @return {@code true} si la position a changé
+     * @throws IllegalArgumentException si le personnage n'a pas été enregistré
+     */
     @Override
     public boolean move(Character character, float dirX, float dirY, float deltaTime) {
         syncChangingObstacles();

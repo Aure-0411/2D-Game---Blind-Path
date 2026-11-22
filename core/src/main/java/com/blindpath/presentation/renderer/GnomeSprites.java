@@ -2,9 +2,15 @@ package com.blindpath.presentation.renderer;
 
 import com.blindpath.domain.character.Direction;
 
+/** Noms des animations du gnome dans son atlas. */
 public class GnomeSprites {
+    /** Chemin de l'atlas du gnome. */
     public static final String ATLAS_PATH = "gnome/gnome.atlas"; // Votre chemin
 
+    /**
+     * @param d une direction
+     * @return le nom de la région de l'atlas pour cette direction (vers le bas par défaut)
+     */
     public static String regionName(Direction d) {
         return switch (d) {
             case DOWN -> "walk_down";

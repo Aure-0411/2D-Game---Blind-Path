@@ -9,11 +9,19 @@ import com.blindpath.domain.labyrinth.Bounds;
 import com.blindpath.domain.labyrinth.Obstacle;
 import com.blindpath.domain.game.Level;
 
+/**
+ * Affiche les hitbox pour vérifier les collisions (touche F3) : murs en rouge, bords de la carte
+ * en orange, personnage en vert, coffres et leur zone d'ouverture en doré.
+ */
 /** Affiche les hitbox (murs en rouge, le personage en vert) pour vérifier les collisions. Touche F3. */
 public class CollisionDebugRenderer implements Disposable {
 
     private final ShapeRenderer shapes = new ShapeRenderer();
 
+    /**
+     * @param camera la caméra du jeu
+     * @param level le niveau en cours
+     */
     public void render(Camera camera, Level<?> level) {
         shapes.setProjectionMatrix(camera.combined);
         shapes.begin(ShapeRenderer.ShapeType.Line);
@@ -57,6 +65,7 @@ public class CollisionDebugRenderer implements Disposable {
         shapes.rect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
     }
 
+    /** Libère l'outil de dessin des formes. */
     @Override
     public void dispose() {
         shapes.dispose();

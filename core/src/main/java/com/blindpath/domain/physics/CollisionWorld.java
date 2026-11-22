@@ -13,16 +13,28 @@ import com.blindpath.domain.labyrinth.Obstacle;
  */
 public interface CollisionWorld {
 
-    /** Déclare un obstacle fixe (mur). */
+    /**
+     * Déclare un obstacle fixe (mur).
+     *
+     * @param bounds la zone du mur
+     */
     void addStatic(Bounds bounds);
 
-    /** Obstacle dont la position et l'activation peuvent changer pendant le niveau. */
+    /**
+     * Déclare un obstacle dont la position et l'activation peuvent changer pendant le niveau.
+     *
+     * @param obstacle l'obstacle
+     */
     void addChangingObstacle(Obstacle obstacle);
 
     /** Répercute les changements métier dans le moteur physique. */
     void syncChangingObstacles();
 
-    /** Déclare un personnage mobile soumis aux collisions. */
+    /**
+     * Déclare un personnage mobile soumis aux collisions.
+     *
+     * @param character le personnage
+     */
     void addDynamic(Character character);
 
     /**
