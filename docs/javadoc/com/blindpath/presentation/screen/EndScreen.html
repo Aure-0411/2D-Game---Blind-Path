@@ -96,7 +96,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EndScreen</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements com.badlogic.gdx.Screen</span></div>
-<div class="block">Message de fin de démo, suivi d'un retour automatique à l'accueil.</div>
+<div class="block">Message de fin de démo et compteur de morts, suivi d'un retour automatique à l'accueil.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,7 +110,12 @@ implements com.badlogic.gdx.Screen</span></div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.blindpath.Main)" class="member-name-link">EndScreen</a><wbr>(<a href="../../Main.html" title="class in com.blindpath">Main</a>&nbsp;main)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Prépare le message de fin.</div>
+<div class="block">Prépare le message de fin sans mort enregistrée.</div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.blindpath.Main,int)" class="member-name-link">EndScreen</a><wbr>(<a href="../../Main.html" title="class in com.blindpath">Main</a>&nbsp;main,
+ int&nbsp;deathCount)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">Prépare le message de fin avec le nombre de morts de la partie.</div>
 </div>
 </div>
 </section>
@@ -129,31 +134,34 @@ implements com.badlogic.gdx.Screen</span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dispose()" class="member-name-link">dispose</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Libère la scène et la police.</div>
+<div class="block">Libère la scène et les polices.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hide()" class="member-name-link">hide</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Rend le clavier quand l'écran est quitté.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pause()" class="member-name-link">pause</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#render(float)" class="member-name-link">render</a><wbr>(float&nbsp;delta)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Affiche le message, puis revient au menu principal au bout de 6 secondes.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resize(int,int)" class="member-name-link">resize</a><wbr>(int&nbsp;width,
- int&nbsp;height)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resume()" class="member-name-link">resume</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDeathCount()" class="member-name-link">getDeathCount</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#show()" class="member-name-link">show</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hide()" class="member-name-link">hide</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Rend le clavier quand l'écran est quitté.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#pause()" class="member-name-link">pause</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#render(float)" class="member-name-link">render</a><wbr>(float&nbsp;delta)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Affiche le message, puis revient au menu principal au bout de 6 secondes.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resize(int,int)" class="member-name-link">resize</a><wbr>(int&nbsp;width,
+ int&nbsp;height)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resume()" class="member-name-link">resume</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#show()" class="member-name-link">show</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Remet le compte à rebours à zéro et donne le clavier à l'écran.</div>
 </div>
 </div>
@@ -177,10 +185,25 @@ implements com.badlogic.gdx.Screen</span></div>
 <section class="detail" id="&lt;init&gt;(com.blindpath.Main)">
 <h3>EndScreen</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EndScreen</span><wbr><span class="parameters">(<a href="../../Main.html" title="class in com.blindpath">Main</a>&nbsp;main)</span></div>
-<div class="block">Prépare le message de fin.</div>
+<div class="block">Prépare le message de fin sans mort enregistrée.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>main</code> - l'application, pour revenir au menu</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(com.blindpath.Main,int)">
+<h3>EndScreen</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EndScreen</span><wbr><span class="parameters">(<a href="../../Main.html" title="class in com.blindpath">Main</a>&nbsp;main,
+ int&nbsp;deathCount)</span></div>
+<div class="block">Prépare le message de fin avec le nombre de morts de la partie.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>main</code> - l'application, pour revenir au menu</dd>
+<dd><code>deathCount</code> - le nombre de morts survenues pendant la partie</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - si <code>deathCount</code> est négatif</dd>
 </dl>
 </section>
 </li>
@@ -192,6 +215,16 @@ implements com.badlogic.gdx.Screen</span></div>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="getDeathCount()">
+<h3>getDeathCount</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getDeathCount</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>le nombre de morts affiché sur cet écran</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="show()">
 <h3>show</h3>
@@ -265,7 +298,7 @@ implements com.badlogic.gdx.Screen</span></div>
 <section class="detail" id="dispose()">
 <h3>dispose</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">dispose</span>()</div>
-<div class="block">Libère la scène et la police.</div>
+<div class="block">Libère la scène et les polices.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code>dispose</code>&nbsp;in interface&nbsp;<code>com.badlogic.gdx.utils.Disposable</code></dd>
